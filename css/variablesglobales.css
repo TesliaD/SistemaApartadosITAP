@@ -1,0 +1,22 @@
+:root {
+    --primary: #1d3557;
+    --secondary: #457b9d;
+    --accent: #a8dadc;
+    --background: #f5f7fb;
+    --text: #333;
+    --white: #ffffff;
+}
+
+:root {
+    --sidebar-width: 250px;
+    --sidebar-collapsed: 80px;
+    --bg: #f5f7fb;
+    --text: #1d3557;
+    --sidebar: #1d3557;
+}
+
+body.dark {
+    --bg: #121212;
+    --text: #ffffff;
+    --sidebar: #1e1e1e;
+}

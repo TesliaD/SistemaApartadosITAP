@@ -1,0 +1,52 @@
+const form = document.querySelector("form");
+
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    Swal.fire({
+        title: 'Guardando...',
+        text: 'Por favor espera',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    fetch("guardar_usuario.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data);
+
+        if(data.status === "success") {
+            Swal.fire({
+                icon: 'success',
+                title: 'Usuario guardado',
+                text: 'Se registró correctamente'
+            });
+
+            form.reset();
+
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo guardar'
+            });
+        }
+
+    })
+    .catch((err) => {
+        console.error(err);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error en el servidor'
+        });
+    });
+
+});
