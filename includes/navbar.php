@@ -52,7 +52,7 @@
 
     <div class="submenu">
         <a href="RegistrarLaboratorios.php">Registrar</a>
-        <a href="RegistrarUsuarios.php">Lista de Laboratorios</a>
+        <a href="VerLaboratorios_Editar.php">Lista de Laboratorios</a>
     </div>
     
     <a href="#"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
