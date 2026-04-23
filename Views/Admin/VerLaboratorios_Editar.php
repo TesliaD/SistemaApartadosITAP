@@ -53,13 +53,15 @@ $result = $conn->query($sql);
                         <!--EDITAR -->
                         <button 
                             class="btn btn-warning btn-sm btnEditar"
-                            data-id="<?php echo $row['Nombre']; ?>"
-                            data-nombre="<?php echo $row['numMaquinas']; ?>"
-                            data-email="<?php echo $row['Descripcion']; ?>"
-                            data-rol="<?php echo $row['numLab']; ?>"
-                        >
-                            <i class="bi bi-pencil"></i>
-                        </button>
+                            data-id="<?php echo $row['IDLab']; ?>"
+                            data-nombre="<?php echo $row['Nombre']; ?>"
+                            data-num_maquinas="<?php echo $row['numMaquinas']; ?>"
+                            data-descripcion="<?php echo $row['Descripcion']; ?>"
+                            data-num_lab="<?php echo $row['numLab']; ?>"
+                            data-departamento="<?php echo $row['IDDepartamento']; ?>"
+                            data-activo="<?php echo $row['activo']; ?>"
+
+                        ><i class="bi bi-pencil"></i></button>
 
                         <!--ELIMINAR -->
                         <button 
@@ -78,13 +80,13 @@ $result = $conn->query($sql);
 
 </div>
 
-<!-- 🪟 MODAL EDITAR -->
+<!-- 🪟 MODAL EDITAR LABORATORIO -->
 <div class="modal fade" id="modalEditar" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title">Editar Usuario</h5>
+        <h5 class="modal-title">Editar Laboratorio</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
@@ -99,17 +101,33 @@ $result = $conn->query($sql);
           </div>
 
           <div class="mb-3">
-            <label>Email</label>
-            <input type="email" id="edit_email" name="email" class="form-control">
+            <label>No. Máquinas</label>
+            <input type="number" id="edit_num_maquinas" name="num_maquinas" class="form-control">
           </div>
 
           <div class="mb-3">
-            <label>Rol</label>
-            <select id="edit_rol" name="rol" class="form-select">
-                <option value="">Seleccionar</option>
-                <option value="administrador">Administrador</option>
-                <option value="invitado">Invitado</option>
-                <option value="maestro">Maestro</option>
+            <label>Descripción</label>
+            <input type="text" id="edit_descripcion" name="descripcion" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label>Número de Laboratorio</label>
+            <input type="text" id="edit_num_lab" name="num_lab" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label>Departamento</label>
+            <select id="edit_departamento" name="id_departamento" class="form-select">
+                <option value="1">Sistemas</option>
+                <option value="2">Electrónica</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label>Estado</label>
+            <select id="edit_activo" name="activo" class="form-select">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
             </select>
           </div>
 
@@ -131,3 +149,4 @@ $result = $conn->query($sql);
 <script src="../../js/darkmode.js"></script>
 <script src="../../js/logout.js"></script>
 <script src="../../js/eliminarLab.js"></script>
+<script src="../../js/actualizarlaboratorio.js"></script>
