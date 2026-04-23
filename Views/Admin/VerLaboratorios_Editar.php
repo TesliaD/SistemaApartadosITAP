@@ -2,7 +2,10 @@
 include("../../includes/auth.php"); 
 include($_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php");
 
-$sql = "SELECT * FROM usuarios";
+$sql = "SELECT l.*, d.nombre AS nombre_departamento
+        FROM laboratorios l
+        INNER JOIN departamentos d 
+        ON l.IDDepartamento = d.IDDepartamentos";
 $result = $conn->query($sql);
 ?>
 
@@ -12,25 +15,25 @@ $result = $conn->query($sql);
 <div class="content" id="content">
 
     <h3 class="mb-4">
-        <i class="bi bi-people"></i> Lista de Usuarios
+        <i class="bi bi-pc-display"></i> Lista de laboratorios
     </h3>
 
-    <!-- 🔍 xBUSCADOR -->
+    <!-- BUSCADOR -->
     <div class="mb-3">
         <input type="text" id="buscador" class="form-control" placeholder="Buscar usuario...">
     </div>
 
-    <!-- 📋 TABLA -->
+    <!-- TABLA -->
     <div class="card p-3">
         <table class="table table-hover" id="usuarios">
             <thead class="table-dark">
                 <tr>
-                    <th>#</th>
-                    <th>Control</th>
                     <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
+                    <th>Número Maquinas</th>
+                    <th>Descripcion</th>
+                    <th>Activo</th>
+                    <th>Número Laboratorio</th>
+                    <th>Departamento</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -38,30 +41,30 @@ $result = $conn->query($sql);
 
             <?php while($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo $row['IDUsuarios']; ?></td>
-                    <td><?php echo $row['num_control']; ?></td>
-                    <td><?php echo $row['nombre']; ?></td>
-                    <td><?php echo $row['email']; ?></td>
-                    <td><?php echo $row['rol']; ?></td>
+                    <td><?php echo $row['Nombre']; ?></td>
+                    <td><?php echo $row['numMaquinas']; ?></td>
+                    <td><?php echo $row['Descripcion']; ?></td>
                     <td>
                         <?php echo $row['activo'] ? 'Activo' : 'Inactivo'; ?>
                     </td>
+                    <td><?php echo $row['numLab']; ?></td>
+                    <td><?php echo $row['nombre_departamento']; ?></td>
                     <td>
-                        <!-- ✏️ EDITAR -->
+                        <!--EDITAR -->
                         <button 
                             class="btn btn-warning btn-sm btnEditar"
-                            data-id="<?php echo $row['IDUsuarios']; ?>"
-                            data-nombre="<?php echo $row['nombre']; ?>"
-                            data-email="<?php echo $row['email']; ?>"
-                            data-rol="<?php echo $row['rol']; ?>"
+                            data-id="<?php echo $row['Nombre']; ?>"
+                            data-nombre="<?php echo $row['numMaquinas']; ?>"
+                            data-email="<?php echo $row['Descripcion']; ?>"
+                            data-rol="<?php echo $row['numLab']; ?>"
                         >
                             <i class="bi bi-pencil"></i>
                         </button>
 
-                        <!-- 🗑️ ELIMINAR -->
+                        <!--ELIMINAR -->
                         <button 
                             class="btn btn-danger btn-sm btnEliminar" 
-                            data-id="<?php echo $row['IDUsuarios']; ?>"
+                            data-id="<?php echo $row['IDLab']; ?>"
                         >
                             <i class="bi bi-trash"></i>
                         </button>
@@ -122,12 +125,9 @@ $result = $conn->query($sql);
   </div>
 </div>
 
-<!-- ✅ BOOTSTRAP JS (OBLIGATORIO) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- 🔥 TUS SCRIPTS -->
+<!-- TUS SCRIPTS -->
 <script src="../../js/darkmode.js"></script>
 <script src="../../js/logout.js"></script>
-<script src="../../js/buscadorUsuarios.js"></script>
-<script src="../../js/eliminarusuario.js"></script>
-<script src="../../js/actualizarusuarios.js"></script>
+<script src="../../js/eliminarLab.js"></script>

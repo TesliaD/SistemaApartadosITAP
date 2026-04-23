@@ -35,6 +35,8 @@
     <a href="#"><i class="bi bi-house"></i><span>Inicio</span></a>
 
     <!-- SUBMENU -->
+     
+    <!-- Usuarios -->
     <a href="#" class="toggle-submenu">
         <i class="bi bi-people"></i> <span>Usuarios</span>
     </a>
@@ -43,7 +45,16 @@
         <a href="RegistrarUsuarios.php">Agregar</a>
     </div>
 
-    <a href="#"><i class="bi bi-laptop"></i> <span>Laboratorios</span></a>
+    <!-- Laboratorios -->
+    <a href="#" class="toggle-submenu">
+        <i class="bi bi-laptop"></i> <span>Laboratorios</span>
+    </a>
+
+    <div class="submenu">
+        <a href="RegistrarLaboratorios.php">Registrar</a>
+        <a href="VerLaboratorios_Editar.php">Lista de Laboratorios</a>
+    </div>
+    
     <a href="#"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
     <a href="#"><i class="bi bi-newspaper"></i> <span>Noticias</span></a> 
     <a href="#"><i class="bi bi-chat-left-text"></i> <span>Mensajes</span></a> 

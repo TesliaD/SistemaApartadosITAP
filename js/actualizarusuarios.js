@@ -19,24 +19,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("formEditar");
         const formData = new FormData(form);
 
-        fetch("/SistemaApartadosITAP/Views/Admin/actualizarusuario.php", {
+        fetch("actualizar_usuario.php", {
             method: "POST",
             body: formData
         })
-        .then(res => res.text())
+        .then(res => res.json())
         .then(data => {
-            console.log("RESPUESTA:", data);
-            return JSON.parse(data);
-        })
-        .then(data => {
+
             if (data.status === "success") {
                 Swal.fire("Actualizado", "Usuario actualizado", "success")
                     .then(() => location.reload());
             } else {
                 Swal.fire("Error", "No se pudo actualizar", "error");
             }
-        })
-        .catch(error => console.error("Error:", error));
+
+        });
 
     });
 
