@@ -58,7 +58,7 @@
     <a href="#"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
     <a href="#"><i class="bi bi-newspaper"></i> <span>Noticias</span></a> 
     <a href="#"><i class="bi bi-chat-left-text"></i> <span>Mensajes</span></a> 
-    <a href="#"><i class="bi bi-calendar-check"></i> <span>Apartados</span></a>
+    <a href="VentanaApartarLab.php"><i class="bi bi-calendar-check"></i><span>Apartados</span></a>
 
     <hr>
         <a href="#" id="logoutBtn">

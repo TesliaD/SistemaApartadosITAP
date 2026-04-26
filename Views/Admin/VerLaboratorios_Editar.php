@@ -145,7 +145,7 @@ $result = $conn->query($sql);
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- TUS SCRIPTS -->
+<!-- Scripts -->
 <script src="../../js/darkmode.js"></script>
 <script src="../../js/logout.js"></script>
 <script src="../../js/eliminarLab.js"></script>
