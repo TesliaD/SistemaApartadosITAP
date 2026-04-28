@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 confirmButtonText: "Sí, eliminar"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "/SistemaApartadosITAP/views/Admin/eliminarLab.php?IDLab=" + id;
+                    window.location.href = "/SistemaApartadosITAP/controllers/eliminarLab.php?IDLab=" + id;
                 }
             });
 

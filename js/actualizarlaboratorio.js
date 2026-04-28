@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("formEditar");
         const formData = new FormData(form);
 
-        fetch("actualizar_laboratorio.php", { // 👈 CAMBIADO
+        fetch("../../controllers/actualizar_laboratorio.php", { 
             method: "POST",
             body: formData
         })
