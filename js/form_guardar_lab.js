@@ -1,52 +1,55 @@
-const form = document.querySelector("form");
+document.addEventListener("DOMContentLoaded", function () {
 
-form.addEventListener("submit", function(e) {
-    e.preventDefault();
+    const form = document.querySelector("#formLabG");
 
-    const formData = new FormData(form);
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
 
-    Swal.fire({
-        title: 'Guardando...',
-        text: 'Por favor espera',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+        const formData = new FormData(form);
 
-    fetch("guardar_laboratorio.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log(data);
+        Swal.fire({
+            title: 'Guardando...',
+            text: 'Por favor espera',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
-        if(data.status === "success") {
-            Swal.fire({
-                icon: 'success',
-                title: 'Laboratorio Registrado',
-                text: 'Se registró correctamente'
-            });
+        fetch("../../controllers/guardar_laboratorio.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
 
-            form.reset();
+            if(data.status === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Laboratorio Registrado',
+                    text: 'Se registró correctamente'
+                });
 
-        } else {
+                form.reset();
+
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo guardar'
+                });
+            }
+
+        })
+        .catch((err) => {
+            console.error(err);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'No se pudo guardar'
+                text: 'Error en el servidor'
             });
-        }
-
-    })
-    .catch((err) => {
-        console.error(err);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error en el servidor'
         });
+
     });
 
 });

@@ -15,12 +15,12 @@ $result = $conn->query($sql);
         <i class="bi bi-people"></i> Lista de Usuarios
     </h3>
 
-    <!-- 🔍 xBUSCADOR -->
+    <!--BUSCADOR -->
     <div class="mb-3">
         <input type="text" id="buscador" class="form-control" placeholder="Buscar usuario...">
     </div>
 
-    <!-- 📋 TABLA -->
+    <!-- TABLA -->
     <div class="card p-3">
         <table class="table table-hover" id="usuarios">
             <thead class="table-dark">
@@ -47,7 +47,7 @@ $result = $conn->query($sql);
                         <?php echo $row['activo'] ? 'Activo' : 'Inactivo'; ?>
                     </td>
                     <td>
-                        <!-- ✏️ EDITAR -->
+                        <!--EDITAR -->
                         <button 
                             class="btn btn-warning btn-sm btnEditar"
                             data-id="<?php echo $row['IDUsuarios']; ?>"
@@ -58,7 +58,7 @@ $result = $conn->query($sql);
                             <i class="bi bi-pencil"></i>
                         </button>
 
-                        <!-- 🗑️ ELIMINAR -->
+                        <!--ELIMINAR -->
                         <button 
                             class="btn btn-danger btn-sm btnEliminar" 
                             data-id="<?php echo $row['IDUsuarios']; ?>"
@@ -75,7 +75,7 @@ $result = $conn->query($sql);
 
 </div>
 
-<!-- 🪟 MODAL EDITAR -->
+<!-- MODAL EDITAR -->
 <div class="modal fade" id="modalEditar" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -122,12 +122,12 @@ $result = $conn->query($sql);
   </div>
 </div>
 
-<!-- ✅ BOOTSTRAP JS (OBLIGATORIO) -->
+<!--BOOTSTRAP JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- 🔥 TUS SCRIPTS -->
+<!--TUS SCRIPTS -->
 <script src="../../js/darkmode.js"></script>
 <script src="../../js/logout.js"></script>
 <script src="../../js/buscadorUsuarios.js"></script>
-<script src="../../js/eliminarusuario.js"></script>
-<script src="../../js/actualizarusuarios.js"></script>
+<script src="../../js/eliminarusuario_XYZ.js"></script>
+<script src="../../js/actualizarusuarios_XYZ.js"></script> 

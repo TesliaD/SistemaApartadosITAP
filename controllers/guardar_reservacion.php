@@ -8,7 +8,7 @@ $horaFin = $_POST['horaFin'];
 $IDLab = $_POST['IDLab'];
 $IDDocentes = $_POST['IDDocentes'];
 
-// 🔥 VALIDACIÓN DE HORARIO
+// VALIDACIÓN DE HORARIO
 $check = $conn->prepare("
 SELECT * FROM reservaciones 
 WHERE IDLab = ? 

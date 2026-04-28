@@ -80,7 +80,7 @@ $result = $conn->query($sql);
 
 </div>
 
-<!-- 🪟 MODAL EDITAR LABORATORIO -->
+<!-- MODAL EDITAR LABORATORIO -->
 <div class="modal fade" id="modalEditar" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">

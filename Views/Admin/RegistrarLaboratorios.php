@@ -15,7 +15,7 @@
 
     <div class="card p-4">
 
-        <form action="guardar_laboratorio.php" method="POST">
+        <form id="formLabG">
 
             <div class="row g-3">
 

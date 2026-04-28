@@ -1,17 +1,26 @@
 <?php
 session_start();
-include("../../includes/conexion.php");
+
+include($_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php");
 
 header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    if(!isset($_POST['nombre'], $_POST['num_maquinas'], $_POST['descripcion'], $_POST['activo'], $_POST['num_lab'], $_POST['id_departamento'])){
+        echo json_encode([
+            "status" => "error",
+            "msg" => "Datos incompletos"
+        ]);
+        exit;
+    }
+
     $nombre = $_POST['nombre'];
-    $numMaquinas = $_POST['num_maquinas'];
+    $numMaquinas = intval($_POST['num_maquinas']);
     $descripcion = $_POST['descripcion'];
-    $activo = $_POST['activo'];
-    $numLab = $_POST['num_lab'];
-    $idDepartamento = $_POST['id_departamento']; 
+    $activo = intval($_POST['activo']);
+    $numLab = intval($_POST['num_lab']);
+    $idDepartamento = intval($_POST['id_departamento']); 
 
     $sql = "INSERT INTO laboratorios 
     (Nombre, numMaquinas, Descripcion, activo, numLab, IDDepartamento) 
@@ -27,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    $stmt->bind_param("sssssi", 
+    $stmt->bind_param("sisiii", 
         $nombre, 
         $numMaquinas,
         $descripcion,  
@@ -38,10 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if($stmt->execute()){
         echo json_encode(["status" => "success"]);
+    exit;
     } else {
         echo json_encode([
-            "status" => "error",
-            "msg" => $stmt->error
-        ]);
-    }
+        "status" => "error",
+        "msg" => $stmt->error
+    ]);
+    exit;
+}
 }

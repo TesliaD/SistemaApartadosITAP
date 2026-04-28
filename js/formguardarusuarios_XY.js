@@ -14,7 +14,7 @@ form.addEventListener("submit", function(e) {
         }
     });
 
-    fetch("guardar_usuario.php", {
+    fetch("../../controllers/guardar_usuario.php", {
         method: "POST",
         body: formData
     })
