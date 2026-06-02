@@ -34,7 +34,7 @@ include("../../includes/navbar.php");
                     $horas = [
                         "07:00","08:00","09:00","10:00","11:00","12:00",
                         "13:00","14:00","15:00","16:00","17:00","18:00",
-                        "19:00","20:00"
+                        "19:00","20:00","21:00","22:00"
                     ];
 
                     foreach($horas as $h){
@@ -65,21 +65,6 @@ include("../../includes/navbar.php");
         <hr>
         <div class="row g-3">
 
-        <!-- EVENTO -->
-        <div class="col-md-4">
-            <label>Evento</label>
-            <select id="evento" class="form-select shadow-sm">
-                <option value="">Seleccionar evento</option>
-                <?php
-                $eventos = $conn->query("SELECT IDEvento, Practica FROM eventos");
-                while($e = $eventos->fetch_assoc()):
-                ?>
-                <option value="<?= $e['IDEvento'] ?>">
-                    <?= $e['Practica'] ?>
-                </option>
-                <?php endwhile; ?>
-            </select>
-        </div>
 
         <!-- DOCENTE -->
         <div class="col-md-4">
@@ -121,6 +106,12 @@ include("../../includes/navbar.php");
         <div class="col-md-4">
             <label>Software</label>
             <input type="text" id="software" class="form-control shadow-sm">
+        </div>
+
+        <!--PRACTICA-->
+        <div class="col-md-4">
+        <label>Práctica</label>
+            <input type="text" id="practica" class="form-control shadow-sm">
         </div>
 
         <!-- ALUMNOS -->
@@ -198,7 +189,7 @@ include("../../includes/navbar.php");
                             <th>Lab</th>
                             <th>Docente</th>
                             <th>Grupo</th>
-                            <th>Evento</th>
+                            <th>Práctica</th>
                             <th>Software</th>
                             <th>Estado</th>
                             <th>Acción</th>
@@ -221,13 +212,22 @@ include("../../includes/navbar.php");
 
 </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="/SistemaApartadosITAP/css/reservaciones.css">
+<!-- CSS -->
+<link rel="stylesheet" href="/SistemaApartadosITAP/css/reservaciones.css">
 
-    <!-- LIBS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- LIBS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- TU JS -->
-    <script src="../../js/reservaciones.js"></script>
+<!-- TU JS -->
+<script src="../../js/reservaciones.js"></script>
+
+    
+<!-- Scripts -->
+<script src="../../js/logout.js"></script>
+<script src="../../js/eliminarLab.js"></script>

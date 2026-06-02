@@ -96,9 +96,6 @@
     </div>
 
 </div>
-<!--Dark Mode y menú lateral-->
-<script src="../../js/darkmode.js"></script>
-
 <!--Logout-->
 <script src="../../js/logout.js"></script>
 

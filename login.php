@@ -12,7 +12,7 @@ if ($result->num_rows > 0) {
 
     $user = $result->fetch_assoc();
 
-    // 🔐 Guardar datos en sesión (NORMALIZADOS)
+    // Guardar datos en sesión (NORMALIZADOS)
     $_SESSION['usuario'] = $user['nombre'];
     $_SESSION['rol'] = strtolower(trim($user['rol']));
     $_SESSION['num_control'] = $user['num_control'];

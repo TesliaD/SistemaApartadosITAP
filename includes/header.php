@@ -9,7 +9,7 @@
 
 <!-- CSS GLOBAL -->
 <link rel="stylesheet" href="/SistemaApartadosITAP/css/variablesglobales.css">
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/adminDash.css">
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

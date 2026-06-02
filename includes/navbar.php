@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/SistemaApartadosITAP/css/navbar.css">
 <div class="overlay" id="overlay"></div>
 
 <!-- NAVBAR -->
@@ -32,7 +33,7 @@
 
     <h5 class="mb-4">Menú</h5>
 
-    <a href="#"><i class="bi bi-house"></i><span>Inicio</span></a>
+    <a href="admin.php"><i class="bi bi-house"></i><span>Inicio</span></a>
 
     <!-- SUBMENU -->
      
@@ -41,8 +42,8 @@
         <i class="bi bi-people"></i> <span>Usuarios</span>
     </a>
     <div class="submenu">
-        <a href="VerUsuarios_Editar.php">Lista</a>
-        <a href="RegistrarUsuarios.php">Agregar</a>
+        <a href="VerUsuarios_Editar.php"><i class="bi bi-person-badge-fill"></i>Lista</a>
+        <a href="RegistrarUsuarios.php"><i class="bi bi-person-add"></i>Agregar</a>
     </div>
 
     <!-- Laboratorios -->
@@ -51,13 +52,23 @@
     </a>
 
     <div class="submenu">
-        <a href="RegistrarLaboratorios.php">Registrar</a>
-        <a href="VerLaboratorios_Editar.php">Lista de Laboratorios</a>
+        <a href="RegistrarLaboratorios.php"><i class="bi bi-building-fill-add"></i>Registrar</a>
+        <a href="VerLaboratorios_Editar.php"><i class="bi bi-display"></i>Lista de Laboratorios</a>
     </div>
     
+    <!--Reportes-->
     <a href="#"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
-    <a href="#"><i class="bi bi-newspaper"></i> <span>Noticias</span></a> 
-    <a href="#"><i class="bi bi-chat-left-text"></i> <span>Mensajes</span></a> 
+    
+    <!--Noticias-->
+    <a href="#" class="toggle-submenu">
+        <i class="bi bi-newspaper"></i> <span>Noticias</span>
+    </a>
+    <div class="submenu">
+        <a href="Ventana_AgregarNoticias.php"><i class="bi bi-alarm"></i>Agregar Noticias</a>
+        <a href="Ventana_Editar_Noticias.php"><i class="bi bi-info-circle"></i>Editar Noticias</a>
+    </div>
+    
+    <a href="#"><i class="bi bi-chat-left-text"></i> <span>Mensajes</span></a>
     <a href="VentanaApartarLab.php"><i class="bi bi-calendar-check"></i><span>Apartados</span></a>
 
     <hr>
@@ -65,3 +76,5 @@
             <i class="bi bi-box-arrow-right"></i> <span>Salir</span>
         </a>
 </div>
+
+<script src="../../js/darkmode.js"></script>

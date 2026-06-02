@@ -28,9 +28,9 @@ $result = $conn->query($sql);
                     <th>#</th>
                     <th>Control</th>
                     <th>Nombre</th>
+                    <th>Area</th>
                     <th>Email</th>
                     <th>Rol</th>
-                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -38,21 +38,26 @@ $result = $conn->query($sql);
 
             <?php while($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo $row['IDUsuarios']; ?></td>
-                    <td><?php echo $row['num_control']; ?></td>
-                    <td><?php echo $row['nombre']; ?></td>
-                    <td><?php echo $row['email']; ?></td>
-                    <td><?php echo $row['rol']; ?></td>
-                    <td>
-                        <?php echo $row['activo'] ? 'Activo' : 'Inactivo'; ?>
-                    </td>
+                    <td><?= htmlspecialchars($row['IDUsuarios']); ?></td>
+
+                    <td><?= htmlspecialchars($row['num_control']); ?></td>
+
+                    <td><?= htmlspecialchars($row['nombre']); ?></td>
+
+                    <td><?= htmlspecialchars($row['area']); ?></td>
+
+                    <td><?= htmlspecialchars($row['email']); ?></td>
+
+                    <td><?= htmlspecialchars($row['rol']); ?></td>
                     <td>
                         <!--EDITAR -->
                         <button 
                             class="btn btn-warning btn-sm btnEditar"
                             data-id="<?php echo $row['IDUsuarios']; ?>"
                             data-nombre="<?php echo $row['nombre']; ?>"
+                            data-area="<?php echo $row['area']?>"
                             data-email="<?php echo $row['email']; ?>"
+                            data-password="<?php echo $row['password']?>"
                             data-rol="<?php echo $row['rol']; ?>"
                         >
                             <i class="bi bi-pencil"></i>
@@ -77,56 +82,140 @@ $result = $conn->query($sql);
 
 <!-- MODAL EDITAR -->
 <div class="modal fade" id="modalEditar" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title">Editar Usuario</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+    <div class="modal-dialog">
 
-      <div class="modal-body">
-        <form id="formEditar">
+        <div class="modal-content">
 
-          <input type="hidden" id="edit_id" name="id">
+            <!-- HEADER -->
+            <div class="modal-header">
 
-          <div class="mb-3">
-            <label>Nombre</label>
-            <input type="text" id="edit_nombre" name="nombre" class="form-control">
-          </div>
+                <h5 class="modal-title">
+                    Editar Usuario
+                </h5>
 
-          <div class="mb-3">
-            <label>Email</label>
-            <input type="email" id="edit_email" name="email" class="form-control">
-          </div>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
 
-          <div class="mb-3">
-            <label>Rol</label>
-            <select id="edit_rol" name="rol" class="form-select">
-                <option value="">Seleccionar</option>
-                <option value="administrador">Administrador</option>
-                <option value="invitado">Invitado</option>
-                <option value="maestro">Maestro</option>
-            </select>
-          </div>
+            </div>
 
-        </form>
-      </div>
+            <!-- BODY -->
+            <div class="modal-body">
 
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button class="btn btn-primary" id="btnGuardarCambios">Guardar</button>
-      </div>
+                <form id="formEditar">
+
+                    <input
+                        type="hidden"
+                        id="edit_id"
+                        name="id">
+
+                    <!-- NOMBRE -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Nombre
+                        </label>
+
+                        <input
+                            type="text"
+                            id="edit_nombre"
+                            name="nombre"
+                            class="form-control"
+                            required
+                            minlength="3"
+                            maxlength="80">
+
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="edit_email"
+                            name="email"
+                            class="form-control"
+                            required
+                            maxlength="120">
+
+                    </div>
+
+                    <!-- ROL -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Rol
+                        </label>
+
+                        <select
+                            id="edit_rol"
+                            name="rol"
+                            class="form-select"
+                            required>
+
+                            <option value="">
+                                Seleccionar
+                            </option>
+
+                            <option value="administrador">
+                                Administrador
+                            </option>
+
+                            <option value="invitado">
+                                Invitado
+                            </option>
+
+                            <option value="maestro">
+                                Maestro
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="btnGuardarCambios">
+
+                    Guardar
+
+                </button>
+
+            </div>
+
+        </div>
 
     </div>
-  </div>
-</div>
 
+</div>
 <!--BOOTSTRAP JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!--TUS SCRIPTS -->
-<script src="../../js/darkmode.js"></script>
 <script src="../../js/logout.js"></script>
 <script src="../../js/buscadorUsuarios.js"></script>
 <script src="../../js/eliminarusuario_XYZ.js"></script>

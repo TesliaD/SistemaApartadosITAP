@@ -1,0 +1,509 @@
+/* =========================================
+   PAGINA NOTICIAS
+========================================= */
+
+/* TITULO */
+
+.titulo-noticias{
+
+    color: #1f3b63;
+
+    font-size: 2rem;
+
+}
+
+/* SUBTITULO */
+
+.text-muted{
+
+    color: #64748b !important;
+
+}
+
+/* CARD PRINCIPAL */
+
+.card{
+
+    border: none !important;
+
+    border-radius: 20px !important;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
+
+}
+
+/* HEADER */
+
+.noticias-header{
+
+    background:
+        linear-gradient(
+            135deg,
+            #1f3b63,
+            #2563eb
+        );
+
+    color: white;
+
+    border: none;
+
+}
+
+/* LABELS */
+
+.form-label{
+
+    color: #1e293b;
+
+    font-size: .95rem;
+
+}
+
+/* INPUTS */
+
+.form-control,
+.form-select{
+
+    border-radius: 12px !important;
+
+    border:
+        1px solid #dbe2ea;
+
+    padding: 12px;
+
+    transition: .3s ease;
+
+}
+
+/* FOCUS */
+
+.form-control:focus,
+.form-select:focus{
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.15);
+
+}
+
+/* TEXTAREA */
+
+textarea{
+
+    resize: none;
+
+}
+
+/* BOTON PUBLICAR */
+
+.btn-primary{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1f3b63
+        ) !important;
+
+    border: none !important;
+
+    border-radius: 12px;
+
+    padding: 10px 22px;
+
+    transition: .3s ease;
+
+}
+
+/* HOVER */
+
+.btn-primary:hover{
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 18px rgba(37,99,235,.25);
+
+}
+
+/* BOTON LIMPIAR */
+
+.btn-outline-secondary{
+
+    border-radius: 12px;
+
+}
+
+/* IMAGEN PREVIEW */
+
+#preview{
+
+    border-radius: 15px;
+
+    object-fit: cover;
+
+    border:
+        3px solid #e2e8f0;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.1);
+
+}
+
+/* EFECTO GENERAL */
+
+.card-body{
+
+    background: #ffffff;
+
+}
+
+/* DARK MODE */
+
+body.dark .card{
+
+    background: #1e1e1e;
+
+}
+
+body.dark .card-body{
+
+    background: #1e1e1e;
+
+}
+
+body.dark .form-control,
+body.dark .form-select{
+
+    background: #2a2a2a !important;
+
+    color: white !important;
+
+    border:
+        1px solid #444;
+
+}
+
+body.dark .form-label{
+
+    color: white;
+
+}
+
+body.dark .titulo-noticias{
+
+    color: #60a5fa;
+
+}
+
+
+/* =========================================
+   INPUT FILE
+========================================= */
+
+input[type="file"]::file-selector-button{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1f3b63
+        );
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 18px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    margin-right: 15px;
+
+    transition: .3s ease;
+
+    font-weight: 500;
+
+}
+
+/* HOVER */
+
+input[type="file"]::file-selector-button:hover{
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 12px rgba(37,99,235,.3);
+
+}
+
+body.dark input[type="file"]{
+
+    background: #2a2a2a;
+
+    color: white;
+
+    border:
+        1px solid #444;
+
+}
+
+/* =========================================
+   EDITAR NOTICIAS
+========================================= */
+
+/* TITULO */
+
+.titulo-editar{
+
+    color: #1f3b63;
+
+    font-size: 2rem;
+
+}
+
+/* HEADER */
+
+.editar-header{
+
+    background:
+        linear-gradient(
+            135deg,
+            #1f3b63,
+            #2563eb
+        );
+
+    color: white;
+
+    border: none;
+
+}
+
+/* CARD */
+
+.card{
+
+    border: none !important;
+
+    border-radius: 20px !important;
+
+    overflow: hidden;
+
+    background: white;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
+
+}
+
+/* BODY */
+
+.card-body{
+
+    background: white;
+
+}
+
+/* LABELS */
+
+.form-label{
+
+    color: #1e293b;
+
+    font-size: .95rem;
+
+}
+
+/* INPUTS */
+
+.form-control,
+.form-select{
+
+    border-radius: 12px !important;
+
+    border:
+        1px solid #dbe2ea;
+
+    padding: 12px;
+
+    transition: .3s ease;
+
+}
+
+/* FOCUS */
+
+.form-control:focus,
+.form-select:focus{
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.15);
+
+}
+
+/* BOTON GUARDAR */
+
+.btn-guardar{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1f3b63
+        ) !important;
+
+    border: none !important;
+
+    border-radius: 12px;
+
+    transition: .3s ease;
+
+}
+
+/* HOVER */
+
+.btn-guardar:hover{
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 18px rgba(37,99,235,.25);
+
+}
+
+/* BOTON VOLVER */
+
+.btn-secondary{
+
+    border-radius: 12px;
+
+}
+
+/* INPUT FILE */
+
+input[type="file"]::file-selector-button{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1f3b63
+        );
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 18px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    margin-right: 15px;
+
+    transition: .3s ease;
+
+}
+
+/* HOVER FILE */
+
+input[type="file"]::file-selector-button:hover{
+
+    box-shadow:
+        0 4px 12px rgba(37,99,235,.25);
+
+}
+
+/* PREVIEW */
+
+.img-preview{
+
+    width: 100%;
+
+    max-width: 350px;
+
+    max-height: 250px;
+
+    object-fit: cover;
+
+    border-radius: 15px;
+
+    border:
+        3px solid #e2e8f0;
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,.1);
+
+}
+
+/* TEXT MUTED */
+
+.text-muted{
+
+    color: #64748b !important;
+
+}
+
+/* DARK MODE */
+
+body.dark .card{
+
+    background: #1e1e1e !important;
+
+    color: white;
+
+}
+
+body.dark .card-body{
+
+    background: #1e1e1e;
+
+}
+
+body.dark .form-control,
+body.dark .form-select{
+
+    background: #2d2d2d !important;
+
+    color: white !important;
+
+    border: 1px solid #444;
+
+}
+
+body.dark .form-control:focus,
+body.dark .form-select:focus{
+
+    background: #2d2d2d;
+
+    color: white;
+
+}
+
+body.dark .titulo-editar{
+
+    color: #60a5fa;
+
+}
+
+body.dark .text-muted{
+
+    color: #bdbdbd !important;
+
+}
+
+body.dark .form-label{
+
+    color: white;
+
+}
