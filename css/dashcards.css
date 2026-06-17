@@ -1,0 +1,198 @@
+
+/* ==========================
+BODY
+========================== */
+body{
+    color: #212529;
+}
+
+/* ==========================
+CONTENIDO
+========================== */
+.content{
+    padding: 25px;
+    min-height: 100vh;
+}
+
+/* ==========================
+TARJETAS DASHBOARD
+========================== */
+.dashboard-card{
+    border-radius: 22px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    transition: .3s ease;
+    overflow: hidden;
+}
+
+.dashboard-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,.08);
+}
+
+/* ==========================
+ICONOS
+========================== */
+.icon-circle{
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    font-size: 2rem;
+}
+
+/* ==========================
+AVISO
+========================== */
+.aviso-card{
+    background: #ffffff;
+    border-radius: 22px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,.05);
+}
+
+/* ==========================
+NOTICIAS
+========================== */
+.news-section{
+    margin-top: 50px;
+}
+
+.news-title{
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.news-subtitle{
+    color: #6b7280;
+}
+
+/* ==========================
+CARD NOTICIAS
+========================== */
+.noticia-card{
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    transition: all .3s ease;
+    height: 100%;
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+}
+
+.noticia-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 14px 30px rgba(0,0,0,.08);
+}
+
+/* ==========================
+IMAGEN
+========================== */
+.noticia-img{
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+}
+
+/* ==========================
+BODY CARD
+========================== */
+.noticia-body{
+    padding: 24px;
+}
+
+/* ==========================
+TITULO
+========================== */
+.noticia-titulo{
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 12px;
+}
+
+/* ==========================
+INFO
+========================== */
+.noticia-info{
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 15px;
+}
+
+/* ==========================
+BADGE
+========================== */
+.noticia-badge{
+    background: #2563eb;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 50px;
+    display: inline-block;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+/* ==========================
+TEXTO
+========================== */
+.noticia-texto{
+    color: #374151;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+/* ==========================
+BOTON
+========================== */
+.btn-news{
+    margin-top: 15px;
+    border-radius: 12px;
+    padding: 10px 20px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    transition: .3s;
+    font-weight: 600;
+}
+
+.btn-news:hover{
+    background: #1d4ed8;
+}
+
+/* ==========================
+RESPONSIVE
+========================== */
+@media(max-width:991px){
+
+    .noticia-img{
+        height: 220px;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .content{
+        padding: 15px;
+    }
+
+    .news-title{
+        font-size: 1.6rem;
+    }
+
+    .noticia-img{
+        height: 190px;
+    }
+
+    .noticia-titulo{
+        font-size: 1.3rem;
+    }
+
+}
+

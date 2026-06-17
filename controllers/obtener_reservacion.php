@@ -1,164 +1,113 @@
-<?php 
-include("../includes/conexion.php");
+<?php
+ob_clean();
+session_start();
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
 
 header('Content-Type: application/json');
 
+if(!isset($_SESSION['id'])){
+    echo json_encode(["error" => "No autorizado"]);
+    exit;
+}
 
-// ==========================
-// PARAMETROS
-// ==========================
-$fechaInicio = $_GET['inicio'] ?? null;
-$fechaFin    = $_GET['fin'] ?? null;
-$busqueda    = $_GET['buscar'] ?? null;
-
-$page = isset($_GET['page']) 
-    ? (int)$_GET['page'] 
-    : 1;
-
+$page = (int)($_GET['page'] ?? 1);
 $limit = 10;
 $offset = ($page - 1) * $limit;
 
-
-// ==========================
-// QUERY BASE
-// ==========================
-$sql = "
-SELECT 
-    r.IDReservacion,
-    r.fecha,
-    r.horaInicio,
-    r.horaFin,
-    r.Estado,
-
-    l.Nombre AS laboratorio,
-    l.numLab,
-
-    d.Nombre AS docente,
-
-    g.IDGrupo,
-    g.Semestre,
-
-    c.Nombre AS carrera,
-
-    dep.nombre AS departamento,
-
-    r.Practica,
-    r.Software
-
-FROM reservaciones r
-
-LEFT JOIN laboratorios l 
-    ON r.IDLab = l.IDLab
-
-LEFT JOIN docentes d 
-    ON r.IDDocentes = d.IDDocentes
-
-LEFT JOIN grupos g 
-    ON r.IDGrupo = g.IDGrupo
-
-LEFT JOIN carreras c 
-    ON g.IDCarrera = c.IDCarrera
-
-LEFT JOIN departamentos dep 
-    ON c.IDDepartamento = dep.IDDepartamentos
-
-WHERE 1=1
-";
-
+// Construir WHERE dinámico
+$where = [];
 $params = [];
 $types = "";
 
-
-// ==========================
-// FILTRO FECHAS
-// ==========================
-if($fechaInicio && $fechaFin){
-
-    $sql .= " AND r.fecha BETWEEN ? AND ?";
-
-    $params[] = $fechaInicio;
-    $params[] = $fechaFin;
-
-    $types .= "ss";
+// Filtro de fechas
+if(!empty($_GET['inicio'])) {
+    $where[] = "r.fecha >= ?";
+    $params[] = $_GET['inicio'];
+    $types .= "s";
+}
+if(!empty($_GET['fin'])) {
+    $where[] = "r.fecha <= ?";
+    $params[] = $_GET['fin'];
+    $types .= "s";
 }
 
-
-// ==========================
-// BUSQUEDA
-// ==========================
-if($busqueda){
-
-    $sql .= "
-    AND (
-        l.Nombre LIKE ?
-        OR d.Nombre LIKE ?
-        OR r.Practica LIKE ?
-    )
-    ";
-
-    $search = "%$busqueda%";
-
-    $params[] = $search;
-    $params[] = $search;
-    $params[] = $search;
-
+// Filtro de búsqueda
+if(!empty($_GET['buscar'])) {
+    $buscar = "%" . $_GET['buscar'] . "%";
+    $where[] = "(u.nombre LIKE ? OR u.apellidos LIKE ? OR l.Nombre LIKE ?)";
+    $params[] = $buscar;
+    $params[] = $buscar;
+    $params[] = $buscar;
     $types .= "sss";
 }
 
+// Filtro de estado
+if(!empty($_GET['estado'])) {
+    $where[] = "r.Estado = ?";
+    $params[] = $_GET['estado'];
+    $types .= "s";
+}
 
-// ==========================
-// ORDEN + PAGINACION
-// ==========================
-$sql .= "
-ORDER BY r.fecha DESC, r.horaInicio ASC
-LIMIT ? OFFSET ?
-";
+$whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
+
+// Consulta principal
+$sql = "SELECT 
+            r.IDReservacion,
+            r.fecha,
+            r.horaInicio,
+            r.horaFin,
+            r.Practica,
+            r.Software,
+            r.Estado,
+            l.Nombre AS laboratorio,
+            CONCAT(u.nombre, ' ', u.apellidos) AS docente,
+            g.Nombre AS grupoNombre,
+            g.Semestre,
+            c.Nombre AS carrera
+        FROM reservaciones r
+        LEFT JOIN laboratorios l ON r.IDLab = l.IDLab
+        LEFT JOIN usuarios u ON r.IDUsuario = u.IDUsuarios
+        LEFT JOIN grupos g ON r.IDGrupo = g.IDGrupo
+        LEFT JOIN carreras c ON g.IDCarrera = c.IDCarrera
+        $whereClause
+        ORDER BY r.fecha DESC, r.horaInicio DESC
+        LIMIT ? OFFSET ?";
 
 $params[] = $limit;
 $params[] = $offset;
-
 $types .= "ii";
 
-
-// ==========================
-// EJECUTAR
-// ==========================
 $stmt = $conn->prepare($sql);
-
-$stmt->bind_param($types, ...$params);
-
+if(!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
 $stmt->execute();
+$result = $stmt->get_result();
 
-$res = $stmt->get_result();
-
-$data = [];
-
-while($row = $res->fetch_assoc()){
-
-    $data[] = $row;
-
+$reservaciones = [];
+while($row = $result->fetch_assoc()) {
+    $reservaciones[] = $row;
 }
 
+// Contar total para paginación
+$sqlCount = "SELECT COUNT(*) as total FROM reservaciones r $whereClause";
+$stmtCount = $conn->prepare($sqlCount);
+if(!empty($params)) {
+    // Quitar los parámetros de LIMIT para el COUNT
+    $countParams = array_slice($params, 0, count($params) - 2);
+    $countTypes = substr($types, 0, -2);
+    if(!empty($countParams)) {
+        $stmtCount->bind_param($countTypes, ...$countParams);
+    }
+}
+$stmtCount->execute();
+$resultCount = $stmtCount->get_result();
+$total = $resultCount->fetch_assoc()['total'] ?? 0;
 
-// ==========================
-// TOTAL REGISTROS
-// ==========================
-$totalQuery = "
-SELECT COUNT(*) as total 
-FROM reservaciones
-";
-
-$totalRes = $conn->query($totalQuery);
-
-$total = $totalRes->fetch_assoc()['total'];
-
-
-// ==========================
-// RESPUESTA
-// ==========================
 echo json_encode([
-    "data"  => $data,
+    "data" => $reservaciones,
     "total" => $total,
-    "page"  => $page
+    "page" => $page,
+    "totalPages" => ceil($total / $limit)
 ]);
 ?>

@@ -1,13 +1,26 @@
 <?php
+ob_clean();
 include("../includes/conexion.php");
 
-$id = $_GET['id'];
+header('Content-Type: application/json');
 
-$sql = "SELECT cantidadAlumnos FROM grupos WHERE IDGrupo = $id";
-$res = $conn->query($sql);
+$idGrupo = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-$row = $res->fetch_assoc();
+if($idGrupo == 0){
+    echo json_encode(["error" => "ID de grupo requerido"]);
+    exit;
+}
 
-echo json_encode([
-    "cantidad" => $row['cantidadAlumnos']
-]);
+// Obtener la cantidad de alumnos del grupo
+$sql = "SELECT cantidadAlumnos FROM grupos WHERE IDGrupo = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $idGrupo);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if($row = $result->fetch_assoc()){
+    echo json_encode(["cantidad" => $row['cantidadAlumnos'] ?? 0]);
+} else {
+    echo json_encode(["cantidad" => 0]);
+}
+?>

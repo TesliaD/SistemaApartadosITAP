@@ -6,9 +6,13 @@ header('Content-Type: application/json');
 $fecha = $_GET['fecha'];
 $lab   = $_GET['lab'];
 
+// Solo considerar reservaciones con Estado = 'activa'
+// Las canceladas NO bloquean el horario
 $stmt = $conn->prepare("
     SELECT horaInicio FROM reservaciones 
-    WHERE fecha=? AND IDLab=?
+    WHERE fecha = ? 
+    AND IDLab = ?
+    AND Estado = 'activa'
 ");
 
 $stmt->bind_param("si", $fecha, $lab);
@@ -23,3 +27,4 @@ while($row = $res->fetch_assoc()){
 }
 
 echo json_encode($horas);
+?>

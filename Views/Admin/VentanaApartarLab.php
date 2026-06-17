@@ -4,6 +4,26 @@ include("../../includes/conexion.php");
 include("../../includes/header.php");
 include("../../includes/navbar.php");
 ?>
+<style>
+        /* Para que el navbar no tape el contenido */
+    body {
+        padding-top: 70px; /* Ajusta según la altura de tu navbar */
+    }
+
+    /* Si tu navbar es fijo/sticky */
+    .navbar-fixed-top,
+    .navbar-sticky-top {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    /* Espacio extra para el primer container */
+    .container.mt-4:first-of-type {
+        margin-top: 20px !important;
+    }
+</style>
 
 <div class="container mt-4">
 
@@ -50,7 +70,7 @@ include("../../includes/navbar.php");
                 <label class="fw-bold">Laboratorio</label>
                 <select id="lab" class="form-select shadow-sm">
                 <?php
-                $labs = $conn->query("SELECT IDLab, Nombre FROM laboratorios");
+                $labs = $conn->query("SELECT IDLab, Nombre FROM laboratorios WHERE activo = 1 ORDER BY Nombre");
                 while($lab = $labs->fetch_assoc()):
                 ?>
                 <option value="<?= $lab['IDLab'] ?>">
@@ -65,69 +85,62 @@ include("../../includes/navbar.php");
         <hr>
         <div class="row g-3">
 
+            <!-- DOCENTE (ahora desde usuarios) -->
+            <div class="col-md-4">
+                <label>Docente</label>
+                <select id="docente" class="form-select shadow-sm">
+                    <option value="">Seleccionar docente</option>
+                    <?php
+                    // Ahora obtenemos de usuarios con rol = 'maestro'
+                    $docentes = $conn->query("
+                        SELECT IDUsuarios, CONCAT(nombre, ' ', apellidos) AS Nombre 
+                        FROM usuarios 
+                        WHERE rol = 'maestro' AND activo = 1
+                        ORDER BY nombre
+                    ");
+                    while($d = $docentes->fetch_assoc()):
+                    ?>
+                    <option value="<?= $d['IDUsuarios'] ?>">
+                        <?= $d['Nombre'] ?>
+                    </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
 
-        <!-- DOCENTE -->
-        <div class="col-md-4">
-            <label>Docente</label>
-            <select id="docente" class="form-select shadow-sm">
-                <option value="">Seleccionar docente</option>
-                <?php
-                $docentes = $conn->query("SELECT IDDocentes, Nombre FROM docentes");
-                while($d = $docentes->fetch_assoc()):
-                ?>
-                <option value="<?= $d['IDDocentes'] ?>">
-                    <?= $d['Nombre'] ?>
-                </option>
-                <?php endwhile; ?>
-            </select>
+            <!-- GRUPO (filtrado por docente) -->
+            <div class="col-md-4">
+                <label>Grupo</label>
+                <select id="grupo" class="form-select shadow-sm">
+                    <option value="">Seleccionar grupo</option>
+                </select>
+            </div>
+
+            <!-- SOFTWARE -->
+            <div class="col-md-4">
+                <label>Software</label>
+                <input type="text" id="software" class="form-control shadow-sm">
+            </div>
+
+            <!--PRACTICA-->
+            <div class="col-md-4">
+                <label>Práctica</label>
+                <input type="text" id="practica" class="form-control shadow-sm">
+            </div>
+
+            <!-- ALUMNOS -->
+            <div class="col-md-2">
+                <label>Alumnos</label>
+                <input type="number" id="alumnos" class="form-control shadow-sm" readonly>
+            </div>
+
+            <!-- BOTÓN -->
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-success w-100 shadow" id="btnGuardar">
+                    <i class="bi bi-save"></i> Apartar
+                </button>
+            </div>
+
         </div>
-
-        <!-- GRUPO -->
-        <div class="col-md-4">
-            <label>Grupo</label>
-            <select id="grupo" class="form-select shadow-sm">
-                <option value="">Seleccionar grupo</option>
-                <?php
-                $grupos = $conn->query("
-                    SELECT g.IDGrupo, c.Nombre AS carrera, g.Semestre
-                    FROM grupos g
-                    LEFT JOIN carreras c ON g.IDCarrera = c.IDCarrera
-                ");
-                while($g = $grupos->fetch_assoc()):
-                ?>
-                <option value="<?= $g['IDGrupo'] ?>">
-                    <?= $g['carrera'] ?> - Sem <?= $g['Semestre'] ?>
-                </option>
-                <?php endwhile; ?>
-            </select>
-        </div>
-
-        <!-- SOFTWARE -->
-        <div class="col-md-4">
-            <label>Software</label>
-            <input type="text" id="software" class="form-control shadow-sm">
-        </div>
-
-        <!--PRACTICA-->
-        <div class="col-md-4">
-        <label>Práctica</label>
-            <input type="text" id="practica" class="form-control shadow-sm">
-        </div>
-
-        <!-- ALUMNOS -->
-        <div class="col-md-2">
-            <label>Alumnos</label>
-            <input type="number" id="alumnos" class="form-control shadow-sm">
-        </div>
-
-        <!-- BOTÓN -->
-        <div class="col-md-2 d-flex align-items-end">
-            <button class="btn btn-success w-100 shadow" id="btnGuardar">
-                <i class="bi bi-save"></i> Apartar
-            </button>
-        </div>
-
-    </div>
         
     </div>
 
@@ -139,35 +152,40 @@ include("../../includes/navbar.php");
 <div class="container mt-4">
 
     <!-- FILTROS -->
-    <div class="card shadow-sm p-3 mb-3">
-
-        <label class="fw-bold mb-2">Filtrar reservaciones</label>
-
-        <div class="row g-2">
-
-            <div class="col-md-3">
-                <input type="date" id="fechaInicio" class="form-control">
-            </div>
-
-            <div class="col-md-3">
-                <input type="date" id="fechaFin" class="form-control">
-            </div>
-
-            <div class="col-md-3">
-                <input type="text" id="buscar" 
-                       placeholder="Buscar docente o laboratorio"
-                       class="form-control">
-            </div>
-
-            <div class="col-md-3">
-                <button class="btn btn-primary w-100" onclick="cargarTabla(1)">
-                    Filtrar
+<div class="card shadow-sm p-3 mb-3">
+    <label class="fw-bold mb-2">Filtrar reservaciones</label>
+    <div class="row g-2">
+        <div class="col-md-2">
+            <input type="date" id="fechaInicio" class="form-control" placeholder="Fecha inicio">
+        </div>
+        <div class="col-md-2">
+            <input type="date" id="fechaFin" class="form-control" placeholder="Fecha fin">
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="buscar" 
+                   placeholder="Buscar docente o laboratorio"
+                   class="form-control">
+        </div>
+        <div class="col-md-2">
+            <select id="filtroEstado" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="activa">Activa</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="finalizada">Finalizada</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary flex-grow-1" onclick="cargarTabla(1)">
+                    <i class="bi bi-funnel"></i> Filtrar
+                </button>
+                <button class="btn btn-secondary" onclick="limpiarFiltros()" title="Limpiar filtros">
+                    <i class="bi bi-x-circle"></i>
                 </button>
             </div>
-
         </div>
-
     </div>
+</div>
 
 
     <!-- TABLA -->
@@ -211,7 +229,6 @@ include("../../includes/navbar.php");
     </div>
 
 </div>
-
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -221,13 +238,7 @@ include("../../includes/navbar.php");
 <!-- CSS -->
 <link rel="stylesheet" href="/SistemaApartadosITAP/css/reservaciones.css">
 
-<!-- LIBS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <!-- TU JS -->
 <script src="../../js/reservaciones.js"></script>
-
-    
-<!-- Scripts -->
 <script src="../../js/logout.js"></script>
 <script src="../../js/eliminarLab.js"></script>

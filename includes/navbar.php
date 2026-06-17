@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/SistemaApartadosITAP/css/navbar.css">
+<link rel="stylesheet" href="/SistemaApartadosITAP/css/dashcards.css">
 <div class="overlay" id="overlay"></div>
 
 <!-- NAVBAR -->

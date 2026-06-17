@@ -11,4 +11,6 @@ if ($_SESSION['rol'] !== 'administrador') {
     echo "Acceso denegado";
     exit();
 }
+
 ?>
+

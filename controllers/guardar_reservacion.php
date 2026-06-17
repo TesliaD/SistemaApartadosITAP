@@ -1,159 +1,93 @@
-<?php 
-include("../includes/conexion.php");
+<?php
+ob_clean();
+error_reporting(0);
+ini_set('display_errors', 0);
 
+session_start();
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents("php://input"), true);
+if(!isset($_SESSION['id'])){
+    echo json_encode(["error" => "No autorizado"]);
+    exit;
+}
 
-// ==========================
-// DATOS
-// ==========================
-$fecha = $data['fecha'] ?? null;
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
 
-$horas = $data['horas'] ?? [];
+if(!$conn){
+    echo json_encode(["error" => "Error de conexión a BD"]);
+    exit;
+}
 
-$lab = $data['IDLab'] ?? null;
+$input = file_get_contents('php://input');
+if(!$input){
+    echo json_encode(["error" => "No se recibieron datos"]);
+    exit;
+}
 
+$data = json_decode($input, true);
+if(!$data){
+    echo json_encode(["error" => "JSON inválido"]);
+    exit;
+}
+
+if(empty($data['fecha']) || empty($data['horas']) || empty($data['IDLab']) || empty($data['IDUsuario']) || empty($data['IDGrupo'])){
+    echo json_encode(["error" => "Faltan datos requeridos"]);
+    exit;
+}
+
+$fecha = $data['fecha'];
+$horas = $data['horas'];
+$idLab = (int)$data['IDLab'];
+$idUsuario = (int)$data['IDUsuario'];
+$idGrupo = (int)$data['IDGrupo'];
+$software = $data['software'] ?? '';
 $practica = $data['Practica'] ?? '';
 
+sort($horas);
+$horaInicio = $horas[0];
+$horaFin = end($horas);
 
-$software = $data['software'] ?? '';
+// Verificar disponibilidad
+$sqlCheck = "SELECT COUNT(*) as total FROM reservaciones 
+             WHERE fecha = ? AND IDLab = ? AND Estado != 'cancelada'
+             AND ((horaInicio <= ? AND horaFin > ?) OR (horaInicio < ? AND horaFin >= ?))";
 
-$alumnos = $data['Alumnos'] ?? 0;
-
-$docente = $data['IDDocentes'] ?? null;
-
-$grupo = $data['IDGrupo'] ?? null;
-
-
-// ==========================
-// VALIDACIONES
-// ==========================
-if(!$fecha){
-
-    echo json_encode([
-        "status" => "error",
-        "mensaje" => "Fecha requerida"
-    ]);
-
+$stmtCheck = $conn->prepare($sqlCheck);
+if(!$stmtCheck){
+    echo json_encode(["error" => "Error prepare check: " . $conn->error]);
     exit;
-
 }
 
-if(empty($horas)){
+$stmtCheck->bind_param("sissii", $fecha, $idLab, $horaInicio, $horaInicio, $horaFin, $horaFin);
+$stmtCheck->execute();
+$resultCheck = $stmtCheck->get_result();
+$rowCheck = $resultCheck->fetch_assoc();
 
-    echo json_encode([
-        "status" => "error",
-        "mensaje" => "Selecciona al menos una hora"
-    ]);
-
+if($rowCheck['total'] > 0){
+    echo json_encode(["error" => "El laboratorio no está disponible en ese horario"]);
+    $stmtCheck->close();
     exit;
-
 }
+$stmtCheck->close();
 
-if(!$lab){
+// Guardar reservación - SIN la columna Alumnos
+$sql = "INSERT INTO reservaciones (fecha, horaInicio, horaFin, IDLab, IDUsuario, IDGrupo, Software, Practica, Estado) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'activa')";
 
-    echo json_encode([
-        "status" => "error",
-        "mensaje" => "Selecciona laboratorio"
-    ]);
-
+$stmt = $conn->prepare($sql);
+if(!$stmt){
+    echo json_encode(["error" => "Error prepare insert: " . $conn->error]);
     exit;
-
 }
 
+$stmt->bind_param("sssiiiss", $fecha, $horaInicio, $horaFin, $idLab, $idUsuario, $idGrupo, $software, $practica);
 
-// ==========================
-// RECORRER HORAS
-// ==========================
-foreach($horas as $hora){
-
-    $inicio = $hora . ":00";
-
-    $fin = date(
-        "H:i:s",
-        strtotime($inicio . " +1 hour")
-    );
-
-    // ==========================
-    // VALIDAR CRUCE HORARIOS
-    // ==========================
-    $check = $conn->prepare("
-        SELECT 1 
-        FROM reservaciones 
-        WHERE IDLab = ?
-        AND fecha = ?
-        AND (
-            horaInicio < ?
-            AND horaFin > ?
-        )
-        AND Estado = 'Activo'
-    ");
-
-    $check->bind_param(
-        "isss",
-        $lab,
-        $fecha,
-        $fin,
-        $inicio
-    );
-
-    $check->execute();
-
-    // ==========================
-    // SI YA EXISTE
-    // ==========================
-    if($check->get_result()->num_rows > 0){
-
-        continue;
-
-    }
-
-    // ==========================
-    // INSERTAR RESERVACION
-    // ==========================
-    $stmt = $conn->prepare("
-        INSERT INTO reservaciones
-        (
-            fecha,
-            horaInicio,
-            horaFin,
-            IDLab,
-            IDDocentes,
-            IDGrupo,
-            Practica,
-            Software,
-            Estado
-        )
-        VALUES
-        (
-            ?, ?, ?, ?, ?, ?, ?, ?, 'Activo'
-        )
-    ");
-
-    $stmt->bind_param(
-        "sssiiiss",
-
-        $fecha,
-        $inicio,
-        $fin,
-        $lab,
-        $docente,
-        $grupo,
-        $practica,
-        $software
-    );
-
-    $stmt->execute();
-
+if($stmt->execute()){
+    echo json_encode(["mensaje" => "Reservación guardada correctamente"]);
+} else {
+    echo json_encode(["error" => "Error al guardar: " . $stmt->error]);
 }
 
-
-// ==========================
-// RESPUESTA
-// ==========================
-echo json_encode([
-    "status" => "success",
-    "mensaje" => "Reservación guardada correctamente"
-]);
+$stmt->close();
+$conn->close();
 ?>
