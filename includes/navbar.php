@@ -58,7 +58,7 @@
     </div>
     
     <!--Reportes-->
-    <a href="#"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
+    <a href="reportes_asistencia.php"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
     
     <!--Noticias-->
     <a href="#" class="toggle-submenu">
@@ -79,3 +79,4 @@
 </div>
 
 <script src="../../js/darkmode.js"></script>
+<script src="../../js/logout.js"></script>

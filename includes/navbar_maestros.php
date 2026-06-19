@@ -34,7 +34,7 @@
 
     <h5 class="mb-4">Menú</h5>
 
-    <a href="admin.php"><i class="bi bi-house"></i><span>Inicio</span></a>
+    <a href="maestro.php"><i class="bi bi-house"></i><span>Inicio</span></a>
 
     <!-- SUBMENU -->
      
@@ -48,12 +48,12 @@
         <a href="VerLaboratorios_Editar.php"><i class="bi bi-display"></i>Lista de Laboratorios</a>
     </div>
 
-    <a class="submenu" href="/SistemaApartadosITAP/Views/Maestro/grupos_maestro.php">
+    <a class="toggle-submenu">
         <i class="bi bi-people"></i> Mis Grupos
     </a>
-
+ 
     <div class="submenu">
-        <a href="maestro_apartar_lab.php"><i class="bi bi-building-fill-add"></i>Dar de Alta Grupos</a>
+        <a href="grupos_maestro.php"><i class="bi bi-building-fill-add"></i>Dar de Alta Grupos</a>
         <a href="VerLaboratorios_Editar.php"><i class="bi bi-display"></i>Mis Grupos</a>
     </div>
     
@@ -67,3 +67,4 @@
 </div>
 
 <script src="../../js/darkmode.js"></script>
+<script src="../../js/logout.js"></script>
