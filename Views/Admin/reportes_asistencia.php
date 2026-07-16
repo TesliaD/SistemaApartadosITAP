@@ -4,28 +4,46 @@ include("../../includes/header.php");
 include("../../includes/navbar.php");
 include("../../includes/conexion.php");
 ?>
+
 <style>
-        /* Para que el navbar no tape el contenido */
     body {
-        padding-top: 70px; /* Ajusta según la altura de tu navbar */
+        padding-top: 70px;
     }
 
-    /* Si tu navbar es fijo/sticky */
-    .navbar-fixed-top,
-    .navbar-sticky-top {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
+    .reporte-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 25px 20px;
+        text-align: center;
+        background: #fff;
+        height: 100%;
+    }
+    .reporte-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .reporte-card.seleccionado {
+        border-color: #0d6efd;
+        background-color: #f0f7ff;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    }
+    .reporte-card .icono {
+        font-size: 2.8rem;
+        color: #0d6efd;
+        display: block;
+        margin-bottom: 10px;
+    }
+    .reporte-card h6 {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .reporte-card small {
+        color: #6c757d;
+        font-size: 0.75rem;
     }
 
-    /* Espacio extra para el primer container */
-    .container.mt-4:first-of-type {
-        margin-top: 20px !important;
-    }
-</style>
-
-<style>
     .reporte-preview {
         background: #f8f9fa;
         padding: 20px;
@@ -33,6 +51,7 @@ include("../../includes/conexion.php");
         border: 1px solid #dee2e6;
         display: none;
         margin-top: 20px;
+        overflow-x: auto;
     }
     .reporte-preview table {
         width: 100%;
@@ -73,6 +92,14 @@ include("../../includes/conexion.php");
         margin-top: 30px;
         padding-top: 5px;
     }
+
+    .modal-header {
+        background: #0d6efd;
+        color: white;
+    }
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
 </style>
 
 <div class="container mt-4">
@@ -80,79 +107,49 @@ include("../../includes/conexion.php");
     <div class="card shadow-lg p-4 border-0">
         <h4 class="mb-4 text-primary">
             <i class="bi bi-file-earmark-text"></i>
-            Generar Reporte de Asistencia a Prácticas
+            Generador de Reportes
         </h4>
 
-        <div class="row g-3">
+        <p class="text-muted">Selecciona el tipo de reporte que deseas generar y luego haz clic en "Configurar Reporte".</p>
 
-            <!-- FILTROS -->
-            <div class="col-md-3">
-                <label class="fw-bold">Laboratorio</label>
-                <select id="filtroLab" class="form-select">
-                    <option value="">Todos</option>
-                    <?php
-                    $labs = $conn->query("SELECT IDLab, Nombre FROM laboratorios WHERE activo = 1 ORDER BY Nombre");
-                    while($lab = $labs->fetch_assoc()):
-                    ?>
-                    <option value="<?= $lab['IDLab'] ?>"><?= $lab['Nombre'] ?></option>
-                    <?php endwhile; ?>
-                </select>
+        <!-- Tarjetas de tipos de reporte - SOLO 3 -->
+        <div class="row g-4 mt-2">
+
+            <!-- Reporte 1: Reporte por Departamento -->
+            <div class="col-md-4">
+                <div class="reporte-card" data-reporte="reporte_departamento" onclick="seleccionarReporte(this)">
+                    <span class="icono"><i class="bi bi-building"></i></span>
+                    <h6>Reporte por Departamento</h6>
+                    <small>Uso de laboratorios por departamento</small>
+                </div>
             </div>
 
-            <div class="col-md-3">
-                <label class="fw-bold">Docente</label>
-                <select id="filtroDocente" class="form-select">
-                    <option value="">Todos</option>
-                    <?php
-                    $docentes = $conn->query("
-                        SELECT IDUsuarios, CONCAT(nombre, ' ', apellidos) AS Nombre 
-                        FROM usuarios 
-                        WHERE rol = 'maestro' AND activo = 1
-                        ORDER BY nombre
-                    ");
-                    while($d = $docentes->fetch_assoc()):
-                    ?>
-                    <option value="<?= $d['IDUsuarios'] ?>"><?= $d['Nombre'] ?></option>
-                    <?php endwhile; ?>
-                </select>
+            <!-- Reporte 2: Apartados por Maestro -->
+            <div class="col-md-4">
+                <div class="reporte-card" data-reporte="apartados_maestro" onclick="seleccionarReporte(this)">
+                    <span class="icono"><i class="bi bi-person-workspace"></i></span>
+                    <h6>Apartados por Maestro</h6>
+                    <small>Historial de apartados por docente</small>
+                </div>
             </div>
 
-            <div class="col-md-3">
-                <label class="fw-bold">Grupo</label>
-                <select id="filtroGrupo" class="form-select">
-                    <option value="">Todos</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label class="fw-bold">Reservación</label>
-                <select id="filtroReservacion" class="form-select">
-                    <option value="">Seleccionar reservación</option>
-                </select>
+            <!-- Reporte 3: Reporte General de Reservaciones -->
+            <div class="col-md-4">
+                <div class="reporte-card" data-reporte="reporte_general" onclick="seleccionarReporte(this)">
+                    <span class="icono"><i class="bi bi-list-ul"></i></span>
+                    <h6>Reporte General de Reservaciones</h6>
+                    <small>Todas las reservaciones con filtros</small>
+                </div>
             </div>
 
         </div>
 
-        <div class="row g-3 mt-2">
-            <div class="col-md-3">
-                <label class="fw-bold">Fecha Inicio</label>
-                <input type="date" id="fechaInicio" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <label class="fw-bold">Fecha Fin</label>
-                <input type="date" id="fechaFin" class="form-control">
-            </div>
-            <div class="col-md-6 d-flex align-items-end">
-                <button class="btn btn-primary me-2" onclick="generarReporte()">
-                    <i class="bi bi-search"></i> Generar Reporte
-                </button>
-                <button class="btn btn-success me-2" onclick="exportarExcel()">
-                    <i class="bi bi-file-excel"></i> Exportar Excel
-                </button>
-                <button class="btn btn-secondary" onclick="imprimirReporte()">
-                    <i class="bi bi-printer"></i> Imprimir
-                </button>
-            </div>
+        <!-- Botón para abrir modal -->
+        <div class="mt-4 text-center">
+            <button class="btn btn-primary btn-lg" id="btnConfigurarReporte" disabled onclick="abrirModalFechas()">
+                <i class="bi bi-gear"></i> Configurar Reporte
+            </button>
+            <small class="d-block text-muted mt-2">Selecciona un tipo de reporte para habilitar el botón</small>
         </div>
 
     </div>
@@ -162,8 +159,62 @@ include("../../includes/conexion.php");
         <div id="contenidoReporte">
             <!-- Se llena con JS -->
         </div>
+        <div class="mt-3 text-center">
+            <button class="btn btn-success me-2" onclick="exportarExcel()">
+                <i class="bi bi-file-excel"></i> Exportar Excel
+            </button>
+            <button class="btn btn-secondary" onclick="imprimirReporte()">
+                <i class="bi bi-printer"></i> Imprimir
+            </button>
+        </div>
     </div>
 
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL PARA SELECCIONAR FECHAS Y FILTROS -->
+<!-- ========================================== -->
+<div class="modal fade" id="modalFechas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-calendar-range"></i> Configurar Reporte
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="infoReporte" class="alert alert-info">
+                    <strong>Tipo de reporte:</strong> <span id="tipoReporteSeleccionado">-</span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Fecha de Inicio</label>
+                        <input type="date" id="modalFechaInicio" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Fecha de Fin</label>
+                        <input type="date" id="modalFechaFin" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Filtros específicos según el reporte -->
+                <div id="filtrosAdicionales" class="mt-3">
+                    <!-- Se llena con JS dinámicamente -->
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="generarReporteDesdeModal()">
+                    <i class="bi bi-file-earmark-text"></i> Generar Reporte
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- SweetAlert -->

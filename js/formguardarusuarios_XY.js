@@ -14,7 +14,9 @@ form.addEventListener("submit", function(e) {
     const area = form.area.value.trim();
     const email = form.email.value.trim();
     const password = form.password.value.trim();
+    const confirm_password = form.confirm_password.value.trim();
     const rol = form.rol.value;
+    const IDDepartamento = form.IDDepartamento.value;
 
     // =========================
     // EXPRESIONES REGULARES
@@ -29,79 +31,86 @@ form.addEventListener("submit", function(e) {
     // =========================
 
     if(!regexNumeros.test(num_control)) {
-
         Swal.fire({
             icon: 'warning',
             title: 'Número inválido',
             text: 'El número de control solo debe contener números'
         });
-
         return;
     }
 
     if(!regexNombre.test(nombre)) {
-
         Swal.fire({
             icon: 'warning',
             title: 'Nombre inválido',
             text: 'El nombre solo debe contener letras'
         });
-
         return;
     }
 
     if(!regexNombre.test(apellidos)) {
-
         Swal.fire({
             icon: 'warning',
             title: 'Apellidos inválidos',
             text: 'Los apellidos solo deben contener letras'
         });
-
         return;
     }
 
     if(area.length < 3) {
-
         Swal.fire({
             icon: 'warning',
             title: 'Área inválida',
             text: 'El área debe tener mínimo 3 caracteres'
         });
-
         return;
     }
 
     if(!regexEmail.test(email)) {
-
         Swal.fire({
             icon: 'warning',
             title: 'Correo inválido',
             text: 'Ingresa un correo válido'
         });
-
         return;
     }
 
     if(password.length < 8) {
-
         Swal.fire({
             icon: 'warning',
             title: 'Contraseña insegura',
             text: 'La contraseña debe tener mínimo 8 caracteres'
         });
+        return;
+    }
 
+    if(password !== confirm_password) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Las contraseñas no coinciden',
+            text: 'Por favor verifica que ambas contraseñas sean iguales'
+        });
         return;
     }
 
     if(rol === "") {
-
         Swal.fire({
             icon: 'warning',
             title: 'Rol requerido',
             text: 'Selecciona un rol'
         });
+        return;
+    }
 
+    // =========================
+    // VALIDACIÓN DE DEPARTAMENTO PARA MAESTROS
+    // =========================
+    if(rol === "maestro" && !IDDepartamento) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Departamento requerido',
+            text: 'Los maestros deben tener un departamento asignado'
+        });
         return;
     }
 
@@ -172,4 +181,4 @@ form.addEventListener("submit", function(e) {
         });
 
     });
-    });
+});

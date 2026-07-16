@@ -30,12 +30,14 @@ try {
     $area = trim($_POST['area']);
     $email = trim($_POST['email']);
     $passwordTexto = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
     $rol = isset($_POST['rol']) ? $_POST['rol'] : 'usuario';
     $activo = $_POST['activo'];
+    $IDDepartamento = isset($_POST['IDDepartamento']) ? (int)$_POST['IDDepartamento'] : null; // NUEVO
 
     // VALIDACIONES
 
-    if(empty($num_control) || empty($nombre) || empty($apellidos) || empty($area) || empty($email) || empty($passwordTexto)) {
+    if(empty($num_control) || empty($nombre) || empty($apellidos) || empty($area) || empty($email) || empty($passwordTexto) || empty($confirm_password)) {
 
         echo json_encode([
             "status" => "error",
@@ -65,17 +67,37 @@ try {
         exit;
     }
 
+    // VALIDACIÓN DE CONTRASEÑAS
+    if($passwordTexto !== $confirm_password) {
+
+        echo json_encode([
+            "status" => "error",
+            "message" => "Las contraseñas no coinciden"
+        ]);
+
+        exit;
+    }
+
+    // VALIDACIÓN DE DEPARTAMENTO (si el usuario es maestro, debe tener departamento)
+    if($rol === 'maestro' && empty($IDDepartamento)) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Los maestros deben tener un departamento asignado"
+        ]);
+
+        exit;
+    }
+
     // ENCRIPTAR PASSWORD
     $password = password_hash($passwordTexto, PASSWORD_DEFAULT);
 
-    // INSERTAR
+    // INSERTAR (con IDDepartamento)
     $sql = "INSERT INTO usuarios 
-    (num_control, nombre, apellidos, area, email, password, rol, activo)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    (num_control, nombre, apellidos, area, email, password, rol, activo, IDDepartamento)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
 
-    // ERROR PREPARE
     if(!$stmt) {
 
         echo json_encode([
@@ -86,9 +108,9 @@ try {
         exit;
     }
 
-    // BIND
+    // BIND (9 parámetros)
     $stmt->bind_param(
-        "sssssssi",
+        "sssssssii", // 7 strings + 2 ints
         $num_control,
         $nombre,
         $apellidos,
@@ -96,10 +118,10 @@ try {
         $email,
         $password,
         $rol,
-        $activo
+        $activo,
+        $IDDepartamento
     );
 
-    // EJECUTAR
     if($stmt->execute()) {
 
         echo json_encode([
@@ -121,4 +143,6 @@ try {
         "status" => "error",
         "message" => $e->getMessage()
     ]);
+
 }
+?>

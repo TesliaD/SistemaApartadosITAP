@@ -68,10 +68,25 @@
         <a href="Ventana_AgregarNoticias.php"><i class="bi bi-alarm"></i>Agregar Noticias</a>
         <a href="Ventana_Editar_Noticias.php"><i class="bi bi-info-circle"></i>Editar Noticias</a>
     </div>
-    
-    <a href="#"><i class="bi bi-chat-left-text"></i> <span>Mensajes</span></a>
-    <a href="VentanaApartarLab.php"><i class="bi bi-calendar-check"></i><span>Apartados</span></a>
 
+    <!--Departamentos-->
+    <a href="#" class="toggle-submenu">
+        <i class="bi bi-building-fill-check"></i> <span>Departamentos</span>
+    </a>
+    <div class="submenu">
+        <a href="Departamentos.php"><i class="bi bi-building-fill-add"></i></i>Agregar Departamentos</a>
+    </div>
+
+    <!--Reservaciones-->
+    <a href="#" class="toggle-submenu">
+        <i class="bi bi-newspaper"></i> <span>Reservaciones</span>
+    </a>
+    <div class="submenu">
+        <a href="VentanaApartarLab.php"><i class="bi bi-calendar-check"></i><span>Apartados</span></a>
+        <a href="VerReservaciones.php"><i class="bi bi-info-circle"></i>Ver Reservaciones</a>
+        <a href="ReservacionesPorDia.php"><i class="bi bi-info-circle"></i>Reservaciones Diarias</a>
+    </div>
+    
     <hr>
         <a href="#" id="logoutBtn">
             <i class="bi bi-box-arrow-right"></i> <span>Salir</span>

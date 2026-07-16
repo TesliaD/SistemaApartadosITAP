@@ -1,238 +1,370 @@
 // ==========================
 // VARIABLES GLOBALES
 // ==========================
-let reservacionesCargadas = [];
+let reporteSeleccionado = null;
+let modalFechas = null;
 
 // ==========================
 // DOM READY
 // ==========================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
     console.log("🔵 Reportes Admin - Iniciando...");
     
-    const filtroLab = document.getElementById("filtroLab");
-    const filtroDocente = document.getElementById("filtroDocente");
-    const filtroGrupo = document.getElementById("filtroGrupo");
-    const fechaInicio = document.getElementById("fechaInicio");
-    const fechaFin = document.getElementById("fechaFin");
-
-    // Evento: Cambio de docente → Cargar grupos
-    if(filtroDocente) {
-        filtroDocente.addEventListener("change", function() {
-            console.log("🔄 Cambió docente, cargando grupos...");
-            cargarGrupos(this.value);
-            cargarReservaciones(); // Recargar reservaciones
-        });
+    const modalElement = document.getElementById("modalFechas");
+    if(modalElement) {
+        modalFechas = new bootstrap.Modal(modalElement);
     }
 
-    // Eventos: Cambio en filtros → Recargar reservaciones
-    if(filtroLab) {
-        filtroLab.addEventListener("change", function() {
-            console.log("🔄 Cambió laboratorio, recargando reservaciones...");
-            cargarReservaciones();
-        });
-    }
+    // Fechas por defecto (mes actual)
+    const hoy = new Date();
+    const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
     
-    if(filtroGrupo) {
-        filtroGrupo.addEventListener("change", function() {
-            console.log("🔄 Cambió grupo, recargando reservaciones...");
-            cargarReservaciones();
-        });
-    }
+    const fechaInicio = document.getElementById("modalFechaInicio");
+    const fechaFin = document.getElementById("modalFechaFin");
     
-    if(fechaInicio) {
-        fechaInicio.addEventListener("change", function() {
-            console.log("🔄 Cambió fecha inicio, recargando reservaciones...");
-            cargarReservaciones();
-        });
-    }
-    
-    if(fechaFin) {
-        fechaFin.addEventListener("change", function() {
-            console.log("🔄 Cambió fecha fin, recargando reservaciones...");
-            cargarReservaciones();
-        });
-    }
-
-    // Carga inicial
-    console.log("🔄 Carga inicial: cargando reservaciones...");
-    cargarReservaciones();
+    if(fechaInicio) fechaInicio.value = primerDiaMes.toISOString().split('T')[0];
+    if(fechaFin) fechaFin.value = hoy.toISOString().split('T')[0];
 });
 
 // ==========================
-// CARGAR GRUPOS POR DOCENTE
+// SELECCIONAR TIPO DE REPORTE
 // ==========================
-function cargarGrupos(idDocente) {
-    const grupoSelect = document.getElementById("filtroGrupo");
-    if(!grupoSelect) return;
-
-    if(!idDocente || idDocente === '') {
-        grupoSelect.innerHTML = '<option value="">Todos</option>';
-        return;
-    }
-
-    grupoSelect.innerHTML = '<option value="">Cargando grupos...</option>';
-
-    fetch(`/SistemaApartadosITAP/controllers/obtener_grupos_docente.php?id=${idDocente}`)
-    .then(response => {
-        if(!response.ok) throw new Error('Error HTTP: ' + response.status);
-        return response.json();
-    })
-    .then(data => {
-        grupoSelect.innerHTML = '<option value="">Todos</option>';
-        
-        if(data.error) {
-            console.error("Error:", data.error);
-            grupoSelect.innerHTML = `<option value="">Error: ${data.error}</option>`;
-            return;
-        }
-        
-        if(!data || data.length === 0) {
-            grupoSelect.innerHTML = '<option value="">No hay grupos para este docente</option>';
-            return;
-        }
-        
-        data.forEach(g => {
-            const nombreGrupo = g.Nombre || `${g.Semestre}° Semestre`;
-            const option = document.createElement('option');
-            option.value = g.IDGrupo;
-            option.textContent = `${g.Carrera || 'Sin carrera'} - ${nombreGrupo}`;
-            grupoSelect.appendChild(option);
-        });
-        
-        console.log(`✅ ${data.length} grupos cargados para el docente`);
-    })
-    .catch(err => {
-        console.error("Error cargando grupos:", err);
-        grupoSelect.innerHTML = '<option value="">Error al cargar grupos</option>';
+function seleccionarReporte(elemento) {
+    document.querySelectorAll('.reporte-card').forEach(card => {
+        card.classList.remove('seleccionado');
     });
+    
+    elemento.classList.add('seleccionado');
+    reporteSeleccionado = elemento.dataset.reporte;
+    
+    document.getElementById("btnConfigurarReporte").disabled = false;
+    
+    const nombreReporte = elemento.querySelector('h6').textContent;
+    console.log(`✅ Reporte seleccionado: ${nombreReporte}`);
 }
 
 // ==========================
-// CARGAR RESERVACIONES CON FILTROS
+// ABRIR MODAL DE FECHAS
 // ==========================
-function cargarReservaciones() {
-    const lab = document.getElementById("filtroLab")?.value || '';
-    const docente = document.getElementById("filtroDocente")?.value || '';
-    const grupo = document.getElementById("filtroGrupo")?.value || '';
-    const inicio = document.getElementById("fechaInicio")?.value || '';
-    const fin = document.getElementById("fechaFin")?.value || '';
-
-    // Construir URL
-    let url = `/SistemaApartadosITAP/controllers/obtener_reservaciones_filtro.php?`;
-    const params = [];
-    
-    if(lab) params.push(`lab=${lab}`);
-    if(docente) params.push(`docente=${docente}`);
-    if(grupo) params.push(`grupo=${grupo}`);
-    if(inicio) params.push(`inicio=${inicio}`);
-    if(fin) params.push(`fin=${fin}`);
-    
-    url += params.join('&');
-    
-    // Si no hay filtros, mostrar reservaciones de los últimos 30 días
-    if(params.length === 0) {
-        const hoy = new Date();
-        const hace30Dias = new Date();
-        hace30Dias.setDate(hoy.getDate() - 30);
-        url += `inicio=${hace30Dias.toISOString().split('T')[0]}&fin=${hoy.toISOString().split('T')[0]}`;
-    }
-
-    console.log("📡 Cargando reservaciones:", url);
-
-    const select = document.getElementById("filtroReservacion");
-    if(!select) return;
-    
-    select.innerHTML = '<option value="">⏳ Cargando reservaciones...</option>';
-    select.disabled = true;
-
-    fetch(url)
-    .then(response => {
-        if(!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        select.innerHTML = '<option value="">Seleccionar reservación</option>';
-        select.disabled = false;
-        
-        if(data.error) {
-            console.error("Error:", data.error);
-            select.innerHTML = `<option value="">⚠️ ${data.error}</option>`;
-            return;
-        }
-        
-        if(!data || data.length === 0) {
-            select.innerHTML = '<option value="">📭 No hay reservaciones disponibles</option>';
-            reservacionesCargadas = [];
-            return;
-        }
-        
-        reservacionesCargadas = data;
-        
-        data.forEach(r => {
-            const option = document.createElement('option');
-            option.value = r.IDReservacion;
-            const fecha = r.fecha || 'Sin fecha';
-            const hora = r.horaInicio && r.horaFin ? `${r.horaInicio} - ${r.horaFin}` : 'Sin hora';
-            const labNombre = r.laboratorio || 'Sin laboratorio';
-            option.textContent = `${fecha} - ${hora} - ${labNombre}`;
-            select.appendChild(option);
-        });
-        
-        console.log(`✅ ${data.length} reservaciones cargadas`);
-    })
-    .catch(err => {
-        console.error("❌ Error cargando reservaciones:", err);
-        select.innerHTML = `<option value="">❌ Error al cargar reservaciones</option>`;
-        select.disabled = false;
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudieron cargar las reservaciones',
-            footer: err.message
-        });
-    });
-}
-
-// ==========================
-// GENERAR REPORTE
-// ==========================
-function generarReporte() {
-    const reservacionId = document.getElementById("filtroReservacion").value;
-    
-    if(!reservacionId) {
+function abrirModalFechas() {
+    if(!reporteSeleccionado) {
         Swal.fire({
             icon: 'warning',
-            title: 'Selecciona una reservación',
-            text: 'Debes seleccionar una reservación para generar el reporte'
+            title: 'Selecciona un reporte',
+            text: 'Primero debes seleccionar el tipo de reporte que deseas generar'
         });
         return;
     }
+    
+    const cardSeleccionada = document.querySelector(`.reporte-card[data-reporte="${reporteSeleccionado}"]`);
+    const nombreReporte = cardSeleccionada ? cardSeleccionada.querySelector('h6').textContent : reporteSeleccionado;
+    
+    document.getElementById("tipoReporteSeleccionado").textContent = nombreReporte;
+    
+    // Generar filtros según el tipo de reporte
+    generarFiltrosEspecificos(reporteSeleccionado);
+    
+    modalFechas.show();
+}
 
-    console.log("📄 Generando reporte para reservación ID:", reservacionId);
+// ==========================
+// GENERAR FILTROS ESPECÍFICOS
+// ==========================
+function generarFiltrosEspecificos(tipo) {
+    const container = document.getElementById("filtrosAdicionales");
+    
+    let html = '<div class="row g-3">';
+    
+    switch(tipo) {
+        // ==========================
+        // REPORTE 1: POR DEPARTAMENTO
+        // ==========================
+        case 'reporte_departamento':
+            html += `
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Departamento</label>
+                    <select id="modalFiltroDepartamento" class="form-select">
+                        <option value="">Todos los departamentos</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Laboratorio</label>
+                    <select id="modalFiltroLab" class="form-select">
+                        <option value="">Todos los laboratorios</option>
+                    </select>
+                </div>
+            `;
+            break;
 
+        // ==========================
+        // REPORTE 2: APARTADOS POR MAESTRO
+        // ==========================
+        case 'apartados_maestro':
+            html += `
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Docente</label>
+                    <select id="modalFiltroDocente" class="form-select">
+                        <option value="">Todos los docentes</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Grupo</label>
+                    <select id="modalFiltroGrupo" class="form-select">
+                        <option value="">Todos los grupos</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Laboratorio</label>
+                    <select id="modalFiltroLab" class="form-select">
+                        <option value="">Todos los laboratorios</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Estado</label>
+                    <select id="modalFiltroEstado" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="activa">Activas</option>
+                        <option value="cancelada">Canceladas</option>
+                    </select>
+                </div>
+            `;
+            break;
+
+        // ==========================
+        // REPORTE 3: REPORTE GENERAL DE RESERVACIONES
+        // ==========================
+        case 'reporte_general':
+            html += `
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Departamento</label>
+                    <select id="modalFiltroDepartamento" class="form-select">
+                        <option value="">Todos los departamentos</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Laboratorio</label>
+                    <select id="modalFiltroLab" class="form-select">
+                        <option value="">Todos los laboratorios</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Docente</label>
+                    <select id="modalFiltroDocente" class="form-select">
+                        <option value="">Todos los docentes</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Grupo</label>
+                    <select id="modalFiltroGrupo" class="form-select">
+                        <option value="">Todos los grupos</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Carrera</label>
+                    <select id="modalFiltroCarrera" class="form-select">
+                        <option value="">Todas las carreras</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Estado</label>
+                    <select id="modalFiltroEstado" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="activa">Activas</option>
+                        <option value="cancelada">Canceladas</option>
+                    </select>
+                </div>
+            `;
+            break;
+    }
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    // Cargar los datos de los selects
+    cargarDatosSelects(tipo);
+}
+
+// ==========================
+// CARGAR DATOS DE LOS SELECTS (FUNCIÓN QUE FALTABA)
+// ==========================
+function cargarDatosSelects(tipo) {
+    console.log("🔄 Cargando datos de selects...");
+    
+    // Cargar Departamentos
+    fetch('/SistemaApartadosITAP/controllers/obtener_departamentos.php')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('modalFiltroDepartamento');
+            if(select) {
+                select.innerHTML = '<option value="">Todos los departamentos</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.IDDepartamentos;
+                    option.textContent = item.nombre;
+                    select.appendChild(option);
+                });
+                console.log("✅ Departamentos cargados:", data.length);
+            }
+        })
+        .catch(err => console.error('Error cargando departamentos:', err));
+
+    // Cargar Laboratorios
+    fetch('/SistemaApartadosITAP/controllers/obtener_laboratorios.php')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('modalFiltroLab');
+            if(select) {
+                select.innerHTML = '<option value="">Todos los laboratorios</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.IDLab;
+                    option.textContent = item.Nombre;
+                    select.appendChild(option);
+                });
+                console.log("✅ Laboratorios cargados:", data.length);
+            }
+        })
+        .catch(err => console.error('Error cargando laboratorios:', err));
+
+    // Cargar Docentes
+    fetch('/SistemaApartadosITAP/controllers/obtener_docentes.php')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('modalFiltroDocente');
+            if(select) {
+                select.innerHTML = '<option value="">Todos los docentes</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.IDUsuarios;
+                    option.textContent = item.Nombre;
+                    select.appendChild(option);
+                });
+                console.log("✅ Docentes cargados:", data.length);
+            }
+        })
+        .catch(err => console.error('Error cargando docentes:', err));
+
+    // Cargar Grupos
+    fetch('/SistemaApartadosITAP/controllers/obtener_grupos.php')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('modalFiltroGrupo');
+            if(select) {
+                select.innerHTML = '<option value="">Todos los grupos</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.IDGrupo;
+                    option.textContent = (item.Carrera || '') + ' - ' + (item.Nombre || item.Semestre + '°');
+                    select.appendChild(option);
+                });
+                console.log("✅ Grupos cargados:", data.length);
+            }
+        })
+        .catch(err => console.error('Error cargando grupos:', err));
+
+    // Cargar Carreras (solo para reporte_general)
+    if(tipo === 'reporte_general') {
+        fetch('/SistemaApartadosITAP/controllers/obtener_carreras.php')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('modalFiltroCarrera');
+                if(select) {
+                    select.innerHTML = '<option value="">Todas las carreras</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.IDCarrera;
+                        option.textContent = item.Nombre;
+                        select.appendChild(option);
+                    });
+                    console.log("✅ Carreras cargadas:", data.length);
+                }
+            })
+            .catch(err => console.error('Error cargando carreras:', err));
+    }
+}
+
+// ==========================
+// OBTENER FILTROS DEL MODAL
+// ==========================
+function obtenerFiltrosModal() {
+    const filtros = {};
+    
+    const departamento = document.getElementById('modalFiltroDepartamento');
+    if(departamento && departamento.value) filtros.departamento = departamento.value;
+    
+    const lab = document.getElementById('modalFiltroLab');
+    if(lab && lab.value) filtros.laboratorio = lab.value;
+    
+    const docente = document.getElementById('modalFiltroDocente');
+    if(docente && docente.value) filtros.docente = docente.value;
+    
+    const grupo = document.getElementById('modalFiltroGrupo');
+    if(grupo && grupo.value) filtros.grupo = grupo.value;
+    
+    const estado = document.getElementById('modalFiltroEstado');
+    if(estado && estado.value) filtros.estado = estado.value;
+    
+    const carrera = document.getElementById('modalFiltroCarrera');
+    if(carrera && carrera.value) filtros.carrera = carrera.value;
+    
+    console.log("🔍 Filtros obtenidos:", filtros);
+    return filtros;
+}
+
+// ==========================
+// GENERAR REPORTE DESDE MODAL
+// ==========================
+function generarReporteDesdeModal() {
+    const fechaInicio = document.getElementById("modalFechaInicio").value;
+    const fechaFin = document.getElementById("modalFechaFin").value;
+    
+    if(!fechaInicio || !fechaFin) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Fechas requeridas',
+            text: 'Selecciona ambas fechas para generar el reporte'
+        });
+        return;
+    }
+    
+    if(fechaInicio > fechaFin) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Fechas inválidas',
+            text: 'La fecha de inicio no puede ser mayor a la fecha de fin'
+        });
+        return;
+    }
+    
+    modalFechas.hide();
+    
     Swal.fire({
         title: 'Generando reporte...',
         text: 'Por favor espera',
         allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        didOpen: () => Swal.showLoading()
     });
-
-    fetch(`/SistemaApartadosITAP/controllers/generar_reporte_asistencia.php?id=${reservacionId}`)
-    .then(response => {
-        if(!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
+    
+    const datos = {
+        tipo: reporteSeleccionado,
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin,
+        filtros: obtenerFiltrosModal()
+    };
+    
+    console.log("📊 Datos enviados:", datos);
+    
+    fetch('/SistemaApartadosITAP/controllers/generar_reporte_fechas.php', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
     })
+    .then(response => response.json())
     .then(data => {
         Swal.close();
         
         if(data.error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.error
-            });
+            Swal.fire({ icon: 'error', title: 'Error', text: data.error });
             return;
         }
         
@@ -249,13 +381,8 @@ function generarReporte() {
     })
     .catch(err => {
         Swal.close();
-        console.error("Error generando reporte:", err);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo generar el reporte',
-            footer: err.message
-        });
+        console.error("Error:", err);
+        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo generar el reporte' });
     });
 }
 
@@ -268,84 +395,25 @@ function mostrarReporte(data) {
     let html = `
     <div class="reporte-header">
         <h5>INSTITUTO TECNOLÓGICO DE AGUA PRIETA</h5>
-        <div class="subtitulo">DEPARTAMENTO DE ${data.departamento || 'SISTEMAS'}</div>
-        <h5 style="margin-top:10px;">CONTROL DE ASISTENCIA A PRÁCTICAS</h5>
+        <div class="subtitulo">CENTRO DE CÓMPUTO</div>
+        <h5 style="margin-top:10px;">${data.titulo || 'REPORTE'}</h5>
+        <p style="font-size:12px; margin-top:5px;">
+            Período: ${data.fechaInicio || ''} - ${data.fechaFin || ''}
+        </p>
     </div>
-
-    <table>
-        <tr>
-            <td width="50%"><strong>Laboratorio:</strong> ${data.laboratorio || 'N/A'}</td>
-            <td width="50%"><strong>Carrera:</strong> ${data.carrera || 'N/A'}</td>
-        </tr>
-        <tr>
-            <td><strong>Nombre del Maestro(a):</strong> ${data.docente || 'N/A'}</td>
-            <td><strong>Materia:</strong> ${data.materia || 'N/A'}</td>
-        </tr>
-        <tr>
-            <td colspan="2"><strong>Nombre de la práctica:</strong> ${data.practica || 'N/A'}</td>
-        </tr>
-        <tr>
-            <td><strong>Grupo:</strong> ${data.grupo || 'N/A'}</td>
-            <td><strong>Fecha:</strong> ${data.fecha || 'N/A'} &nbsp;&nbsp; <strong>Hora:</strong> ${data.hora || 'N/A'}</td>
-        </tr>
-    </table>
-
-    <br>
-
-    <table>
-        <thead>
-            <tr>
-                <th width="5%">No</th>
-                <th width="20%">Núm. de control</th>
-                <th width="60%">Nombre del alumno(a)</th>
-                <th width="15%">Firma</th>
-            </tr>
-        </thead>
-        <tbody>
     `;
 
-    if(data.alumnos && data.alumnos.length > 0) {
-        data.alumnos.forEach((alumno, index) => {
-            html += `
-                <tr>
-                    <td style="text-align:center;">${index + 1}</td>
-                    <td>${alumno.NoControl || ''}</td>
-                    <td>${alumno.nombre || ''}</td>
-                    <td style="text-align:center;">&nbsp;</td>
-                </tr>
-            `;
-        });
+    if(data.html) {
+        html += data.html;
     } else {
-        html += `
-            <tr>
-                <td colspan="4" style="text-align:center; color:#999;">
-                    No hay alumnos registrados para este grupo
-                </td>
-            </tr>
-        `;
-    }
-
-    // Completar hasta 30 filas
-    const alumnosCount = data.alumnos ? data.alumnos.length : 0;
-    for(let i = alumnosCount + 1; i <= 30; i++) {
-        html += `
-            <tr>
-                <td style="text-align:center;">${i}</td>
-                <td></td>
-                <td></td>
-                <td style="text-align:center;">&nbsp;</td>
-            </tr>
-        `;
+        html += `<p class="text-center text-muted">No hay datos para mostrar</p>`;
     }
 
     html += `
-        </tbody>
-    </table>
-
     <div class="footer-reporte">
         <br>
         <span class="firma-linea"></span><br>
-        <strong>Nombre y firma del maestro(a)</strong>
+        <strong>Responsable del Centro de Cómputo</strong>
     </div>
     `;
 
@@ -358,11 +426,7 @@ function mostrarReporte(data) {
 function exportarExcel() {
     const contenido = document.getElementById("contenidoReporte");
     if(!contenido || !contenido.innerHTML) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Primero genera el reporte',
-            text: 'Debes generar el reporte antes de exportarlo'
-        });
+        Swal.fire({ icon: 'warning', title: 'Primero genera el reporte' });
         return;
     }
 
@@ -388,7 +452,7 @@ function exportarExcel() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Reporte_Asistencia_${new Date().toISOString().slice(0,10)}.xls`;
+    a.download = `Reporte_${new Date().toISOString().slice(0,10)}.xls`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -401,11 +465,7 @@ function exportarExcel() {
 function imprimirReporte() {
     const contenido = document.getElementById("contenidoReporte");
     if(!contenido || !contenido.innerHTML) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Primero genera el reporte',
-            text: 'Debes generar el reporte antes de imprimirlo'
-        });
+        Swal.fire({ icon: 'warning', title: 'Primero genera el reporte' });
         return;
     }
 
@@ -413,7 +473,7 @@ function imprimirReporte() {
     ventana.document.write(`
     <html>
     <head>
-        <title>Reporte de Asistencia</title>
+        <title>Reporte</title>
         <style>
             body { font-family: Arial, sans-serif; padding: 20px; }
             table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -433,7 +493,5 @@ function imprimirReporte() {
     </html>
     `);
     ventana.document.close();
-    setTimeout(() => {
-        ventana.print();
-    }, 500);
+    setTimeout(() => ventana.print(), 500);
 }
