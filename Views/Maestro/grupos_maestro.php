@@ -67,7 +67,32 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
                 </select>
             </div>
 
+            <!-- NUEVOS CAMPOS: PERIODO Y AÑO -->
             <div class="col-md-2">
+                <label class="fw-bold">Periodo</label>
+                <select id="periodo" class="form-select">
+                    <option value="">Seleccionar</option>
+                    <option value="Enero - Junio">Enero - Junio</option>
+                    <option value="Agosto - Diciembre">Agosto - Diciembre</option>
+                    <option value="Verano">Verano</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label class="fw-bold">Año</label>
+                <select id="anio" class="form-select">
+                    <option value="">Seleccionar</option>
+                    <?php 
+                    $anioActual = date("Y");
+                    for($i = $anioActual - 2; $i <= $anioActual + 2; $i++): 
+                    ?>
+                        <option value="<?= $i ?>"><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+            </div>
+            <!-- FIN DE NUEVOS CAMPOS -->
+
+            <div class="col-md-3">
                 <label class="fw-bold">Nombre del Grupo</label>
                 <input type="text" id="nombreGrupo" class="form-control" placeholder="Ej: 5° A">
             </div>
@@ -77,7 +102,7 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
                 <input type="number" id="cantidadAlumnos" class="form-control" placeholder="Ej: 30">
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="fw-bold">Tipo de Grupo</label>
                 <select id="tipoGrupo" class="form-select">
                     <option value="regular">Regular</option>
@@ -86,7 +111,7 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
                 </select>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-12 mt-3">
                 <button class="btn btn-success" id="btnGuardarGrupo">
                     <i class="bi bi-save"></i> Guardar Grupo
                 </button>
@@ -109,6 +134,8 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
                         <tr>
                             <th>Carrera</th>
                             <th>Semestre</th>
+                            <th>Periodo</th> <!-- NUEVA COLUMNA -->
+                            <th>Año</th>    <!-- NUEVA COLUMNA -->
                             <th>Nombre Grupo</th>
                             <th>Tipo</th>
                             <th>Alumnos</th>
@@ -126,7 +153,7 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
     </div>
 </div>
 
-<!-- Modal para subir alumnos -->
+<!-- Modales y scripts existentes (sin cambios) -->
 <div class="modal fade" id="modalAlumnos" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -157,7 +184,6 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
     </div>
 </div>
 
-<!-- Modal para ver lista de alumnos -->
 <div class="modal fade" id="modalVerAlumnos" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -197,6 +223,7 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../js/grupos_maestro.js"></script>

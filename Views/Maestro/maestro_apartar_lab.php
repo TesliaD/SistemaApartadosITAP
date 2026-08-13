@@ -6,7 +6,7 @@ include("../../includes/navbar_maestros.php");
 
 $idUsuario = $_SESSION['id'] ?? 0;
 
-// Obtener datos del usuario desde la base de datos
+// Obtener datos del usuario
 $sqlUsuario = "SELECT nombre, apellidos, num_control FROM usuarios WHERE IDUsuarios = ?";
 $stmt = $conn->prepare($sqlUsuario);
 $stmt->bind_param("i", $idUsuario);
@@ -24,307 +24,448 @@ if($result->num_rows > 0) {
 ?>
 
 <style>
-        /* Para que el navbar no tape el contenido */
     body {
-        padding-top: 70px; /* Ajusta según la altura de tu navbar */
+        background: #f5f7fb;
+        padding-top: 70px;
     }
 
-    /* Si tu navbar es fijo/sticky */
-    .navbar-fixed-top,
-    .navbar-sticky-top {
-        position: fixed;
-        top: 0;
+    .card-modern {
+        background: #ffffff;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(29, 53, 87, 0.08);
+        max-width: 1200px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-modern .card-header-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        color: white;
+        padding: 18px 25px;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-modern .card-header-modern h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.3rem;
+    }
+
+    .card-modern .card-header-modern h4 i {
+        margin-right: 12px;
+        color: #a8dadc;
+    }
+
+    .card-modern .card-body-modern {
+        padding: 25px 30px;
+    }
+
+    .form-label-modern {
+        font-weight: 600;
+        color: #1d3557;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .form-label-modern i {
+        color: #457b9d;
+        margin-right: 4px;
+    }
+
+    .form-control-modern,
+    .form-select-modern {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        height: 46px;
+        color: #1d3557;
+    }
+
+    .form-control-modern:focus,
+    .form-select-modern:focus {
+        border-color: #457b9d;
+        box-shadow: 0 0 0 4px rgba(69, 123, 157, 0.12);
+        background: #ffffff;
+    }
+
+    .form-control-modern[readonly] {
+        background: #f1f4f8;
+        cursor: not-allowed;
+    }
+
+    /* =========================
+       DESCRIPCIÓN DEL LABORATORIO
+    ========================= */
+    .lab-descripcion {
+        background: #f0f4f8;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-top: 8px;
+        border-left: 4px solid #457b9d;
+        display: none;
+        transition: all 0.3s ease;
+    }
+
+    .lab-descripcion.visible {
+        display: block;
+        animation: fadeIn 0.4s ease;
+    }
+
+    .lab-descripcion .desc-titulo {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #457b9d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .lab-descripcion .desc-titulo i {
+        font-size: 0.85rem;
+    }
+
+    .lab-descripcion .desc-texto {
+        color: #1d3557;
+        font-size: 0.9rem;
+        margin-top: 4px;
+        line-height: 1.5;
+    }
+
+    .lab-descripcion .desc-texto.empty {
+        color: #757474;
+        font-style: italic;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hora-btn-modern {
+        border: 2px solid #e2e8f0;
+        background: #f8fafc;
+        color: #1d3557;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        min-width: 80px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .hora-btn-modern:hover:not(.ocupada):not(.activa) {
+        background: #e8f0f5;
+        border-color: #457b9d;
+        transform: translateY(-2px);
+    }
+
+    .hora-btn-modern.activa {
+        background: #1d3557;
+        border-color: #1d3557;
+        color: white;
+        box-shadow: 0 4px 15px rgba(29, 53, 87, 0.3);
+    }
+
+    /* ========================================================== */
+    /* CAMBIO APLICADO: Estilo gris y tachado para horas ocupadas  */
+    /* ========================================================== */
+    .hora-btn-modern.ocupada,
+    .hora-btn-modern:disabled {
+        background: #e9ecef !important;
+        border-color: #dee2e6 !important;
+        color: #6c757d !important;
+        cursor: not-allowed !important;
+        opacity: 0.7 !important;
+        text-decoration: line-through !important;
+        transform: none !important;
+        box-shadow: none !important;
+        pointer-events: none !important;
+    }
+    /* ========================================================== */
+
+    .btn-guardar-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 30px;
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(29, 53, 87, 0.25);
         width: 100%;
-        z-index: 1000;
     }
 
-    /* Espacio extra para el primer container */
-    .container.mt-4:first-of-type {
-        margin-top: 20px !important;
+    .btn-guardar-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(29, 53, 87, 0.35);
+        background: linear-gradient(135deg, #2a4a7a, #1d3557);
+    }
+
+    .btn-guardar-modern i {
+        margin-right: 10px;
+        color: #a8dadc;
+    }
+
+    .divider-modern {
+        border: none;
+        border-top: 2px dashed #e8f0f5;
+        margin: 20px 0;
+    }
+
+    .info-label {
+        color: #757474;
+        font-size: 0.75rem;
+        margin-top: 4px;
+    }
+
+    .info-label i {
+        color: #457b9d;
+        margin-right: 4px;
+    }
+
+    @media (max-width: 768px) {
+        .card-modern .card-body-modern {
+            padding: 18px;
+        }
+        .hora-btn-modern {
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            min-width: 65px;
+        }
+        .lab-descripcion {
+            padding: 10px 12px;
+        }
+        .lab-descripcion .desc-texto {
+            font-size: 0.8rem;
+        }
     }
 </style>
 
 <div class="container mt-4">
 
-    <div class="card shadow-lg p-4 border-0">
+    <div class="card-modern">
 
-        <h4 class="mb-4 text-primary">
-            <i class="bi bi-calendar-check"></i>
-            Nueva Reservación
-        </h4>
+        <div class="card-header-modern">
+            <h4>
+                <i class="bi bi-calendar-check"></i> Nueva Reservación
+            </h4>
+            <span style="background:rgba(255,255,255,0.15); color:white; padding:4px 14px; border-radius:20px; font-size:0.7rem;">
+                <i class="bi bi-person"></i> <?= htmlspecialchars($nombreCompleto) ?>
+            </span>
+        </div>
 
-        <div class="row g-4">
+        <div class="card-body-modern">
 
-            <!-- FECHA -->
-            <div class="col-md-3">
-                <label class="fw-bold">Fecha</label>
-                <input
-                    type="date"
-                    id="fecha"
-                    class="form-control shadow-sm"
-                    min="<?= date('Y-m-d', strtotime('+1 day')) ?>"
-                    max="<?= date('Y-m-d', strtotime('+3 days')) ?>">
-                <small class="text-muted">Solo puedes reservar con 1 a 3 días de anticipación. No disponible domingos.</small>
-            </div>
+            <div class="row g-4">
 
-            <!-- HORAS -->
-            <div class="col-md-5">
+                <!-- FECHA -->
+                <div class="col-md-3">
+                    <label class="form-label-modern">
+                        <i class="bi bi-calendar3"></i> Fecha <span style="color:#e63946;">*</span>
+                    </label>
+                    <input
+                        type="date"
+                        id="fecha"
+                        class="form-control-modern form-control"
+                        min="<?= date('Y-m-d', strtotime('+1 day')) ?>"
+                        max="<?= date('Y-m-d', strtotime('+3 days')) ?>">
+                    <div class="info-label">
+                        <i class="bi bi-info-circle"></i> 1 a 3 días de anticipación
+                    </div>
+                </div>
 
-                <label class="fw-bold">
-                    Selecciona Horas
-                </label>
+                <!-- HORAS -->
+                <div class="col-md-5">
+                    <label class="form-label-modern">
+                        <i class="bi bi-clock-history"></i> Selecciona una Hora <span style="color:#e63946;">*</span>
+                    </label>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <?php
+                        $horas = [
+                            "07:00 - 08:00","08:00 - 09:00","09:00 - 10:00","10:00 - 11:00",
+                            "11:00 - 12:00","12:00 - 13:00","13:00 - 14:00","14:00 - 15:00",
+                            "15:00 - 16:00","16:00 - 17:00","17:00 - 18:00","18:00 - 19:00",
+                            "19:00 - 20:00","20:00 - 21:00","21:00 - 22:00"
+                        ];
+                        foreach($horas as $h){
+                            echo "<button type='button' class='hora-btn-modern hora-btn'>$h</button>";
+                        }
+                        ?>
+                    </div>
+                    <div class="info-label mt-1">
+                        <i class="bi bi-info-circle"></i> Solo puedes seleccionar una hora por reservación
+                    </div>
+                </div>
 
-                <div class="d-flex flex-wrap gap-2 mt-2">
+                <!-- LAB -->
+                <div class="col-md-4">
+                    <label class="form-label-modern">
+                        <i class="bi bi-laptop"></i> Laboratorio <span style="color:#e63946;">*</span>
+                    </label>
+                    <select id="lab" class="form-select-modern form-select">
+                        <option value="">Seleccionar laboratorio</option>
+                        <?php
+                        $labs = $conn->query("
+                            SELECT IDLab, Nombre, numLab, Descripcion
+                            FROM laboratorios
+                            WHERE activo = 1
+                            ORDER BY Nombre
+                        ");
+                        while($lab = $labs->fetch_assoc()):
+                        ?>
+                        <option value="<?= $lab['IDLab'] ?>" data-descripcion="<?= htmlspecialchars($lab['Descripcion'] ?? '') ?>">
+                            <?= $lab['Nombre'] ?> (Lab <?= $lab['numLab'] ?>)
+                        </option>
+                        <?php endwhile; ?>
+                    </select>
 
-                    <?php
-
-                    $horas = [
-                        "07:00","08:00","09:00","10:00",
-                        "11:00","12:00","13:00","14:00",
-                        "15:00","16:00","17:00","18:00",
-                        "19:00","20:00","21:00","22:00"
-                    ];
-
-                    foreach($horas as $h){
-
-                        echo "
-                        <button
-                            type='button'
-                            class='btn btn-outline-primary hora-btn'>
-                            $h
-                        </button>";
-                    }
-
-                    ?>
-
+                    <!-- DESCRIPCIÓN DEL LABORATORIO -->
+                    <div id="labDescripcion" class="lab-descripcion">
+                        <div class="desc-titulo">
+                            <i class="bi bi-info-circle"></i> Descripción del laboratorio
+                        </div>
+                        <div id="labDescripcionTexto" class="desc-texto empty">
+                            Selecciona un laboratorio para ver su descripción
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
-            <!-- LAB -->
-            <div class="col-md-4">
+            <hr class="divider-modern">
 
-                <label class="fw-bold">
-                    Laboratorio
-                </label>
+            <div class="row g-3">
 
-                <select id="lab" class="form-select shadow-sm">
+                <!-- DOCENTE -->
+                <div class="col-md-4">
+                    <label class="form-label-modern">
+                        <i class="bi bi-person-badge"></i> Docente
+                    </label>
+                    <input
+                        type="text"
+                        id="docente"
+                        class="form-control-modern form-control"
+                        value="<?= htmlspecialchars($nombreCompleto) ?>"
+                        readonly>
+                </div>
 
-                    <?php
+                <!-- GRUPO -->
+                <div class="col-md-4">
+                    <label class="form-label-modern">
+                        <i class="bi bi-people"></i> Grupo <span style="color:#e63946;">*</span>
+                    </label>
+                    <select id="grupo" class="form-select-modern form-select">
+                        <option value="">Seleccionar grupo</option>
+                    </select>
+                </div>
 
-                    $labs = $conn->query("
-                        SELECT IDLab, Nombre
-                        FROM laboratorios
-                        ORDER BY Nombre
-                    ");
+                <!-- ALUMNOS -->
+                <div class="col-md-4">
+                    <label class="form-label-modern">
+                        <i class="bi bi-person"></i> Alumnos
+                    </label>
+                    <input
+                        type="number"
+                        id="alumnos"
+                        class="form-control-modern form-control"
+                        readonly
+                        placeholder="Selecciona un grupo">
+                </div>
 
-                    while($lab = $labs->fetch_assoc()):
+            </div>
 
-                    ?>
+            <div class="row g-3 mt-2">
 
-                        <option value="<?= $lab['IDLab'] ?>">
-                            <?= $lab['Nombre'] ?>
-                        </option>
+                <!-- SOFTWARE -->
+                <div class="col-md-6">
+                    <label class="form-label-modern">
+                        <i class="bi bi-code-square"></i> Software
+                    </label>
+                    <input
+                        type="text"
+                        id="software"
+                        class="form-control-modern form-control"
+                        placeholder="Ej: Visual Studio, Cisco Packet Tracer">
+                </div>
 
-                    <?php endwhile; ?>
+                <!-- PRACTICA -->
+                <div class="col-md-6">
+                    <label class="form-label-modern">
+                        <i class="bi bi-file-text"></i> Práctica
+                    </label>
+                    <input
+                        type="text"
+                        id="practica"
+                        class="form-control-modern form-control"
+                        placeholder="Nombre de la práctica">
+                </div>
 
-                </select>
+            </div>
 
+            <div class="row mt-4">
+                <div class="col-md-4 mx-auto">
+                    <button class="btn-guardar-modern" id="btnGuardar">
+                        <i class="bi bi-check-circle"></i> Apartar Laboratorio
+                    </button>
+                </div>
             </div>
 
         </div>
-
-        <hr>
-
-        <div class="row g-3">
-
-            <!-- DOCENTE LOGUEADO -->
-            <div class="col-md-4">
-                <label>Docente</label>
-                <input 
-                    type="text" 
-                    id="docente"  
-                    name="docente"
-                    class="form-control" 
-                    value="<?= htmlspecialchars($nombreCompleto) ?>" 
-                    readonly>
-            </div>
-            
-            <!-- GRUPO -->
-            <div class="col-md-4">
-
-                <label>Grupo</label>
-
-                <select
-                    id="grupo"
-                    class="form-select shadow-sm">
-
-                    <option value="">
-                        Seleccionar grupo
-                    </option>
-
-                </select>
-
-            </div>
-
-            <!-- SOFTWARE -->
-            <div class="col-md-4">
-
-                <label>Software</label>
-
-                <input
-                    type="text"
-                    id="software"
-                    class="form-control shadow-sm">
-
-            </div>
-
-            <!-- PRACTICA -->
-            <div class="col-md-4">
-
-                <label>Práctica</label>
-
-                <input
-                    type="text"
-                    id="practica"
-                    class="form-control shadow-sm">
-
-            </div>
-
-            <!-- ALUMNOS -->
-            <div class="col-md-2">
-
-                <label>Alumnos</label>
-
-                <input
-                    type="number"
-                    id="alumnos"
-                    class="form-control shadow-sm"
-                    readonly>
-
-            </div>
-
-            <!-- BOTON -->
-            <div class="col-md-2 d-flex align-items-end">
-
-                <button
-                    class="btn btn-success w-100 shadow"
-                    id="btnGuardar">
-
-                    <i class="bi bi-save"></i>
-                    Apartar
-
-                </button>
-
-            </div>
-
-        </div>
-
     </div>
 
 </div>
 
-<!-- ========================= -->
-<!-- TABLA -->
-<!-- ========================= -->
-<div class="container mt-4">
-
-    <!-- FILTROS -->
-<div class="card shadow-sm p-3 mb-3">
-    <label class="fw-bold mb-2">Filtrar reservaciones</label>
-    <div class="row g-2">
-        <div class="col-md-2">
-            <input type="date" id="fechaInicio" class="form-control" placeholder="Fecha inicio">
-        </div>
-        <div class="col-md-2">
-            <input type="date" id="fechaFin" class="form-control" placeholder="Fecha fin">
-        </div>
-        <div class="col-md-3">
-            <input type="text" id="buscar" 
-                   placeholder="Buscar docente o laboratorio"
-                   class="form-control">
-        </div>
-        <div class="col-md-2">
-            <select id="filtroEstado" class="form-select">
-                <option value="">Todos los estados</option>
-                <option value="activa">Activa</option>
-                <option value="cancelada">Cancelada</option>
-                <option value="finalizada">Finalizada</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary flex-grow-1" onclick="cargarTabla(1)">
-                    <i class="bi bi-funnel"></i> Filtrar
-                </button>
-                <button class="btn btn-secondary" onclick="limpiarFiltros()" title="Limpiar filtros">
-                    <i class="bi bi-x-circle"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-    <!-- TABLA -->
-    <div class="card shadow border-0">
-
-        <div class="card-header bg-dark text-white">
-            <i class="bi bi-list"></i> Reservaciones
-        </div>
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle" id="tablaReservaciones">
-
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Horario</th>
-                            <th>Lab</th>
-                            <th>Docente</th>
-                            <th>Grupo</th>
-                            <th>Práctica</th>
-                            <th>Software</th>
-                            <th>Estado</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="text-center">
-                        <!-- JS llena aquí -->
-                    </tbody>
-
-                </table>
-            </div>
-
-            <!-- PAGINACIÓN -->
-            <div id="paginacion" class="mt-3 text-center"></div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- SweetAlert -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- CSS -->
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/reservaciones.css">
-
-<!-- LIBS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- TU JS -->
-<script src="../../js/reservaciones_maestro.js"></script>
-
-
-    
 <!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../../js/reservaciones_maestro.js"></script>
 <script src="../../js/logout.js"></script>
-<script src="../../js/eliminarLab.js"></script>
+
+<!-- ========================= -->
+<!-- SCRIPT PARA MOSTRAR DESCRIPCIÓN -->
+<!-- ========================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const selectLab = document.getElementById("lab");
+    const descContainer = document.getElementById("labDescripcion");
+    const descTexto = document.getElementById("labDescripcionTexto");
+
+    if(selectLab) {
+        selectLab.addEventListener("change", function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const descripcion = selectedOption ? selectedOption.dataset.descripcion : '';
+            
+            if(descripcion && descripcion.trim() !== '') {
+                descTexto.textContent = descripcion;
+                descTexto.className = 'desc-texto';
+                descContainer.classList.add('visible');
+            } else {
+                descTexto.textContent = 'Este laboratorio no tiene descripción registrada';
+                descTexto.className = 'desc-texto empty';
+                descContainer.classList.add('visible');
+            }
+        });
+
+        // Si ya hay un laboratorio seleccionado al cargar, mostrar su descripción
+        if(selectLab.value) {
+            const event = new Event('change');
+            selectLab.dispatchEvent(event);
+        }
+    }
+});
+</script>

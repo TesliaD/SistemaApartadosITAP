@@ -32,12 +32,12 @@ if(isset($data['IDGrupo']) && $data['IDGrupo'] != "" && $data['IDGrupo'] != 0 &&
     }
     $check->close();
     
-    // Verificar duplicidad (mismo nombre, carrera, semestre pero diferente ID)
-    $dupCheck = $conn->prepare("SELECT IDGrupo FROM grupos WHERE IDCarrera = ? AND Semestre = ? AND Nombre = ? AND IDUsuario = ? AND IDGrupo != ?");
-    $dupCheck->bind_param("iissi", $data['IDCarrera'], $data['Semestre'], $data['Nombre'], $idUsuario, $data['IDGrupo']);
+    // Verificar duplicidad (mismo nombre, carrera, semestre, PERIODO y AÑO pero diferente ID)
+    $dupCheck = $conn->prepare("SELECT IDGrupo FROM grupos WHERE IDCarrera = ? AND Semestre = ? AND Periodo = ? AND Anio = ? AND Nombre = ? AND IDUsuario = ? AND IDGrupo != ?");
+    $dupCheck->bind_param("iisissi", $data['IDCarrera'], $data['Semestre'], $data['Periodo'], $data['Anio'], $data['Nombre'], $idUsuario, $data['IDGrupo']);
     $dupCheck->execute();
     if($dupCheck->get_result()->num_rows > 0){
-        echo json_encode(["error" => "Ya existe un grupo con ese nombre, carrera y semestre"]);
+        echo json_encode(["error" => "Ya existe un grupo con ese nombre, carrera, semestre, periodo y año"]);
         exit;
     }
     $dupCheck->close();
@@ -45,15 +45,20 @@ if(isset($data['IDGrupo']) && $data['IDGrupo'] != "" && $data['IDGrupo'] != 0 &&
     $sql = "UPDATE grupos SET 
                 IDCarrera = ?, 
                 Semestre = ?, 
+                Periodo = ?,
+                Anio = ?,
                 cantidadAlumnos = ?, 
                 Nombre = ?, 
                 tipoGrupo = ?
             WHERE IDGrupo = ? AND IDUsuario = ?";
             
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iiissii", 
+    // Tipos: i=entero, s=string
+    $stmt->bind_param("iisiissii", 
         $data['IDCarrera'],
         $data['Semestre'],
+        $data['Periodo'],
+        $data['Anio'],
         $data['cantidadAlumnos'],
         $data['Nombre'],
         $data['tipoGrupo'],
@@ -63,22 +68,24 @@ if(isset($data['IDGrupo']) && $data['IDGrupo'] != "" && $data['IDGrupo'] != 0 &&
     
 } else {
     // INSERTAR NUEVO - Verificar duplicidad
-    $check = $conn->prepare("SELECT IDGrupo FROM grupos WHERE IDCarrera = ? AND Semestre = ? AND Nombre = ? AND IDUsuario = ?");
-    $check->bind_param("iisi", $data['IDCarrera'], $data['Semestre'], $data['Nombre'], $idUsuario);
+    $check = $conn->prepare("SELECT IDGrupo FROM grupos WHERE IDCarrera = ? AND Semestre = ? AND Periodo = ? AND Anio = ? AND Nombre = ? AND IDUsuario = ?");
+    $check->bind_param("iisiss", $data['IDCarrera'], $data['Semestre'], $data['Periodo'], $data['Anio'], $data['Nombre'], $idUsuario);
     $check->execute();
     if($check->get_result()->num_rows > 0){
-        echo json_encode(["error" => "Ya existe un grupo con ese nombre, carrera y semestre"]);
+        echo json_encode(["error" => "Ya existe un grupo con ese nombre, carrera, semestre, periodo y año"]);
         exit;
     }
     $check->close();
     
-    $sql = "INSERT INTO grupos (IDCarrera, Semestre, cantidadAlumnos, Nombre, tipoGrupo, IDUsuario) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO grupos (IDCarrera, Semestre, Periodo, Anio, cantidadAlumnos, Nombre, tipoGrupo, IDUsuario) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iiissi", 
+    $stmt->bind_param("iisiissi", 
         $data['IDCarrera'],
         $data['Semestre'],
+        $data['Periodo'],
+        $data['Anio'],
         $data['cantidadAlumnos'],
         $data['Nombre'],
         $data['tipoGrupo'],

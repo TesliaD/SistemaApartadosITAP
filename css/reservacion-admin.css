@@ -1,0 +1,751 @@
+/* =========================
+       ESTILOS GENERALES
+    ========================= */
+    body {
+        background: #f5f7fb;
+        padding-top: 70px;
+    }
+
+    /* =========================
+       BADGE ADMIN
+    ========================= */
+    .badge-admin {
+        background: #457b9d;
+        color: white;
+        font-size: 0.7rem;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* =========================
+       CARD MODERN
+    ========================= */
+    .card-modern {
+        background: #ffffff;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(29, 53, 87, 0.08);
+        transition: all 0.3s ease;
+        max-width: 1200px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-modern:hover {
+        box-shadow: 0 15px 50px rgba(29, 53, 87, 0.12);
+    }
+
+    .card-modern .card-header-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        color: white;
+        padding: 20px 30px;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-modern .card-header-modern h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.4rem;
+        letter-spacing: 0.5px;
+        color: white;
+    }
+
+    .card-modern .card-header-modern h4 i {
+        margin-right: 14px;
+        color: #a8dadc;
+    }
+
+    .card-modern .card-body-modern {
+        padding: 30px 35px;
+    }
+
+    /* =========================
+       ETIQUETAS
+    ========================= */
+    .form-label-modern {
+        font-weight: 600;
+        color: #1d3557;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+
+    .form-label-modern .required {
+        color: #e63946;
+        margin-left: 2px;
+    }
+
+    .form-label-modern i {
+        color: #457b9d;
+        margin-right: 4px;
+    }
+
+    /* =========================
+       CAMPOS
+    ========================= */
+    .form-control-modern,
+    .form-select-modern {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        height: 50px;
+        color: #1d3557;
+    }
+
+    .form-control-modern:focus,
+    .form-select-modern:focus {
+        border-color: #457b9d;
+        box-shadow: 0 0 0 4px rgba(69, 123, 157, 0.15);
+        background: #ffffff;
+    }
+
+    .form-control-modern::placeholder {
+        color: #a0aec0;
+    }
+
+    .form-control-modern:disabled,
+    .form-control-modern[readonly] {
+        background: #f1f4f8;
+        cursor: not-allowed;
+        color: #757474;
+    }
+
+    textarea.form-control-modern {
+        height: auto;
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    /* =========================
+       DESCRIPCIÓN DEL LABORATORIO
+    ========================= */
+    .lab-descripcion {
+        background: #f0f4f8;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-top: 10px;
+        border-left: 4px solid #457b9d;
+        display: none;
+        transition: all 0.3s ease;
+    }
+
+    .lab-descripcion.visible {
+        display: block;
+        animation: fadeIn 0.4s ease;
+    }
+
+    .lab-descripcion .desc-titulo {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #457b9d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .lab-descripcion .desc-titulo i {
+        font-size: 0.9rem;
+    }
+
+    .lab-descripcion .desc-texto {
+        color: #1d3557;
+        font-size: 0.95rem;
+        margin-top: 4px;
+        line-height: 1.5;
+    }
+
+    .lab-descripcion .desc-texto.empty {
+        color: #757474;
+        font-style: italic;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================
+       BOTONES DE HORAS
+    ========================= */
+    .hora-btn-modern {
+        border: 2px solid #e2e8f0;
+        background: #f8fafc;
+        color: #1d3557;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.25s ease;
+        min-width: 120px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        letter-spacing: 0.3px;
+    }
+
+    .hora-btn-modern:hover:not(.ocupada):not(.activa) {
+        background: #e8f0f5;
+        border-color: #457b9d;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(69, 123, 157, 0.15);
+    }
+
+    .hora-btn-modern.activa {
+        background: #1d3557;
+        border-color: #1d3557;
+        color: white;
+        box-shadow: 0 4px 20px rgba(29, 53, 87, 0.35);
+        transform: scale(1.02);
+    }
+
+/* ============================================== */
+/*    ESTILO CORREGIDO PARA HORAS OCUPADAS        */
+/* ============================================== */
+.hora-btn-modern.ocupada,
+.hora-btn-modern:disabled {
+    background: #e9ecef !important;
+    border-color: #dee2e6 !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+    text-decoration: line-through !important; /* EL TACHADO */
+    transform: none !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+}
+    /* =============================================== */
+
+    /* =========================
+       BOTÓN GUARDAR
+    ========================= */
+    .btn-guardar-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        border: none;
+        border-radius: 14px;
+        padding: 14px 35px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(29, 53, 87, 0.3);
+        width: 100%;
+    }
+
+    .btn-guardar-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(29, 53, 87, 0.4);
+        background: linear-gradient(135deg, #2a4a7a, #1d3557);
+    }
+
+    .btn-guardar-modern:active {
+        transform: translateY(0px);
+    }
+
+    .btn-guardar-modern i {
+        margin-right: 12px;
+        color: #a8dadc;
+    }
+
+    /* =========================
+       DIVISOR
+    ========================= */
+    .divider-modern {
+        border: none;
+        border-top: 2px dashed #e8f0f5;
+        margin: 25px 0;
+    }
+
+    /* =========================
+       INFO LABEL
+    ========================= */
+    .info-label {
+        color: #757474;
+        font-size: 0.75rem;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .info-label i {
+        font-size: 0.9rem;
+        color: #457b9d;
+    }
+
+    /* =========================
+       BADGE ESTADO EN TABLA
+    ========================= */
+    .badge-estado {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .badge-estado.activa {
+        background: #d4edda;
+        color: #155724;
+    }
+    .badge-estado.cancelada {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .badge-estado.finalizada {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+    @media (max-width: 992px) {
+        .card-modern .card-body-modern {
+            padding: 25px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .card-modern .card-body-modern {
+            padding: 20px;
+        }
+        .hora-btn-modern {
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            min-width: 90px;
+            flex: 1 1 auto;
+            max-width: 140px;
+        }
+        .card-modern .card-header-modern h4 {
+            font-size: 1rem;
+        }
+        .card-modern .card-header-modern .badge-admin {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+        }
+        .form-control-modern,
+        .form-select-modern {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            height: 44px;
+        }
+        .lab-descripcion {
+            padding: 12px 14px;
+        }
+        .lab-descripcion .desc-texto {
+            font-size: 0.85rem;
+        }
+        .d-flex.flex-wrap.gap-2 {
+            gap: 8px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-modern .card-body-modern {
+            padding: 15px;
+        }
+        .hora-btn-modern {
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            min-width: 60px;
+            flex: 1 1 auto;
+            max-width: 100px;
+        }
+        .btn-guardar-modern {
+            font-size: 0.9rem;
+            padding: 12px 20px;
+        }
+        .d-flex.flex-wrap.gap-2 {
+            gap: 6px !important;
+        }
+        .row.g-4 {
+            --bs-gutter-y: 1rem;
+            --bs-gutter-x: 1rem;
+        }
+    }/* =========================
+       ESTILOS GENERALES
+    ========================= */
+    body {
+        background: #f5f7fb;
+        padding-top: 70px;
+    }
+
+    /* =========================
+       BADGE ADMIN
+    ========================= */
+    .badge-admin {
+        background: #457b9d;
+        color: white;
+        font-size: 0.7rem;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* =========================
+       CARD MODERN
+    ========================= */
+    .card-modern {
+        background: #ffffff;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(29, 53, 87, 0.08);
+        transition: all 0.3s ease;
+        max-width: 1200px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-modern:hover {
+        box-shadow: 0 15px 50px rgba(29, 53, 87, 0.12);
+    }
+
+    .card-modern .card-header-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        color: white;
+        padding: 20px 30px;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-modern .card-header-modern h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.4rem;
+        letter-spacing: 0.5px;
+        color: white;
+    }
+
+    .card-modern .card-header-modern h4 i {
+        margin-right: 14px;
+        color: #a8dadc;
+    }
+
+    .card-modern .card-body-modern {
+        padding: 30px 35px;
+    }
+
+    /* =========================
+       ETIQUETAS
+    ========================= */
+    .form-label-modern {
+        font-weight: 600;
+        color: #1d3557;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+
+    .form-label-modern .required {
+        color: #e63946;
+        margin-left: 2px;
+    }
+
+    .form-label-modern i {
+        color: #457b9d;
+        margin-right: 4px;
+    }
+
+    /* =========================
+       CAMPOS
+    ========================= */
+    .form-control-modern,
+    .form-select-modern {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        height: 50px;
+        color: #1d3557;
+    }
+
+    .form-control-modern:focus,
+    .form-select-modern:focus {
+        border-color: #457b9d;
+        box-shadow: 0 0 0 4px rgba(69, 123, 157, 0.15);
+        background: #ffffff;
+    }
+
+    .form-control-modern::placeholder {
+        color: #a0aec0;
+    }
+
+    .form-control-modern:disabled,
+    .form-control-modern[readonly] {
+        background: #f1f4f8;
+        cursor: not-allowed;
+        color: #757474;
+    }
+
+    textarea.form-control-modern {
+        height: auto;
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    /* =========================
+       DESCRIPCIÓN DEL LABORATORIO
+    ========================= */
+    .lab-descripcion {
+        background: #f0f4f8;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-top: 10px;
+        border-left: 4px solid #457b9d;
+        display: none;
+        transition: all 0.3s ease;
+    }
+
+    .lab-descripcion.visible {
+        display: block;
+        animation: fadeIn 0.4s ease;
+    }
+
+    .lab-descripcion .desc-titulo {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #457b9d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .lab-descripcion .desc-titulo i {
+        font-size: 0.9rem;
+    }
+
+    .lab-descripcion .desc-texto {
+        color: #1d3557;
+        font-size: 0.95rem;
+        margin-top: 4px;
+        line-height: 1.5;
+    }
+
+    .lab-descripcion .desc-texto.empty {
+        color: #757474;
+        font-style: italic;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================
+       BOTONES DE HORAS
+    ========================= */
+    .hora-btn-modern {
+        border: 2px solid #e2e8f0;
+        background: #f8fafc;
+        color: #1d3557;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.25s ease;
+        min-width: 120px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        letter-spacing: 0.3px;
+    }
+
+    .hora-btn-modern:hover:not(.ocupada):not(.activa) {
+        background: #e8f0f5;
+        border-color: #457b9d;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(69, 123, 157, 0.15);
+    }
+
+    .hora-btn-modern.activa {
+        background: #1d3557;
+        border-color: #1d3557;
+        color: white;
+        box-shadow: 0 4px 20px rgba(29, 53, 87, 0.35);
+        transform: scale(1.02);
+    }
+
+    /* =============================================== */
+    /*        CAMBIO APLICADO AQUÍ (MÁS FÁCIL)          */
+    /* =============================================== */
+    .hora-btn-modern.ocupada,
+    .hora-btn-modern:disabled {
+        background: #e9ecef !important;      /* Fondo gris */
+        border-color: #dee2e6 !important;    /* Borde gris */
+        color: #6c757d !important;           /* Texto gris oscuro */
+        cursor: not-allowed !important;
+        opacity: 0.7 !important;             /* Un poco transparente */
+        text-decoration: line-through !important; /* EL TACHADO */
+        transform: none !important;
+        box-shadow: none !important;
+        pointer-events: none !important;     /* Asegura que no se pueda hacer clic */
+    }
+    /* =============================================== */
+
+    /* =========================
+       BOTÓN GUARDAR
+    ========================= */
+    .btn-guardar-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        border: none;
+        border-radius: 14px;
+        padding: 14px 35px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(29, 53, 87, 0.3);
+        width: 100%;
+    }
+
+    .btn-guardar-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(29, 53, 87, 0.4);
+        background: linear-gradient(135deg, #2a4a7a, #1d3557);
+    }
+
+    .btn-guardar-modern:active {
+        transform: translateY(0px);
+    }
+
+    .btn-guardar-modern i {
+        margin-right: 12px;
+        color: #a8dadc;
+    }
+
+    /* =========================
+       DIVISOR
+    ========================= */
+    .divider-modern {
+        border: none;
+        border-top: 2px dashed #e8f0f5;
+        margin: 25px 0;
+    }
+
+    /* =========================
+       INFO LABEL
+    ========================= */
+    .info-label {
+        color: #757474;
+        font-size: 0.75rem;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .info-label i {
+        font-size: 0.9rem;
+        color: #457b9d;
+    }
+
+    /* =========================
+       BADGE ESTADO EN TABLA
+    ========================= */
+    .badge-estado {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .badge-estado.activa {
+        background: #d4edda;
+        color: #155724;
+    }
+    .badge-estado.cancelada {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .badge-estado.finalizada {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+    @media (max-width: 992px) {
+        .card-modern .card-body-modern {
+            padding: 25px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .card-modern .card-body-modern {
+            padding: 20px;
+        }
+        .hora-btn-modern {
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            min-width: 90px;
+            flex: 1 1 auto;
+            max-width: 140px;
+        }
+        .card-modern .card-header-modern h4 {
+            font-size: 1rem;
+        }
+        .card-modern .card-header-modern .badge-admin {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+        }
+        .form-control-modern,
+        .form-select-modern {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            height: 44px;
+        }
+        .lab-descripcion {
+            padding: 12px 14px;
+        }
+        .lab-descripcion .desc-texto {
+            font-size: 0.85rem;
+        }
+        .d-flex.flex-wrap.gap-2 {
+            gap: 8px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-modern .card-body-modern {
+            padding: 15px;
+        }
+        .hora-btn-modern {
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            min-width: 60px;
+            flex: 1 1 auto;
+            max-width: 100px;
+        }
+        .btn-guardar-modern {
+            font-size: 0.9rem;
+            padding: 12px 20px;
+        }
+        .d-flex.flex-wrap.gap-2 {
+            gap: 6px !important;
+        }
+        .row.g-4 {
+            --bs-gutter-y: 1rem;
+            --bs-gutter-x: 1rem;
+        }
+    }

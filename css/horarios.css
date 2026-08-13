@@ -1,0 +1,216 @@
+body {
+        background: #f5f7fb;
+        padding-top: 70px;
+    }
+
+    .card-modern {
+        background: #ffffff;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(29, 53, 87, 0.08);
+        max-width: 1200px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-modern .card-header-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        color: white;
+        padding: 18px 25px;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-modern .card-header-modern h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.3rem;
+    }
+
+    .card-modern .card-header-modern h4 i {
+        margin-right: 12px;
+        color: #a8dadc;
+    }
+
+    .card-modern .card-body-modern {
+        padding: 25px 30px;
+    }
+
+    .form-label-modern {
+        font-weight: 600;
+        color: #1d3557;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .form-label-modern i {
+        color: #457b9d;
+        margin-right: 4px;
+    }
+
+    .form-control-modern,
+    .form-select-modern {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        height: 46px;
+        color: #1d3557;
+    }
+
+    .form-control-modern:focus,
+    .form-select-modern:focus {
+        border-color: #457b9d;
+        box-shadow: 0 0 0 4px rgba(69, 123, 157, 0.12);
+        background: #ffffff;
+    }
+
+    .hora-btn-modern {
+        border: 2px solid #e2e8f0;
+        background: #f8fafc;
+        color: #1d3557;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.25s ease;
+        min-width: 80px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .hora-btn-modern:hover:not(.activa) {
+        background: #e8f0f5;
+        border-color: #457b9d;
+        transform: translateY(-2px);
+    }
+
+    .hora-btn-modern.activa {
+        background: #1d3557;
+        border-color: #1d3557;
+        color: white;
+        box-shadow: 0 4px 15px rgba(29, 53, 87, 0.3);
+    }
+
+    .hora-btn-modern.deshabilitada {
+        background: #fef2f2;
+        border-color: #fca5a5;
+        color: #991b1b;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: line-through;
+    }
+
+    .btn-guardar-modern {
+        background: linear-gradient(135deg, #1d3557, #2a4a7a);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 30px;
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(29, 53, 87, 0.25);
+        width: 100%;
+    }
+
+    .btn-guardar-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(29, 53, 87, 0.35);
+        background: linear-gradient(135deg, #2a4a7a, #1d3557);
+    }
+
+    .btn-guardar-modern i {
+        margin-right: 10px;
+        color: #a8dadc;
+    }
+
+    .divider-modern {
+        border: none;
+        border-top: 2px dashed #e8f0f5;
+        margin: 20px 0;
+    }
+
+    .info-label {
+        color: #757474;
+        font-size: 0.75rem;
+        margin-top: 4px;
+    }
+
+    .info-label i {
+        color: #457b9d;
+        margin-right: 4px;
+    }
+
+    .leyenda {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    .leyenda-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        color: #1d3557;
+    }
+
+    .leyenda-item .color-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .color-box.habilitada {
+        background: #1d3557;
+    }
+    .color-box.deshabilitada {
+        background: #fef2f2;
+        border-color: #fca5a5;
+    }
+
+    .table-horarios {
+        font-size: 0.9rem;
+    }
+
+    .table-horarios thead th {
+        background: #1d3557 !important;
+        color: white !important;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 10px;
+        text-align: center;
+        border: none;
+    }
+
+    .table-horarios tbody td {
+        padding: 10px 10px;
+        vertical-align: middle;
+        text-align: center;
+        border-bottom: 1px solid #e8f0f5;
+    }
+
+    @media (max-width: 768px) {
+        .card-modern .card-body-modern {
+            padding: 18px;
+        }
+        .hora-btn-modern {
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            min-width: 65px;
+        }
+    }

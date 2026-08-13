@@ -1,111 +1,95 @@
 <?php
 session_start();
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
+
 header('Content-Type: application/json');
-error_reporting(0);
 
 if(!isset($_SESSION['id'])){
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
 
-include("../includes/conexion.php");
-
 $idUsuario = $_SESSION['id'];
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $limit = 10;
 $offset = ($page - 1) * $limit;
 
-// Construir WHERE dinámico
-$where = "WHERE r.IDUsuario = $idUsuario";
-$params = [];
-$types = "";
+// Filtros adicionales desde el JS
+$inicio = isset($_GET['inicio']) ? $_GET['inicio'] : '';
+$fin = isset($_GET['fin']) ? $_GET['fin'] : '';
+$buscar = isset($_GET['buscar']) ? $_GET['buscar'] : '';
+$estado = isset($_GET['estado']) ? $_GET['estado'] : '';
 
-// Filtro por fecha inicio
-if(isset($_GET['inicio']) && !empty($_GET['inicio'])){
-    $where .= " AND r.fecha >= ?";
-    $params[] = $_GET['inicio'];
-    $types .= "s";
-}
-
-// Filtro por fecha fin
-if(isset($_GET['fin']) && !empty($_GET['fin'])){
-    $where .= " AND r.fecha <= ?";
-    $params[] = $_GET['fin'];
-    $types .= "s";
-}
-
-// Filtro por estado
-if(isset($_GET['estado']) && !empty($_GET['estado'])){
-    $where .= " AND r.Estado = ?";
-    $params[] = $_GET['estado'];
-    $types .= "s";
-}
-
-// Filtro por búsqueda
-if(isset($_GET['buscar']) && !empty($_GET['buscar'])){
-    $buscar = "%" . $_GET['buscar'] . "%";
-    $where .= " AND (u.nombre LIKE ? OR l.Nombre LIKE ? OR g.Nombre LIKE ?)";
-    $params[] = $buscar;
-    $params[] = $buscar;
-    $params[] = $buscar;
-    $types .= "sss";
-}
-
-// Consulta para contar total
-$sqlCount = "SELECT COUNT(*) as total FROM reservaciones r 
-             LEFT JOIN laboratorios l ON r.IDLab = l.IDLab
-             LEFT JOIN grupos g ON r.IDGrupo = g.IDGrupo
-             LEFT JOIN usuarios u ON r.IDUsuario = u.IDUsuarios
-             $where";
-
-// Consulta para datos
+// Construir la consulta SQL con filtros
+// NOTA: Se eliminó 'r.Alumnos' porque no existe en tu tabla reservaciones
 $sql = "SELECT 
-            r.IDReservacion,
-            r.fecha,
-            r.horaInicio,
-            r.horaFin,
-            CONCAT(r.horaInicio, ' - ', r.horaFin) AS horario,
-            l.Nombre AS laboratorio,
-            CONCAT(u.nombre, ' ', IFNULL(u.apellidos, '')) AS docente,
-            CONCAT(g.Nombre, ' (', c.Nombre, ')') AS grupo,
-            r.Practica,
-            r.Software,
-            r.Estado
+            r.IDReservacion, 
+            r.fecha, 
+            r.horaInicio, 
+            r.horaFin, 
+            r.Practica, 
+            r.Software, 
+            r.Estado,
+            l.Nombre AS laboratorio, 
+            CONCAT(u.nombre, ' ', u.apellidos) AS docente,
+            g.Nombre AS grupo
         FROM reservaciones r
-        LEFT JOIN laboratorios l ON r.IDLab = l.IDLab
+        INNER JOIN laboratorios l ON r.IDLab = l.IDLab
+        INNER JOIN usuarios u ON r.IDUsuario = u.IDUsuarios
         LEFT JOIN grupos g ON r.IDGrupo = g.IDGrupo
-        LEFT JOIN carreras c ON g.IDCarrera = c.IDCarrera
-        LEFT JOIN usuarios u ON r.IDUsuario = u.IDUsuarios
-        $where
-        ORDER BY r.fecha DESC, r.horaInicio ASC
-        LIMIT $limit OFFSET $offset";
+        WHERE r.IDUsuario = ?";
 
-// Preparar y ejecutar consulta count
-$stmtCount = $conn->prepare($sqlCount);
-if(!empty($params)){
-    $stmtCount->bind_param($types, ...$params);
+$params = [$idUsuario];
+$tipos = "i";
+
+if (!empty($inicio) && !empty($fin)) {
+    $sql .= " AND r.fecha BETWEEN ? AND ?";
+    $params[] = $inicio;
+    $params[] = $fin;
+    $tipos .= "ss";
 }
-$stmtCount->execute();
-$totalResult = $stmtCount->get_result();
-$total = $totalResult->fetch_assoc()['total'] ?? 0;
 
-// Preparar y ejecutar consulta datos
+if (!empty($buscar)) {
+    $sql .= " AND (l.Nombre LIKE ? OR g.Nombre LIKE ? OR r.Practica LIKE ?)";
+    $like = "%$buscar%";
+    $params[] = $like;
+    $params[] = $like;
+    $params[] = $like;
+    $tipos .= "sss";
+}
+
+if (!empty($estado)) {
+    $sql .= " AND r.Estado = ?";
+    $params[] = $estado;
+    $tipos .= "s";
+}
+
+$sql .= " ORDER BY r.fecha DESC, r.horaInicio DESC LIMIT ? OFFSET ?";
+$params[] = $limit;
+$params[] = $offset;
+$tipos .= "ii";
+
 $stmt = $conn->prepare($sql);
-if(!empty($params)){
-    $stmt->bind_param($types, ...$params);
-}
+$stmt->bind_param($tipos, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
 $data = [];
-while($row = $result->fetch_assoc()){
+while ($row = $result->fetch_assoc()) {
     $data[] = $row;
 }
 
-echo json_encode([
-    "data" => $data,
-    "total" => (int)$total,
-    "page" => $page,
-    "limit" => $limit
-]);
-?>¬
+// Contar total para paginación (mismos filtros sin LIMIT ni OFFSET)
+$sqlTotal = str_replace("LIMIT ? OFFSET ?", "", $sql);
+$stmtTotal = $conn->prepare($sqlTotal);
+// Quitamos los dos últimos parámetros (limit y offset) para el count
+$paramsTotal = array_slice($params, 0, count($params) - 2);
+$tiposTotal = substr($tipos, 0, -2);
+
+$stmtTotal->bind_param($tiposTotal, ...$paramsTotal);
+$stmtTotal->execute();
+$resultTotal = $stmtTotal->get_result();
+$total = $resultTotal->fetch_assoc()['total'] ?? 0;
+
+echo json_encode(["data" => $data, "total" => $total]);
+?>

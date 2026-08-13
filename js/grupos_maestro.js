@@ -39,7 +39,8 @@ function cargarGrupos() {
             
             let html = "";
             if(data.length === 0) {
-                html = '<tr><td colspan="8" class="text-center">No tienes grupos registrados</td></tr>';
+                // Aumenté el colspan a 10 porque agregamos 2 columnas
+                html = '<tr><td colspan="10" class="text-center">No tienes grupos registrados</td></tr>';
             } else {
                 data.forEach(grupo => {
                     const nombreGrupo = grupo.Nombre || grupo.Semestre + '° Semestre';
@@ -49,6 +50,8 @@ function cargarGrupos() {
                         <tr>
                             <td>${grupo.Carrera || 'N/A'}</td>
                             <td>${grupo.Semestre || '-'}°</td>
+                            <td>${grupo.Periodo || '-'}</td>
+                            <td>${grupo.Anio || '-'}</td>
                             <td>${nombreGrupo}</td>
                             <td>${grupo.tipoGrupo || 'regular'}</td>
                             <td>${grupo.cantidadAlumnos || 0}</td>
@@ -89,12 +92,14 @@ function guardarGrupo() {
     
     const carrera = document.getElementById("carrera").value;
     const semestre = document.getElementById("semestre").value;
+    const periodo = document.getElementById("periodo").value;
+    const anio = document.getElementById("anio").value;
     const cantidadAlumnos = document.getElementById("cantidadAlumnos").value;
     const nombreGrupo = document.getElementById("nombreGrupo").value;
     const tipoGrupo = document.getElementById("tipoGrupo").value;
     
-    if(!carrera || !semestre || !cantidadAlumnos) {
-        Swal.fire("Error", "Completa los campos obligatorios", "error");
+    if(!carrera || !semestre || !periodo || !anio || !cantidadAlumnos) {
+        Swal.fire("Error", "Completa todos los campos obligatorios", "error");
         return;
     }
     
@@ -102,6 +107,8 @@ function guardarGrupo() {
         IDGrupo: idGrupoEditando,
         IDCarrera: parseInt(carrera),
         Semestre: parseInt(semestre),
+        Periodo: periodo,
+        Anio: parseInt(anio),
         cantidadAlumnos: parseInt(cantidadAlumnos),
         Nombre: nombreGrupo,
         tipoGrupo: tipoGrupo
@@ -141,6 +148,8 @@ function editarGrupo(id) {
             
             document.getElementById("carrera").value = grupo.IDCarrera;
             document.getElementById("semestre").value = grupo.Semestre;
+            document.getElementById("periodo").value = grupo.Periodo;
+            document.getElementById("anio").value = grupo.Anio;
             document.getElementById("cantidadAlumnos").value = grupo.cantidadAlumnos;
             document.getElementById("nombreGrupo").value = grupo.Nombre || '';
             document.getElementById("tipoGrupo").value = grupo.tipoGrupo || 'regular';
@@ -160,6 +169,8 @@ function editarGrupo(id) {
 function cancelarEdicion() {
     document.getElementById("carrera").value = "";
     document.getElementById("semestre").value = "";
+    document.getElementById("periodo").value = "";
+    document.getElementById("anio").value = "";
     document.getElementById("cantidadAlumnos").value = "";
     document.getElementById("nombreGrupo").value = "";
     document.getElementById("tipoGrupo").value = "regular";
@@ -177,8 +188,8 @@ function eliminarGrupo(id) {
     const buttons = document.querySelectorAll(`[onclick="eliminarGrupo(${id})"]`);
     if(buttons.length > 0) {
         const row = buttons[0].closest('tr');
-        if(row && row.cells[2]) {
-            nombreGrupo = row.cells[2].innerText || 'este grupo';
+        if(row && row.cells[4]) { // Nota: el índice cambió a 4 porque agregamos columnas
+            nombreGrupo = row.cells[4].innerText || 'este grupo';
         }
     }
     
@@ -226,6 +237,7 @@ function eliminarGrupo(id) {
     });
 }
 
+// Las funciones para subir alumnos y ver lista siguen exactamente igual sin cambios:
 function abrirModalAlumnos(grupoId, grupoNombre) {
     document.getElementById("grupoIdUpload").value = grupoId;
     const modal = new bootstrap.Modal(document.getElementById("modalAlumnos"));
@@ -243,7 +255,17 @@ function subirAlumnos(e) {
         method: "POST",
         body: formData
     })
-    .then(res => res.json())
+    .then(res => {
+        // Verificamos si la respuesta es JSON válido antes de intentar parsearlo
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            // Si el servidor devolvió HTML (como ese reporte), esto evitará que se rompa
+            return res.text().then(text => {
+                throw new Error("El servidor devolvió HTML en lugar de JSON. Revisa el controlador.");
+            });
+        }
+        return res.json();
+    })
     .then(data => {
         console.log("Respuesta subida:", data);
         
@@ -275,28 +297,39 @@ function subirAlumnos(e) {
         mensajeHtml += `</div>`;
         resultadoDiv.innerHTML = mensajeHtml;
         
-        if(data.procesados > 0 || data.duplicados > 0) {
+        // Si se insertaron alumnos, cerramos el modal y recargamos la tabla
+        if((data.procesados || 0) > 0 || (data.duplicados || 0) > 0) {
             setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById("modalAlumnos"));
+                const modalEl = document.getElementById("modalAlumnos");
+                const modal = bootstrap.Modal.getInstance(modalEl);
                 if(modal) modal.hide();
+                
+                // Limpiar el resultado al cerrar
+                setTimeout(() => {
+                    resultadoDiv.innerHTML = '';
+                }, 500);
+                
                 cargarGrupos(); // Recargar la tabla para actualizar el contador
             }, 3000);
         }
     })
     .catch(err => {
-        console.error("Error:", err);
-        resultadoDiv.innerHTML = `<div class="alert alert-danger">Error al procesar archivo: ${err.message}</div>`;
+        console.error("Error en catch:", err);
+        // Esto evitará que se inyecte el HTML del reporte en caso de error
+        resultadoDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error inesperado:</strong><br>
+                ${err.message}<br><br>
+                <small>El servidor no devolvió un JSON válido. Revisa la consola (F12) para más detalles.</small>
+            </div>
+        `;
     });
 }
-
-// Función para ver la lista de alumnos
 function verListaAlumnos(grupoId, grupoNombre) {
     console.log("Ver alumnos del grupo:", grupoId, grupoNombre);
     
-    // Actualizar el título del modal
     document.getElementById("tituloGrupoAlumnos").innerText = grupoNombre;
     
-    // Mostrar loading en la tabla
     const tbody = document.getElementById("tablaAlumnosBody");
     tbody.innerHTML = `
         <tr>
@@ -306,11 +339,9 @@ function verListaAlumnos(grupoId, grupoNombre) {
         </tr>
     `;
     
-    // Abrir el modal
     const modal = new bootstrap.Modal(document.getElementById("modalVerAlumnos"));
     modal.show();
     
-    // Cargar los alumnos
     fetch(`/SistemaApartadosITAP/controllers/obtener_alumnos_por_grupo.php?id=${grupoId}`)
         .then(response => response.json())
         .then(data => {

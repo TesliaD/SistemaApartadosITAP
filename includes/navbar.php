@@ -55,6 +55,7 @@
     <div class="submenu">
         <a href="RegistrarLaboratorios.php"><i class="bi bi-building-fill-add"></i>Registrar</a>
         <a href="VerLaboratorios_Editar.php"><i class="bi bi-display"></i>Lista de Laboratorios</a>
+        <a href="horarios_laboratorios.php"><i class="bi bi-alarm"></i>Horarios Disponibles</a>
     </div>
     
     <!--Reportes-->

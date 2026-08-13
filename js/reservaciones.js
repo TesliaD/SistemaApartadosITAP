@@ -312,36 +312,49 @@ function cargarAlumnos(){
 }
 
 // ==========================
-// HORAS OCUPADAS
+// HORAS OCUPADAS (CORREGIDA CON NORMALIZACIÓN)
 // ==========================
-function cargarHorasOcupadas(){
-    if(!fecha.value || !lab.value) return;
+
+function cargarHorasOcupadas() {
+    if (!fecha.value || !lab.value) return;
 
     fetch(`/SistemaApartadosITAP/controllers/obtener_horas_ocupadas.php?fecha=${fecha.value}&lab=${lab.value}`)
-    .then(response => response.json())
-    .then(horas => {
-        // Si la respuesta es un objeto con error
-        if(horas.error) {
-            console.error(horas.error);
-            return;
-        }
-        
-        // Si es un array de horas
-        document.querySelectorAll(".hora-btn").forEach(btn => {
-            let hora = btn.innerText.trim();
-            btn.classList.remove("ocupada");
-            btn.disabled = false;
-            
-            if(Array.isArray(horas) && horas.includes(hora)){
-                btn.classList.add("ocupada");
-                btn.disabled = true;
-                btn.classList.remove("activa");
-            }
-        });
-    })
-    .catch(err => console.error("Error cargando horas ocupadas:", err));
-}
+        .then(response => response.json())
+        .then(horas => {
+            console.log("🟡 Horas recibidas del backend (PHP):", horas);
 
+            document.querySelectorAll(".hora-btn").forEach(btn => {
+                const horaBotonCompleta = btn.innerText.trim();
+                const horaInicioBoton = horaBotonCompleta.split('-')[0].trim(); 
+                
+                btn.classList.remove("ocupada");
+                btn.disabled = false;
+
+                // DEPURACIÓN EXTREMA: Revisar una por una en un bucle
+                let estaOcupada = false;
+                if (Array.isArray(horas)) {
+                    for (let i = 0; i < horas.length; i++) {
+                        // Asegurarnos de limpiar espacios en lo que manda el backend también
+                        if (horas[i].trim() === horaInicioBoton) {
+                            estaOcupada = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (estaOcupada) {
+                    console.log(`🟢 ¡BLOQUEADA! Botón: "${horaBotonCompleta}" vs Backend: "${horaInicioBoton}"`);
+                    btn.classList.add("ocupada");
+                    btn.disabled = true;
+                    btn.classList.remove("activa");
+                } else {
+                    // Si no se bloquea, te dirá por qué en la consola
+                    console.log(`🔴 Libre: "${horaBotonCompleta}" (Buscando inicio: "${horaInicioBoton}")`);
+                }
+            });
+        })
+        .catch(err => console.error("Error al cargar horas ocupadas:", err));
+}
 // ==========================
 // CANCELAR RESERVACION
 // ==========================
@@ -379,3 +392,4 @@ function cancelar(id){
         }
     });
 }
+

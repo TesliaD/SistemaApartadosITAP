@@ -1,5 +1,4 @@
 <?php
-ob_clean();
 session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
 
@@ -35,7 +34,7 @@ if(!$result){
 $grupos = [];
 while($row = $result->fetch_assoc()){
     $nombreGrupo = $row['Nombre'] ?: $row['Semestre'] . '° Semestre';
-    $row['NombreCompleto'] = $row['Carrera'] . ' - ' . $nombreGrupo;
+    $row['NombreCompleto'] = ($row['Carrera'] ?? 'Sin carrera') . ' - ' . $nombreGrupo;
     $grupos[] = $row;
 }
 

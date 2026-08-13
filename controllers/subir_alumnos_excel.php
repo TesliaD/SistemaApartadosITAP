@@ -39,7 +39,7 @@ try {
     $hoja = $spreadsheet->getActiveSheet();
     $datos = $hoja->toArray();
     
-    // Eliminar encabezado
+    // Eliminar encabezado del Excel
     array_shift($datos);
     
     $procesados = 0;
@@ -53,7 +53,33 @@ try {
         
         $noControl = trim($fila[0]);
         $nombre = trim($fila[1]);
-        $plan = isset($fila[2]) ? trim($fila[2]) : null; // Columna C: Plan (ISC, IMA, etc.)
+        $plan = isset($fila[2]) ? trim($fila[2]) : null;
+        
+        // ==========================================================
+        // VALIDACIÓN ESTRICTA PARA EVITAR LOS REPORTES BASURA
+        // ==========================================================
+        // 1. Ignorar si el texto contiene palabras clave de reportes (Case insensitive)
+        $palabrasBasura = ['laboratorio', 'carrera', 'grupo', 'fecha', 'maestro', 'materia', 'núm', 'no.'];
+        $textoMinusculas = strtolower($noControl . ' ' . $nombre);
+        $esBasura = false;
+        foreach ($palabrasBasura as $palabra) {
+            if (strpos($textoMinusculas, $palabra) !== false) {
+                $esBasura = true;
+                break;
+            }
+        }
+        
+        // 2. Ignorar si tiene más de 15 caracteres (los reportes tienen textos largos)
+        if (strlen($noControl) > 15 || strlen($nombre) > 50) {
+            $esBasura = true;
+        }
+
+        // Si es basura, lo saltamos y no lo insertamos
+        if ($esBasura) {
+            $mensajes[] = "Fila ignorada (parece ser encabezado de reporte): $noControl";
+            continue;
+        }
+        // ==========================================================
         
         // PRIMERO: Verificar si el alumno YA EXISTE en ESTE grupo
         $check = $conn->prepare("SELECT IDAlumnos FROM alumnos WHERE NoControl = ? AND IDGrupo = ?");
