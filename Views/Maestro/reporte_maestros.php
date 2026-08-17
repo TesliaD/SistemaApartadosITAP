@@ -3,6 +3,7 @@ include("../../includes/auth_maestro.php");
 include("../../includes/conexion.php");
 include("../../includes/header.php");
 include("../../includes/navbar_maestros.php");
+include("../../includes/reportes_maestros_dise.php");
 
 $idUsuario = $_SESSION['id'] ?? 0;
 
@@ -15,422 +16,6 @@ $result = $stmt->get_result();
 $maestro = $result->fetch_assoc();
 $nombreMaestro = trim($maestro['nombre'] . ' ' . ($maestro['apellidos'] ?? ''));
 ?>
-
-<style>
-    body {
-        background: #f5f7fb;
-        padding-top: 70px;
-    }
-
-    .card-modern {
-        background: #ffffff;
-        border-radius: 20px;
-        border: none;
-        box-shadow: 0 10px 40px rgba(29, 53, 87, 0.08);
-        transition: all 0.3s ease;
-        max-width: 1200px;
-        margin: 0 auto;
-        overflow: hidden;
-    }
-
-    .card-modern .card-header-modern {
-        background: linear-gradient(135deg, #1d3557, #2a4a7a);
-        color: white;
-        padding: 18px 25px;
-        border: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .card-modern .card-header-modern h4 {
-        margin: 0;
-        font-weight: 600;
-        font-size: 1.3rem;
-    }
-
-    .card-modern .card-header-modern h4 i {
-        margin-right: 12px;
-        color: #a8dadc;
-    }
-
-    .card-modern .card-body-modern {
-        padding: 25px 30px;
-    }
-
-    .form-label-modern {
-        font-weight: 600;
-        color: #1d3557;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 5px;
-    }
-
-    .form-label-modern i {
-        color: #457b9d;
-        margin-right: 4px;
-    }
-
-    .form-control-modern,
-    .form-select-modern {
-        border: 2px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 10px 16px;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
-        background: #f8fafc;
-        height: 46px;
-        color: #1d3557;
-    }
-
-    .form-control-modern:focus,
-    .form-select-modern:focus {
-        border-color: #457b9d;
-        box-shadow: 0 0 0 4px rgba(69, 123, 157, 0.12);
-        background: #ffffff;
-    }
-
-    .form-control-modern[readonly] {
-        background: #f1f4f8;
-        cursor: not-allowed;
-    }
-
-    /* =========================
-       VALIDACIÓN DE RESERVACIÓN
-    ========================= */
-    .reservacion-ok {
-        background: #d4edda;
-        border: 2px solid #28a745;
-        border-radius: 10px;
-        padding: 10px 15px;
-        margin-top: 8px;
-        color: #155724;
-        font-size: 0.85rem;
-        display: none;
-    }
-
-    .reservacion-ok i {
-        margin-right: 8px;
-        color: #28a745;
-    }
-
-    .reservacion-error {
-        background: #f8d7da;
-        border: 2px solid #dc3545;
-        border-radius: 10px;
-        padding: 10px 15px;
-        margin-top: 8px;
-        color: #721c24;
-        font-size: 0.85rem;
-        display: none;
-    }
-
-    .reservacion-error i {
-        margin-right: 8px;
-        color: #dc3545;
-    }
-
-    /* =========================
-       PREVIEW DEL REPORTE
-    ========================= */
-    .reporte-preview {
-        background: #ffffff;
-        padding: 25px;
-        border: 2px solid #e2e8f0;
-        border-radius: 16px;
-        margin-top: 25px;
-        display: none;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    }
-
-    .reporte-preview .reporte-header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .reporte-preview .reporte-header h5 {
-        margin: 0;
-        font-weight: 700;
-        color: #1d3557;
-        font-size: 1.1rem;
-    }
-
-    .reporte-preview .reporte-header .subtitulo {
-        font-size: 0.85rem;
-        color: #457b9d;
-        margin-top: 3px;
-    }
-
-    .reporte-preview table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.85rem;
-    }
-
-    .reporte-preview table td,
-    .reporte-preview table th {
-        border: 1px solid #1d3557;
-        padding: 6px 10px;
-        text-align: left;
-    }
-
-    .reporte-preview table th {
-        background: #e8f0f5;
-        color: #1d3557;
-        font-weight: 600;
-        text-align: center;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-    }
-
-    .reporte-preview .firma-linea {
-        display: inline-block;
-        width: 200px;
-        border-top: 1px solid #1d3557;
-        margin-top: 30px;
-        padding-top: 5px;
-    }
-
-    .reporte-preview .footer-reporte {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 0.8rem;
-        color: #757474;
-    }
-
-    .btn-reporte {
-        background: linear-gradient(135deg, #1d3557, #2a4a7a);
-        border: none;
-        border-radius: 12px;
-        padding: 12px 30px;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(29, 53, 87, 0.25);
-    }
-
-    .btn-reporte:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(29, 53, 87, 0.35);
-        background: linear-gradient(135deg, #2a4a7a, #1d3557);
-        color: white;
-    }
-
-    .btn-excel {
-        background: linear-gradient(135deg, #1e7e34, #28a745);
-        border: none;
-        border-radius: 12px;
-        padding: 12px 30px;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.25);
-    }
-
-    .btn-excel:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.35);
-        color: white;
-    }
-
-    .btn-imprimir {
-        background: linear-gradient(135deg, #6c757d, #5a6268);
-        border: none;
-        border-radius: 12px;
-        padding: 12px 30px;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.25);
-    }
-
-    .btn-imprimir:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.35);
-        color: white;
-    }
-
-    .btn-reporte:disabled,
-    .btn-excel:disabled,
-    .btn-imprimir:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none !important;
-    }
-
-    @media (max-width: 768px) {
-        .card-modern .card-body-modern {
-            padding: 18px;
-        }
-        .reporte-preview table {
-            font-size: 0.7rem;
-        }
-        .reporte-preview table td,
-        .reporte-preview table th {
-            padding: 4px 6px;
-        }
-        .btn-reporte,
-        .btn-excel,
-        .btn-imprimir {
-            padding: 10px 20px;
-            font-size: 0.85rem;
-            width: 100%;
-            margin-bottom: 8px;
-        }
-        .d-flex.gap-2.flex-wrap {
-            flex-direction: column;
-        }
-    }
-
-    /* ============================================================ */
-    /*  REGLA PARA QUE AL IMPRIMIR SE VEA IGUAL QUE EN PANTALLA     */
-    /* ============================================================ */
-    @media print 
-    {
-
-        /* =====================================================
-        CONFIGURACIÓN GENERAL
-        ===================================================== */
-
-        @page {
-            size: letter;
-            margin: 10mm;
-        }
-
-
-        html,
-        body {
-            background: white !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-        }
-
-
-        /* =====================================================
-        OCULTAR TODA LA PÁGINA
-        ===================================================== */
-
-        body * {
-            visibility: hidden !important;
-        }
-
-
-        /* =====================================================
-        MOSTRAR ÚNICAMENTE EL REPORTE
-        ===================================================== */
-
-        #reportePreview,
-        #reportePreview * {
-            visibility: visible !important;
-        }
-
-
-        /* =====================================================
-        COLOCAR REPORTE AL PRINCIPIO DE LA HOJA
-        ===================================================== */
-
-        #reportePreview {
-
-            display: block !important;
-
-            position: absolute !important;
-
-            left: 0 !important;
-
-            top: 0 !important;
-
-            width: 100% !important;
-
-            max-width: none !important;
-
-            margin: 0 !important;
-
-            padding: 10px !important;
-
-            border: none !important;
-
-            border-radius: 0 !important;
-
-            box-shadow: none !important;
-
-            background: white !important;
-
-        }
-
-
-        /* =====================================================
-        TABLAS
-        ===================================================== */
-
-        #reportePreview table {
-
-            width: 100% !important;
-
-            border-collapse: collapse !important;
-
-        }
-
-
-        #reportePreview table th {
-
-            background: #e8f0f5 !important;
-
-            color: #1d3557 !important;
-
-            -webkit-print-color-adjust: exact !important;
-
-            print-color-adjust: exact !important;
-
-        }
-
-
-        #reportePreview table td,
-        #reportePreview table th {
-
-            border: 1px solid #1d3557 !important;
-
-        }
-
-
-        /* =====================================================
-        EVITAR CORTES EXTRAÑOS
-        ===================================================== */
-
-        #reportePreview tr {
-
-            page-break-inside: avoid !important;
-
-            break-inside: avoid !important;
-
-        }
-
-
-        #reportePreview table {
-
-            page-break-inside: auto !important;
-
-        }
-
-
-        /* =====================================================
-        OCULTAR ELEMENTOS DE INTERFAZ
-        ===================================================== */
-
-        .navbar,
-        #sidebar,
-        footer,
-        .btn-reporte,
-        .btn-excel,
-        .btn-imprimir {
-
-            display: none !important;
-
-        }
-
-    }
-</style>
 
 <div class="container mt-4">
 
@@ -753,9 +338,9 @@ document.addEventListener("DOMContentLoaded", function () {
         deshabilitarBotones();
 
         // Obtener únicamente la hora inicial
-        const horaInicio = hora
-            .split('-')[0]
-            .trim();
+        const [horaInicio = '', horaFin = ''] = hora
+            .split('-')
+            .map(valor => valor.trim());
 
 
         // URL
@@ -763,7 +348,8 @@ document.addEventListener("DOMContentLoaded", function () {
             `/SistemaApartadosITAP/controllers/obtener_datos_reporte_maestro.php` +
             `?grupo=${encodeURIComponent(idGrupo)}` +
             `&fecha=${encodeURIComponent(fecha)}` +
-            `&hora=${encodeURIComponent(horaInicio)}`;
+            `&hora=${encodeURIComponent(horaInicio)}` +
+            `&horaFin=${encodeURIComponent(horaFin)}`;
 
 
         console.log("================================");
@@ -771,6 +357,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Grupo:", idGrupo);
         console.log("Fecha:", fecha);
         console.log("Hora:", horaInicio);
+        console.log("Hora fin:", horaFin);
         console.log("URL:", url);
         console.log("================================");
 
@@ -1017,45 +604,12 @@ function obtenerAlumnos(reservacion) {
         return [];
     }
 
-
-    // =====================================================
-    // ESTRUCTURA ACTUAL DEL PHP
-    //
-    // El PHP ahora manda:
-    //
-    // Alumnos: 27
-    //
-    // listaAlumnos: [
-    //     {
-    //         numero: 1,
-    //         IDAlumnos: 166,
-    //         NoControl: "23750154",
-    //         nombre: "ARVIZU BARRIOS KARLA GISEL",
-    //         plan: "ISC",
-    //         IDGrupo: 13
-    //     },
-    //     ...
-    // ]
-    //
-    // Por lo tanto, la lista real está en:
-    //
-    // reservacion.listaAlumnos
-    // =====================================================
-
     if (Array.isArray(reservacion.listaAlumnos)) {
 
         return reservacion.listaAlumnos;
 
     }
 
-
-    // =====================================================
-    // COMPATIBILIDAD CON LA ESTRUCTURA ANTERIOR
-    // =====================================================
-    //
-    // Por si en algún momento el PHP vuelve a mandar
-    // directamente los alumnos dentro de "Alumnos".
-    // =====================================================
 
     if (Array.isArray(reservacion.Alumnos)) {
 
@@ -1137,15 +691,6 @@ function obtenerNumeroControl(alumno) {
         return '';
     }
 
-
-    // =====================================================
-    // NOMBRE REAL DE LA COLUMNA EN LA BASE DE DATOS
-    //
-    // PHP devuelve:
-    //
-    // NoControl
-    // =====================================================
-
     return (
 
         alumno.NoControl ??
@@ -1194,15 +739,6 @@ function obtenerNumeroControl(alumno) {
 
     }
 
-
-    // =========================================================
-    // GENERAR FILAS DE ALUMNOS
-    //
-    // IMPORTANTE:
-    // NO HAY LÍMITE DE 30.
-    // RECORRE TODOS LOS ALUMNOS RECIBIDOS DEL PHP.
-    // =========================================================
-
     function generarFilasAlumnos(alumnos) {
 
         let filas = '';
@@ -1233,6 +769,8 @@ function obtenerNumeroControl(alumno) {
                 <tr>
 
                     <td style="
+                        border:1px solid #1d3557 !important;
+                        padding:7px;
                         text-align:center;
                         width:8%;
                     ">
@@ -1241,6 +779,8 @@ function obtenerNumeroControl(alumno) {
 
 
                     <td style="
+                        border:1px solid #1d3557 !important;
+                        padding:7px;
                         width:25%;
                     ">
                         ${escaparHTML(numeroControl)}
@@ -1248,6 +788,8 @@ function obtenerNumeroControl(alumno) {
 
 
                     <td style="
+                        border:1px solid #1d3557 !important;
+                        padding:7px;
                         width:42%;
                     ">
                         ${escaparHTML(nombre)}
@@ -1255,6 +797,8 @@ function obtenerNumeroControl(alumno) {
 
 
                     <td style="
+                        border:1px solid #1d3557 !important;
+                        padding:7px;
                         width:25%;
                         height:32px;
                     ">
@@ -1384,8 +928,10 @@ function obtenerNumeroControl(alumno) {
         // HORA
         // =====================================================
 
-        const horaCompleta =
-            `${r.horaInicio || ''} - ${r.horaFin || ''}`;
+        const rangoSeleccionado = horaReporte.value.split('-').map(hora => hora.trim());
+        const horaInicio = r.horaInicio || rangoSeleccionado[0] || '';
+        const horaFin = r.horaFin || rangoSeleccionado[1] || '';
+        const horaCompleta = `${horaInicio} - ${horaFin}`;
 
 
         // =====================================================
@@ -1394,6 +940,9 @@ function obtenerNumeroControl(alumno) {
 
         const laboratorio =
             r.laboratorio || 'No especificado';
+
+        const departamento =
+            r.departamento || 'Sin asignar';
 
 
         const practica =
@@ -1486,7 +1035,8 @@ function obtenerNumeroControl(alumno) {
                         margin-top:8px;
                     "
                 >
-                    DEPARTAMENTO DE Electrónica
+                    Departamento De
+                    ${escaparHTML(departamento)}
                 </div>
 
 
@@ -1627,6 +1177,9 @@ function obtenerNumeroControl(alumno) {
             ========================================== -->
 
             <table
+                class="tabla-alumnos"
+                border="1"
+                cellspacing="0"
                 style="
                     width:100%;
                     border-collapse:collapse;
@@ -1895,8 +1448,10 @@ function obtenerNumeroControl(alumno) {
         // HORA
         // =====================================================
 
-        const horaCompleta =
-            `${r.horaInicio || ''} - ${r.horaFin || ''}`;
+        const rangoSeleccionado = horaReporte.value.split('-').map(hora => hora.trim());
+        const horaInicio = r.horaInicio || rangoSeleccionado[0] || '';
+        const horaFin = r.horaFin || rangoSeleccionado[1] || '';
+        const horaCompleta = `${horaInicio} - ${horaFin}`;
 
 
         // =====================================================
@@ -1905,6 +1460,9 @@ function obtenerNumeroControl(alumno) {
 
         const laboratorio =
             r.laboratorio || 'No especificado';
+
+        const departamento =
+            r.departamento || 'Sin asignar';
 
 
         const practica =
@@ -2061,7 +1619,7 @@ function obtenerNumeroControl(alumno) {
 
     <h3 style="text-align:center;">
 
-        DEPARTAMENTO DE Electrónica
+        DEPARTAMENTO DE ${escaparHTML(departamento)}
 
     </h3>
 

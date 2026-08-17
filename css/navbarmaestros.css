@@ -1,27 +1,45 @@
-n /* =========================
-RESET
-========================= */
+/* =========================================================
+   RESET
+========================================================= */
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
 html,
-body{
+body {
     height: 100%;
     font-family: Arial, Helvetica, sans-serif;
     background: #f4f6f9;
     overflow-x: hidden;
 }
 
-/* =========================
-SIDEBAR
-========================= */
 
-.sidebar{
+/* =========================================================
+   BODY / ESTRUCTURA PRINCIPAL
+========================================================= */
+
+body.nav-maestro {
+    padding-left: 250px;
+    padding-top: 70px;
+
+    transition: padding-left .3s ease;
+}
+
+body.nav-maestro.sidebar-maestro-colapsada {
+    padding-left: 80px;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
     position: fixed;
+
     top: 0;
     left: 0;
 
@@ -33,32 +51,51 @@ SIDEBAR
     padding: 20px 15px;
 
     overflow-y: auto;
+    overflow-x: hidden;
 
-    transition: all .3s ease;
+    transition:
+        width .3s ease,
+        padding .3s ease,
+        left .3s ease,
+        background-color .3s ease;
 
     z-index: 1200;
 }
 
-/* SIDEBAR COLAPSADO */
 
-.sidebar.collapsed{
+/* =========================================================
+   SIDEBAR COLAPSADO
+========================================================= */
+
+.sidebar.collapsed {
     width: 80px;
     padding: 20px 10px;
 }
 
-/* TITULO */
 
-.sidebar h5{
+/* =========================================================
+   TITULO SIDEBAR
+========================================================= */
+
+.sidebar h5 {
     color: white;
+
     margin-bottom: 25px;
-    transition: opacity .3s ease;
+
+    transition:
+        opacity .2s ease,
+        visibility .2s ease;
 }
 
-/* LINKS */
 
-.sidebar a{
+/* =========================================================
+   LINKS SIDEBAR
+========================================================= */
+
+.sidebar a {
     display: flex;
     align-items: center;
+
     gap: 12px;
 
     color: white;
@@ -70,69 +107,135 @@ SIDEBAR
 
     margin-bottom: 10px;
 
-    transition: all .3s ease;
-
     white-space: nowrap;
+
+    transition:
+        background-color .2s ease,
+        padding .3s ease,
+        transform .2s ease;
 }
 
-/* HOVER */
 
-.sidebar a:hover{
-    background: rgba(255,255,255,.1);
+/* =========================================================
+   HOVER
+========================================================= */
+
+.sidebar a:hover {
+    background: rgba(255, 255, 255, .1);
 }
 
-/* ICONOS */
 
-.sidebar i{
+/* =========================================================
+   ICONOS
+========================================================= */
+
+.sidebar i {
     font-size: 20px;
+
     min-width: 25px;
+
     text-align: center;
+
+    flex-shrink: 0;
 }
 
-/* =========================
-SIDEBAR COLAPSADO
-========================= */
+
+/* =========================================================
+   ELEMENTOS OCULTOS CUANDO ESTÁ COLAPSADO
+========================================================= */
 
 .sidebar.collapsed span,
-.sidebar.collapsed h5,
-.sidebar.collapsed .submenu{
-    display: none;
+.sidebar.collapsed h5 {
+    opacity: 0;
+    visibility: hidden;
+
+    width: 0;
+    overflow: hidden;
 }
 
-.sidebar.collapsed a{
+
+/* =========================================================
+   LINKS CUANDO ESTÁ COLAPSADO
+========================================================= */
+
+.sidebar.collapsed a {
     justify-content: center;
+
     padding: 15px 0;
+
+    gap: 0;
 }
 
-.sidebar.collapsed i{
+.sidebar.collapsed i {
     min-width: auto;
+
     margin: 0;
+
     font-size: 22px;
 }
 
-/* =========================
-SUBMENU
-========================= */
 
-.submenu{
-    display: none;
+/* =========================================================
+   SUBMENÚ
+========================================================= */
+
+.submenu {
+    max-height: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
     margin-left: 15px;
+
+    transition:
+        max-height .3s ease,
+        opacity .25s ease,
+        margin .3s ease;
 }
 
-.submenu.active{
-    display: block;
+
+/* =========================================================
+   SUBMENÚ ABIERTO
+========================================================= */
+
+.submenu.active {
+    max-height: 300px;
+
+    opacity: 1;
+
+    margin-top: 0;
+    margin-bottom: 5px;
 }
 
-.submenu a{
+
+/* =========================================================
+   LINKS DEL SUBMENÚ
+========================================================= */
+
+.submenu a {
     font-size: 14px;
+
     padding: 8px 10px;
+
+    margin-bottom: 5px;
 }
 
-/* =========================
-NAVBAR
-========================= */
 
-.navbar{
+/* =========================================================
+   SUBMENÚ OCULTO EN SIDEBAR COLAPSADO
+========================================================= */
+
+.sidebar.collapsed .submenu {
+    display: none;
+}
+
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.navbar {
     position: fixed;
 
     top: 0;
@@ -150,53 +253,59 @@ NAVBAR
 
     padding: 0 20px;
 
-    transition: all .3s ease;
+    transition:
+        left .3s ease,
+        box-shadow .3s ease,
+        background-color .3s ease;
 
-    box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
 }
 
-/* NAVBAR EXPANDIDA */
 
-.navbar.expanded{
+/* =========================================================
+   NAVBAR CUANDO SIDEBAR ESTÁ COLAPSADO
+========================================================= */
+
+body.nav-maestro.sidebar-maestro-colapsada .navbar {
     left: 80px;
 }
 
-/* EFECTO SCROLL */
 
-.navbar-scrolled{
-    box-shadow: 0 4px 15px rgba(0,0,0,.15);
+/* =========================================================
+   EFECTO SCROLL NAVBAR
+========================================================= */
+
+.navbar-scrolled {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, .15);
+
     backdrop-filter: blur(10px);
 }
 
-/* =========================
-CONTENIDO
-========================= */
 
-.content{
-    margin-left: 250px;
+/* =========================================================
+   CONTENIDO
+========================================================= */
 
-    margin-top: 70px;
+/*
+   IMPORTANTE:
+   El body ya utiliza padding-left para reservar el espacio
+   del sidebar. Por eso NO utilizamos margin-left aquí.
+*/
 
+.content {
     padding: 25px;
 
     min-height: calc(100vh - 70px);
 
-    transition: all .3s ease;
-
     overflow-x: hidden;
 }
 
-/* CONTENIDO EXPANDIDO */
 
-.content.expanded{
-    margin-left: 80px;
-}
+/* =========================================================
+   OVERLAY MOBILE
+========================================================= */
 
-/* =========================
-OVERLAY MOBILE
-========================= */
-
-.overlay{
+.overlay {
     position: fixed;
 
     top: 0;
@@ -205,123 +314,59 @@ OVERLAY MOBILE
     width: 100%;
     height: 100%;
 
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, .5);
 
     display: none;
 
     z-index: 1050;
+
+    opacity: 0;
+
+    transition: opacity .3s ease;
 }
 
-/* =========================
-DARK MODE
-========================= */
 
-body.dark{
-    background: #121212;
-    color: white;
-}
+/* =========================================================
+   DARK MODE
+========================================================= */
 
-body.dark .content{
-    background: #121212;
-}
-
-body.dark .card{
-    background: #1e1e1e;
-    color: white;
-}
-
-body.dark .navbar{
-    background: #0d1b2a;
-}
-
-body.dark .sidebar{
-    background: #0d1b2a;
-}
-
-/* =========================
-RESPONSIVE
-========================= */
-
-@media(max-width:768px){
-
-    /* SIDEBAR */
-
-    .sidebar{
-        left: -250px;
-        width: 250px;
-    }
-
-    .sidebar.show{
-        left: 0;
-    }
-
-    .sidebar.collapsed{
-        width: 250px;
-    }
-
-    /* NAVBAR */
-
-    .navbar{
-        left: 0;
-        width: 100%;
-    }
-
-    .navbar.expanded{
-        left: 0;
-    }
-
-    /* CONTENT */
-
-    .content{
-        margin-left: 0;
-        margin-top: 70px;
-        width: 100%;
-        padding: 15px;
-    }
-
-    .content.expanded{
-        margin-left: 0;
-    }
-
-}
-
-/* =========================
-DARK MODE COMPLETO
-========================= */
-
-body.dark{
+body.dark {
     background: #121212;
     color: #ffffff;
 }
 
-/* CONTENT */
 
-body.dark .content{
+/* =========================================================
+   DARK MODE - CONTENT
+========================================================= */
+
+body.dark .content {
     background: #121212;
     color: #ffffff;
 }
 
-/* NAVBAR */
 
-body.dark .navbar{
+/* =========================================================
+   DARK MODE - NAVBAR
+========================================================= */
+
+body.dark .navbar {
     background: #0d1b2a !important;
 }
 
-/* SIDEBAR */
 
-body.dark .sidebar{
+/* =========================================================
+   DARK MODE - SIDEBAR
+========================================================= */
+
+body.dark .sidebar {
     background: #0d1b2a !important;
 }
 
-/* CARDS */
 
-body.dark .card{
-    background: #1e1e1e !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255,255,255,.1);
-}
-
-/* TEXTOS */
+/* =========================================================
+   DARK MODE - TEXTOS
+========================================================= */
 
 body.dark h1,
 body.dark h2,
@@ -333,153 +378,345 @@ body.dark p,
 body.dark span,
 body.dark small,
 body.dark strong,
-body.dark label{
+body.dark label {
     color: #ffffff !important;
 }
 
-/* LINKS */
 
-body.dark a{
+/* =========================================================
+   DARK MODE - LINKS
+========================================================= */
+
+body.dark a {
     color: #ffffff;
 }
 
-/* SUBTITULOS */
 
-body.dark .text-muted{
+/* =========================================================
+   DARK MODE - TEXT MUTED
+========================================================= */
+
+body.dark .text-muted {
     color: #b0b0b0 !important;
 }
 
-/* TABLAS */
 
-body.dark table{
+/* =========================================================
+   DARK MODE - CARDS
+========================================================= */
+
+body.dark .card {
+    background: #1e1e1e !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+
+
+/* =========================================================
+   DARK MODE - TABLAS
+========================================================= */
+
+body.dark .table {
+    --bs-table-color: #f8fafc;
+    --bs-table-bg: #1e293b;
+    --bs-table-border-color: #475569;
+    --bs-table-striped-color: #f8fafc;
+    --bs-table-striped-bg: #26364b;
+    --bs-table-hover-color: #ffffff;
+    --bs-table-hover-bg: #334155;
+}
+
+body.dark table {
     color: white;
 }
 
-/* INPUTS */
+
+/* =========================================================
+   DARK MODE - MODALES
+========================================================= */
+
+body.dark .modal-content,
+body.dark .modal-header,
+body.dark .modal-body,
+body.dark .modal-footer {
+    background: #1e293b;
+
+    color: #f8fafc;
+
+    border-color: #475569;
+}
+
+
+/* =========================================================
+   DARK MODE - BOTÓN CERRAR
+========================================================= */
+
+body.dark .btn-close {
+    filter: invert(1) grayscale(1) brightness(2);
+}
+
+
+/* =========================================================
+   DARK MODE - INPUTS
+========================================================= */
 
 body.dark input,
 body.dark textarea,
-body.dark select{
+body.dark select {
     background: #2a2a2a !important;
+
     color: white !important;
+
     border: 1px solid #444;
 }
 
-/* PLACEHOLDER */
+
+/* =========================================================
+   DARK MODE - PLACEHOLDER
+========================================================= */
 
 body.dark input::placeholder,
-body.dark textarea::placeholder{
+body.dark textarea::placeholder {
     color: #bdbdbd;
 }
 
-/* BOTONES */
 
-body.dark .btn-light{
+/* =========================================================
+   DARK MODE - BOTONES
+========================================================= */
+
+body.dark .btn-light {
     background: #2d2d2d;
+
     color: white;
+
     border: 1px solid #444;
 }
 
-/* AVISO */
+
+/* =========================================================
+   DARK MODE - ALERTAS
+========================================================= */
 
 body.dark .alert,
-body.dark .bg-white{
+body.dark .bg-white {
     background: #1e1e1e !important;
+
     color: white !important;
 }
 
-/* DROPDOWN */
 
-body.dark .dropdown-menu{
+/* =========================================================
+   DARK MODE - DROPDOWN
+========================================================= */
+
+body.dark .dropdown-menu {
     background: #1e1e1e;
 }
 
-body.dark .dropdown-item{
+body.dark .dropdown-item {
     color: white;
 }
 
-body.dark .dropdown-item:hover{
+body.dark .dropdown-item:hover {
     background: #2d2d2d;
 }
 
-/* ==========================
-DARK MODE NOTICIAS
-========================== */
 
-body.dark .news-title{
+/* =========================================================
+   DARK MODE - NOTICIAS
+========================================================= */
+
+body.dark .news-title {
     color: #ffffff;
 }
 
-body.dark .news-subtitle{
+body.dark .news-subtitle {
     color: #b0b0b0;
 }
 
-/* CARD */
-
-body.dark .noticia-card{
+body.dark .noticia-card {
     background: #1e1e1e;
-    border: 1px solid rgba(255,255,255,.08);
-    box-shadow: 0 4px 14px rgba(0,0,0,.4);
+
+    border: 1px solid rgba(255, 255, 255, .08);
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .4);
 }
 
-/* BODY */
-
-body.dark .noticia-body{
+body.dark .noticia-body {
     background: #1e1e1e;
 }
 
-/* TITULO */
-
-body.dark .noticia-titulo{
+body.dark .noticia-titulo {
     color: #60a5fa;
 }
 
-/* INFO */
-
-body.dark .noticia-info{
+body.dark .noticia-info {
     color: #9ca3af;
 }
 
-/* TEXTO */
-
-body.dark .noticia-texto{
+body.dark .noticia-texto {
     color: #d1d5db;
 }
 
-/* BOTON */
-
-body.dark .btn-news{
+body.dark .btn-news {
     background: #2563eb;
+
     color: white;
 }
 
-body.dark .btn-news:hover{
+body.dark .btn-news:hover {
     background: #1d4ed8;
 }
 
-/* AVISO */
-
-body.dark .aviso-card{
+body.dark .aviso-card {
     background: #1e1e1e;
-    border: 1px solid rgba(255,255,255,.08);
+
+    border: 1px solid rgba(255, 255, 255, .08);
 }
 
-/* DASHBOARD CARDS */
 
-body.dark .dashboard-card{
+/* =========================================================
+   DARK MODE - DASHBOARD CARDS
+========================================================= */
+
+body.dark .dashboard-card {
     background: #1e1e1e;
-    border: 1px solid rgba(255,255,255,.08);
-}
 
-/* TEXTO DASHBOARD */
+    border: 1px solid rgba(255, 255, 255, .08);
+}
 
 body.dark .dashboard-card p,
-body.dark .dashboard-card h5{
+body.dark .dashboard-card h5 {
     color: white;
 }
 
-/* CONTENIDO */
 
-body.dark .content{
-    background: #121212;
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    /* =====================================================
+       BODY
+    ===================================================== */
+
+    body.nav-maestro,
+    body.nav-maestro.sidebar-maestro-colapsada {
+        padding-left: 0;
+        padding-top: 70px;
+    }
+
+
+    /* =====================================================
+       SIDEBAR MOBILE
+    ===================================================== */
+
+    .sidebar {
+        left: -250px;
+
+        width: 250px;
+
+        padding: 20px 15px;
+
+        transition:
+            left .3s ease,
+            width .3s ease;
+    }
+
+
+    /* =====================================================
+       SIDEBAR MOBILE ABIERTO
+    ===================================================== */
+
+    .sidebar.show {
+        left: 0;
+    }
+
+
+    /* =====================================================
+       SIDEBAR COLLAPSED EN MOBILE
+    ===================================================== */
+
+    .sidebar.collapsed {
+        width: 250px;
+
+        padding: 20px 15px;
+    }
+
+
+    .sidebar.collapsed span,
+    .sidebar.collapsed h5 {
+        opacity: 1;
+
+        visibility: visible;
+
+        width: auto;
+    }
+
+
+    .sidebar.collapsed a {
+        justify-content: flex-start;
+
+        padding: 12px 10px;
+
+        gap: 12px;
+    }
+
+
+    .sidebar.collapsed i {
+        min-width: 25px;
+
+        margin: 0;
+
+        font-size: 20px;
+    }
+
+
+    /* =====================================================
+       NAVBAR MOBILE
+    ===================================================== */
+
+    .navbar {
+        left: 0;
+
+        width: 100%;
+
+        padding: 0 15px;
+
+        transition:
+            left .3s ease,
+            box-shadow .3s ease,
+            background-color .3s ease;
+    }
+
+
+    body.nav-maestro.sidebar-maestro-colapsada .navbar {
+        left: 0;
+    }
+
+
+    /* =====================================================
+       CONTENT MOBILE
+    ===================================================== */
+
+    .content {
+        width: 100%;
+
+        padding: 15px;
+
+        min-height: calc(100vh - 70px);
+    }
+
+
+    /* =====================================================
+       OVERLAY
+    ===================================================== */
+
+    .overlay {
+        display: none;
+    }
 }

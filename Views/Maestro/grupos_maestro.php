@@ -3,6 +3,7 @@ include("../../includes/conexion.php");
 include("../../includes/auth_maestro.php");
 include("../../includes/header.php");
 include("../../includes/navbar_maestros.php");
+include("../../includes/grupos_maestros.php");
 
 $idUsuario = $_SESSION['id'] ?? 0;
 
@@ -16,28 +17,10 @@ $usuario = $result->fetch_assoc();
 $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''));
 ?>
 
-<style>
-    body {
-        padding-top: 70px;
-    }
-
-    .navbar-fixed-top,
-    .navbar-sticky-top {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
-    }
-
-    .container.mt-4:first-of-type {
-        margin-top: 20px !important;
-    }
-</style>
-
 <div class="container mt-4">
     <!-- Tarjeta para crear/editar grupos -->
-    <div class="card shadow-lg p-4 border-0 mb-4">
-        <h4 class="mb-4 text-primary">
+    <div class="card grupos-card p-4 mb-4">
+        <h4 class="mb-4 grupos-title">
             <i class="bi bi-people"></i>
             Gestionar Mis Grupos
         </h4>
@@ -99,7 +82,7 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
 
             <div class="col-md-2">
                 <label class="fw-bold">Cantidad Alumnos</label>
-                <input type="number" id="cantidadAlumnos" class="form-control" placeholder="Ej: 30">
+                <input type="number" id="cantidadAlumnos" class="form-control" placeholder="Ej: 30" min="0" step="1" inputmode="numeric">
             </div>
 
             <div class="col-md-2">
@@ -112,7 +95,7 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
             </div>
 
             <div class="col-md-12 mt-3">
-                <button class="btn btn-success" id="btnGuardarGrupo">
+                <button class="btn btn-grupos-principal" id="btnGuardarGrupo">
                     <i class="bi bi-save"></i> Guardar Grupo
                 </button>
                 <button class="btn btn-secondary" id="btnCancelar" style="display:none;">
@@ -123,13 +106,13 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
     </div>
 
     <!-- Tabla de grupos existentes -->
-    <div class="card shadow border-0">
-        <div class="card-header bg-dark text-white">
+    <div class="card grupos-card">
+        <div class="card-header grupos-card-header">
             <i class="bi bi-list"></i> Mis Grupos
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover align-middle" id="tablaGrupos">
+                <table class="table table-hover align-middle grupos-table" id="tablaGrupos">
                     <thead class="table-dark text-center">
                         <tr>
                             <th>Carrera</th>
@@ -196,7 +179,7 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover grupos-table">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>

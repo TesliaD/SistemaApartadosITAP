@@ -35,6 +35,8 @@ $fecha = $_GET['fecha'] ?? '';
 
 $hora = $_GET['hora'] ?? '';
 
+$horaFin = $_GET['horaFin'] ?? '';
+
 $idUsuario = (int)$_SESSION['id'];
 
 
@@ -42,7 +44,7 @@ $idUsuario = (int)$_SESSION['id'];
 // VALIDAR DATOS
 // ============================================================
 
-if ($grupoId <= 0 || empty($fecha) || empty($hora)) {
+if ($grupoId <= 0 || empty($fecha) || empty($hora) || empty($horaFin)) {
 
     echo json_encode([
         "error" => "Faltan datos para buscar la reservación."
@@ -62,6 +64,14 @@ if (strlen($hora) === 5) {
     $horaBusqueda = $hora . ":00";
 } else {
     $horaBusqueda = $hora;
+}
+
+$horaFin = trim($horaFin);
+
+if (strlen($horaFin) === 5) {
+    $horaFinBusqueda = $horaFin . ":00";
+} else {
+    $horaFinBusqueda = $horaFin;
 }
 
 
@@ -91,7 +101,9 @@ $sqlReserva = "
 
         c.Nombre AS carrera,
 
-        l.Nombre AS laboratorio
+        l.Nombre AS laboratorio,
+
+        d.nombre AS departamento
 
     FROM reservaciones r
 
@@ -104,9 +116,14 @@ $sqlReserva = "
     LEFT JOIN laboratorios l
         ON l.IDLab = r.IDLab
 
+    LEFT JOIN departamentos d
+        ON d.IDDepartamentos = l.IDDepartamento
+
     WHERE r.IDGrupo = ?
       AND r.fecha = ?
       AND TIME(r.horaInicio) = TIME(?)
+      AND TIME(r.horaFin) = TIME(?)
+      AND r.IDUsuario = ?
 
     ORDER BY r.IDReservacion DESC
 
@@ -127,10 +144,12 @@ if (!$stmtReserva) {
 
 
 $stmtReserva->bind_param(
-    "iss",
+    "isssi",
     $grupoId,
     $fecha,
-    $horaBusqueda
+    $horaBusqueda,
+    $horaFinBusqueda,
+    $idUsuario
 );
 
 
@@ -326,6 +345,9 @@ $response = [
 
         "laboratorio" =>
             $reserva['laboratorio'] ?? '',
+
+        "departamento" =>
+            $reserva['departamento'] ?? 'Sin asignar',
 
         "carrera" =>
             $reserva['carrera'] ?? '',

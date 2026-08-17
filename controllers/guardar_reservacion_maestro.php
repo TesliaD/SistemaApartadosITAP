@@ -22,15 +22,24 @@ $fecha = $data['fecha'];
 $horas = $data['horas'];
 $idLab = $data['IDLab'];
 $idGrupo = $data['IDGrupo'];
-$software = $data['Software'] ?? '';
+$software = $data['Software'] ?? $data['software'] ?? '';
 $practica = $data['Practica'] ?? '';
 
+$rangoHora = trim((string)$horas[0]);
 
-sort($horas);
-$horaInicio = $horas[0];
-$horaFin = $horas[count($horas) - 1];
+if (strpos($rangoHora, '-') !== false) {
+    [$horaInicio, $horaFin] = array_map('trim', explode('-', $rangoHora, 2));
+} else {
+    // Compatibilidad con solicitudes antiguas que enviaban solamente el inicio.
+    $horaInicio = $rangoHora;
+    $horaFin = date('H:i', strtotime($horaInicio) + 3600);
+}
 
-$horaFin = date('H:i', strtotime($horaFin) + 3600);
+if (!preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $horaInicio) ||
+    !preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $horaFin)) {
+    echo json_encode(["error" => "El rango de horario no es válido"]);
+    exit;
+}
 
 
 $sqlCheck = "SELECT COUNT(*) as total FROM reservaciones 
