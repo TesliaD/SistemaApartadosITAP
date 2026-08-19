@@ -8,7 +8,7 @@ let modalFechas = null;
 // DOM READY
 // ==========================
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("🔵 Reportes Admin - Iniciando...");
+    console.log(" Reportes Admin - Iniciando...");
     
     const modalElement = document.getElementById("modalFechas");
     if(modalElement) {

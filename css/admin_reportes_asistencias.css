@@ -1,0 +1,94 @@
+    body {
+        padding-top: 70px;
+    }
+
+    .reporte-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 25px 20px;
+        text-align: center;
+        background: #fff;
+        height: 100%;
+    }
+    .reporte-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .reporte-card.seleccionado {
+        border-color: #0d6efd;
+        background-color: #f0f7ff;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    }
+    .reporte-card .icono {
+        font-size: 2.8rem;
+        color: #0d6efd;
+        display: block;
+        margin-bottom: 10px;
+    }
+    .reporte-card h6 {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .reporte-card small {
+        color: #6c757d;
+        font-size: 0.75rem;
+    }
+
+    .reporte-preview {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        display: none;
+        margin-top: 20px;
+        overflow-x: auto;
+    }
+    .reporte-preview table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .reporte-preview table th,
+    .reporte-preview table td {
+        border: 1px solid #000;
+        padding: 5px 8px;
+        text-align: left;
+    }
+    .reporte-preview table th {
+        background: #f1f1f1;
+        text-align: center;
+    }
+    .reporte-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .reporte-header h5 {
+        margin: 0;
+        font-weight: bold;
+    }
+    .reporte-header .subtitulo {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .footer-reporte {
+        margin-top: 30px;
+        font-size: 12px;
+        text-align: center;
+    }
+    .firma-linea {
+        display: inline-block;
+        width: 200px;
+        border-top: 1px solid #000;
+        margin-top: 30px;
+        padding-top: 5px;
+    }
+
+    .modal-header {
+        background: #0d6efd;
+        color: white;
+    }
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
