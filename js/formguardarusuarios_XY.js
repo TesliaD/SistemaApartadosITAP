@@ -75,11 +75,11 @@ form.addEventListener("submit", function(e) {
         return;
     }
 
-    if(password.length < 8) {
+    if(password.length < 4) {
         Swal.fire({
             icon: 'warning',
             title: 'Contraseña insegura',
-            text: 'La contraseña debe tener mínimo 8 caracteres'
+            text: 'La contraseña debe tener mínimo 4 caracteres'
         });
         return;
     }

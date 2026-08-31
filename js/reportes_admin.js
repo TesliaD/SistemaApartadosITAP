@@ -96,40 +96,49 @@ function generarFiltrosEspecificos(tipo) {
             `;
             break;
 
-        // ==========================
-        // REPORTE 2: APARTADOS POR MAESTRO
-        // ==========================
-        case 'apartados_maestro':
-            html += `
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Docente</label>
-                    <select id="modalFiltroDocente" class="form-select">
-                        <option value="">Todos los docentes</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Grupo</label>
-                    <select id="modalFiltroGrupo" class="form-select">
-                        <option value="">Todos los grupos</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Laboratorio</label>
-                    <select id="modalFiltroLab" class="form-select">
-                        <option value="">Todos los laboratorios</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Estado</label>
-                    <select id="modalFiltroEstado" class="form-select">
-                        <option value="">Todos</option>
-                        <option value="activa">Activas</option>
-                        <option value="cancelada">Canceladas</option>
-                    </select>
-                </div>
-            `;
-            break;
+   // ==========================
+// REPORTE 2: APARTADOS POR MAESTRO
+// ==========================
+case 'apartados_maestro':
+    html += `
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Departamento</label>
+            <select id="modalFiltroDepartamento" class="form-select">
+                <option value="">Todos los departamentos</option>
+            </select>
+        </div>
 
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Docente</label>
+            <select id="modalFiltroDocente" class="form-select">
+                <option value="">Todos los docentes</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Grupo</label>
+            <select id="modalFiltroGrupo" class="form-select">
+                <option value="">Todos los grupos</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Laboratorio</label>
+            <select id="modalFiltroLab" class="form-select">
+                <option value="">Todos los laboratorios</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Estado</label>
+            <select id="modalFiltroEstado" class="form-select">
+                <option value="">Todos</option>
+                <option value="activa">Activas</option>
+                <option value="cancelada">Canceladas</option>
+            </select>
+        </div>
+    `;
+    break;
         // ==========================
         // REPORTE 3: REPORTE GENERAL DE RESERVACIONES
         // ==========================
