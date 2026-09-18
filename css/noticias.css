@@ -168,25 +168,25 @@ textarea{
 
 body.dark .card{
 
-    background: #1e1e1e;
+    background: #1e293b;
 
 }
 
 body.dark .card-body{
 
-    background: #1e1e1e;
+    background: #1e293b;
 
 }
 
 body.dark .form-control,
 body.dark .form-select{
 
-    background: #2a2a2a !important;
+    background: #0f172a !important;
 
     color: white !important;
 
     border:
-        1px solid #444;
+        1px solid #475569;
 
 }
 
@@ -247,12 +247,12 @@ input[type="file"]::file-selector-button:hover{
 
 body.dark input[type="file"]{
 
-    background: #2a2a2a;
+    background: #0f172a;
 
     color: white;
 
     border:
-        1px solid #444;
+        1px solid #475569;
 
 }
 
@@ -458,7 +458,7 @@ input[type="file"]::file-selector-button:hover{
 
 body.dark .card{
 
-    background: #1e1e1e !important;
+    background: #1e293b !important;
 
     color: white;
 
@@ -466,25 +466,25 @@ body.dark .card{
 
 body.dark .card-body{
 
-    background: #1e1e1e;
+    background: #1e293b;
 
 }
 
 body.dark .form-control,
 body.dark .form-select{
 
-    background: #2d2d2d !important;
+    background: #0f172a !important;
 
     color: white !important;
 
-    border: 1px solid #444;
+    border: 1px solid #475569;
 
 }
 
 body.dark .form-control:focus,
 body.dark .form-select:focus{
 
-    background: #2d2d2d;
+    background: #0f172a;
 
     color: white;
 
