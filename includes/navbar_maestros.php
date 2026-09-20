@@ -1,5 +1,8 @@
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/navbarmaestros.css">
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/dashcards.css">
+<?php
+require_once __DIR__ . '/config.php';
+?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/navbarmaestros.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/dashcards.css">
 <script>
     document.body.classList.add('nav-maestro');
     try {
@@ -71,11 +74,6 @@
         <a href="grupos_maestro.php">
             <i class="bi bi-building-fill-add"></i>
             Dar de Alta Grupos
-        </a>
-
-        <a href="VerLaboratorios_Editar.php">
-            <i class="bi bi-display"></i>
-            Mis Grupos
         </a>
     </div>
 

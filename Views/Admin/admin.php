@@ -1,8 +1,9 @@
 <?php 
-include("../../includes/conexion.php"); 
-include("../../includes/auth.php"); 
-include("../../includes/header.php");
-include("../../includes/navbar.php");
+require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../includes/conexion.php';
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/navbar.php';
 ?>
 
 <!-- ========================= -->
@@ -192,7 +193,7 @@ include("../../includes/navbar.php");
                     <?php if(!empty($noticia['Imagen'])): ?>
 
                         <img 
-                            src="/SistemaApartadosITAP/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
+                            src="<?= BASE_URL ?>/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
                             class="noticia-img"
                             alt="Noticia">
 
