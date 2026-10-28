@@ -12,7 +12,8 @@ header('Content-Type: application/json; charset=utf-8');
 // SEGURIDAD
 // ============================================================
 
-if (!isset($_SESSION['id']) || $_SESSION['rol'] !== 'administrador') {
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if (!puedeGestionar()) {
 
     echo json_encode([
         "error" => "No autorizado"
@@ -42,6 +43,13 @@ $tipo = $data['tipo'] ?? '';
 $fechaInicio = $data['fechaInicio'] ?? '';
 $fechaFin = $data['fechaFin'] ?? '';
 $filtros = $data['filtros'] ?? [];
+
+// Manager: todos sus reportes quedan limitados a su departamento
+// (se ignora cualquier otro departamento que venga en la petición).
+$deptoManager = deptoRestringido($conn);
+if ($deptoManager !== null) {
+    $filtros['departamento'] = $deptoManager > 0 ? $deptoManager : -1;
+}
 
 
 // ============================================================
@@ -645,6 +653,18 @@ function generarReporteApartadosMaestro($conn, $inicio, $fin, $filtros)
         r.fecha >= '$inicio'
         AND r.fecha < DATE_ADD('$fin', INTERVAL 1 DAY)
     ";
+
+
+    // --------------------------------------------------------
+    // DEPARTAMENTO (se fija automáticamente para el manager)
+    // --------------------------------------------------------
+
+    if (!empty($filtros['departamento'])) {
+
+        $idDepartamento = (int)$filtros['departamento'];
+
+        $where[] = "l.IDDepartamento = $idDepartamento";
+    }
 
 
     // --------------------------------------------------------

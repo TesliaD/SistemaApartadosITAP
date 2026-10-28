@@ -57,6 +57,12 @@ body.dark textarea::placeholder {
     color: #94a3b8 !important;
 }
 
+/* En los floating labels el label ocupa el lugar del placeholder: se mantiene oculto. */
+body.dark .form-floating > .form-control::placeholder,
+body.dark .form-floating > textarea::placeholder {
+    color: transparent !important;
+}
+
 body.dark .table {
     --bs-table-color: #f8fafc;
     --bs-table-bg: #1e293b;

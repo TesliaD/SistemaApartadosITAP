@@ -78,6 +78,14 @@ foreach ($horas_reservadas as $hora) {
     }
 }
 
+// 6. Si la fecha es hoy, bloqueamos también las horas que ya comenzaron
+require_once __DIR__ . "/../includes/reglas_reservacion.php";
+foreach ($todas_las_horas as $hora) {
+    if (horaYaPaso($fecha, $hora) && !in_array($hora, $horas_a_bloquear)) {
+        $horas_a_bloquear[] = $hora;
+    }
+}
+
 // Devolvemos el array final
 echo json_encode(array_values($horas_a_bloquear));
 ?>

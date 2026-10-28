@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . "/permisos.php"; ?>
 <link rel="stylesheet" href="/SistemaApartadosITAP/css/navbar.css">
 <link rel="stylesheet" href="/SistemaApartadosITAP/css/dashcards.css">
 <div class="overlay" id="overlay"></div>
@@ -21,8 +22,8 @@
         </button>
 
         <div class="text-end">
-            <strong><?php echo $_SESSION['usuario']; ?></strong><br>
-            <small><?php echo $_SESSION['rol']; ?></small>
+            <strong><?php echo htmlspecialchars($_SESSION['usuario']); ?></strong><br>
+            <small><?php echo htmlspecialchars($_SESSION['rol']); ?></small>
         </div>
 
     </div>
@@ -38,6 +39,7 @@
 
     <!-- SUBMENU -->
      
+    <?php if (esAdmin()): ?>
     <!-- Usuarios -->
     <a href="#" class="toggle-submenu">
         <i class="bi bi-people"></i> <span>Usuarios</span>
@@ -46,6 +48,7 @@
         <a href="VerUsuarios_Editar.php"><i class="bi bi-person-badge-fill"></i>Lista</a>
         <a href="RegistrarUsuarios.php"><i class="bi bi-person-add"></i>Agregar</a>
     </div>
+    <?php endif; ?>
 
     <!-- Laboratorios -->
     <a href="#" class="toggle-submenu">
@@ -61,6 +64,7 @@
     <!--Reportes-->
     <a href="reportes_asistencia.php"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
     
+    <?php if (esAdmin()): ?>
     <!--Noticias-->
     <a href="#" class="toggle-submenu">
         <i class="bi bi-newspaper"></i> <span>Noticias</span>
@@ -75,8 +79,9 @@
         <i class="bi bi-building-fill-check"></i> <span>Departamentos</span>
     </a>
     <div class="submenu">
-        <a href="Departamentos.php"><i class="bi bi-building-fill-add"></i></i>Agregar Departamentos</a>
+        <a href="Departamentos.php"><i class="bi bi-building-fill-add"></i>Agregar Departamentos</a>
     </div>
+    <?php endif; ?>
 
     <!--Reservaciones-->
     <a href="#" class="toggle-submenu">

@@ -1,6 +1,7 @@
 <?php 
-include("../../includes/auth.php"); 
+include("../../includes/auth_gestion.php"); 
 include("../../includes/conexion.php");
+require_once("../../includes/reglas_reservacion.php");
 include("../../includes/header.php");
 include("../../includes/navbar.php");
 include("../../includes/reservacion_admin.php")
@@ -34,9 +35,10 @@ include("../../includes/reservacion_admin.php")
                         type="date" 
                         id="fecha" 
                         class="form-control-modern form-control"
-                        min="<?= date('Y-m-d', strtotime('+1 days')) ?>">
+                        min="<?= fechaMinReservacion() ?>"
+                        max="<?= fechaMaxReservacion() ?>">
                     <div class="info-label">
-                        <i class="bi bi-info-circle"></i> Mínimo 1 día de anticipación
+                        <i class="bi bi-info-circle"></i> Desde hoy hasta 2 días después (hoy solo horarios que aún no inician)
                     </div>
                 </div>
 
@@ -52,7 +54,7 @@ include("../../includes/reservacion_admin.php")
                             SELECT l.IDLab, l.Nombre, l.numLab, l.Descripcion, d.nombre AS depto 
                             FROM laboratorios l
                             LEFT JOIN departamentos d ON l.IDDepartamento = d.IDDepartamentos
-                            WHERE l.activo = 1 
+                            WHERE l.activo = 1 AND " . filtroDeptoSQL($conn, "l.IDDepartamento") . "
                             ORDER BY l.Nombre
                         ");
                         while($lab = $labs->fetch_assoc()):

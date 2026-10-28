@@ -1,6 +1,7 @@
 <?php
 include("../../includes/conexion.php");
 include("../../includes/auth_maestro.php");
+require_once("../../includes/reglas_reservacion.php");
 include("../../includes/header.php");
 include("../../includes/navbar_maestros.php");
 include("../../includes/maestro_apartar_lab.php");
@@ -50,10 +51,10 @@ if($result->num_rows > 0) {
                         type="date"
                         id="fecha"
                         class="form-control-modern form-control"
-                        min="<?= date('Y-m-d', strtotime('+1 day')) ?>"
-                        max="<?= date('Y-m-d', strtotime('+3 days')) ?>">
+                        min="<?= fechaMinReservacion() ?>"
+                        max="<?= fechaMaxReservacion() ?>">
                     <div class="info-label">
-                        <i class="bi bi-info-circle"></i> 1 a 3 días de anticipación
+                        <i class="bi bi-info-circle"></i> Desde hoy hasta 2 días después (hoy solo horarios que aún no inician)
                     </div>
                 </div>
 

@@ -48,12 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(rolSelect && deptoSelect) {
         rolSelect.addEventListener("change", function() {
-            if(this.value === "maestro") {
+            if((this.value === "maestro" || this.value === "manager")) {
                 deptoSelect.required = true;
                 // Cambiar el mensaje de ayuda si existe
                 const helpText = deptoSelect.parentElement.querySelector('small');
                 if(helpText) {
-                    helpText.textContent = '⚠️ Obligatorio para maestros';
+                    helpText.textContent = '⚠️ Obligatorio para maestros y managers';
                     helpText.style.color = '#dc3545';
                 }
             } else {
@@ -160,10 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Validar Departamento (si es maestro, es obligatorio)
-        if(rol === "maestro" && !departamento) {
+        if((rol === "maestro" || rol === "manager") && !departamento) {
             Swal.fire(
                 "Departamento requerido",
-                "Los maestros deben tener un departamento asignado.",
+                "Los maestros y managers deben tener un departamento asignado.",
                 "warning"
             );
             return;

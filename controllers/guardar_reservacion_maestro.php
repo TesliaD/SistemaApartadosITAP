@@ -41,6 +41,14 @@ if (!preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $horaInicio) ||
     exit;
 }
 
+// Regla general: de hoy a 2 días; hoy solo horas que no han comenzado
+require_once __DIR__ . "/../includes/reglas_reservacion.php";
+$errorFecha = validarFechaReservacion($fecha, $horaInicio);
+if($errorFecha) {
+    echo json_encode(["error" => $errorFecha]);
+    exit;
+}
+
 
 $sqlCheck = "SELECT COUNT(*) as total FROM reservaciones 
              WHERE fecha = ? AND IDLab = ? AND Estado = 'activa'

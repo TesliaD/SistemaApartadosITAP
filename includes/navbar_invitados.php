@@ -52,7 +52,7 @@
     <div class="submenu">
         <a href="VentanaApartarLab.php"><i class="bi bi-calendar-check"></i><span>Apartados</span></a>
         <a href="VerReservaciones.php"><i class="bi bi-info-circle"></i>Ver Reservaciones</a>
-        <a href="ReservacionesPorDia.php"><i class="bi bi-info-circle"></i>Reservaciones Diarias</a>
+        <a href="../Admin/ReservacionesPorDia.php"><i class="bi bi-info-circle"></i>Reservaciones Diarias</a>
     </div>
     
     <hr>

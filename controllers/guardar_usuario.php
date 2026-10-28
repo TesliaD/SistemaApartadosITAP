@@ -6,6 +6,15 @@ include("../includes/conexion.php");
 
 header('Content-Type: application/json');
 
+// Solo el administrador puede crear usuarios
+if(!isset($_SESSION['id']) || ($_SESSION['rol'] ?? '') !== 'administrador'){
+    echo json_encode([
+        "status" => "error",
+        "message" => "No autorizado"
+    ]);
+    exit;
+}
+
 // MOSTRAR ERRORES PHP
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -79,10 +88,10 @@ try {
     }
 
     // VALIDACIÓN DE DEPARTAMENTO (si el usuario es maestro, debe tener departamento)
-    if($rol === 'maestro' && empty($IDDepartamento)) {
+    if(in_array($rol, ["maestro", "manager"]) && empty($IDDepartamento)) {
         echo json_encode([
             "status" => "error",
-            "message" => "Los maestros deben tener un departamento asignado"
+            "message" => "Los maestros y managers deben tener un departamento asignado"
         ]);
 
         exit;

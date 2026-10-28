@@ -1,5 +1,5 @@
 <?php
-include("../../includes/auth.php");
+include("../../includes/auth_gestion.php");
 include("../../includes/conexion.php");
 include("../../includes/header.php");
 include("../../includes/navbar.php");
@@ -52,7 +52,7 @@ include("../../includes/horarios.php")
                             SELECT l.IDLab, l.Nombre, l.numLab, d.nombre AS depto 
                             FROM laboratorios l
                             LEFT JOIN departamentos d ON l.IDDepartamento = d.IDDepartamentos
-                            WHERE l.activo = 1 
+                            WHERE l.activo = 1 AND " . filtroDeptoSQL($conn, "l.IDDepartamento") . "
                             ORDER BY l.Nombre
                         ");
                         while($lab = $labs->fetch_assoc()):

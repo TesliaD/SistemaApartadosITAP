@@ -21,6 +21,7 @@ $result = $conn->query($sql);
     }
     .badge-rol.administrador { background: #dc3545; color: white; }
     .badge-rol.maestro { background: #0d6efd; color: white; }
+    .badge-rol.manager { background: #457b9d; color: white; }
     .badge-rol.invitado { background: #6c757d; color: white; }
     
     .badge-departamento {
@@ -53,6 +54,7 @@ $result = $conn->query($sql);
                 <option value="">Todos los roles</option>
                 <option value="administrador">Administrador</option>
                 <option value="maestro">Maestro</option>
+                <option value="manager">Manager (encargado de departamento)</option>
                 <option value="invitado">Invitado</option>
             </select>
         </div>
@@ -185,6 +187,7 @@ $result = $conn->query($sql);
                                 <option value="administrador">Administrador</option>
                                 <option value="invitado">Invitado</option>
                                 <option value="maestro">Maestro</option>
+                                <option value="manager">Manager (encargado de departamento)</option>
                             </select>
                         </div>
 
@@ -200,7 +203,7 @@ $result = $conn->query($sql);
                                 <option value="<?= $depto['IDDepartamentos'] ?>"><?= $depto['nombre'] ?></option>
                                 <?php endwhile; ?>
                             </select>
-                            <small class="text-muted">Obligatorio solo para maestros</small>
+                            <small class="text-muted">Obligatorio para maestros y managers</small>
                         </div>
                     </div>
                 </form>

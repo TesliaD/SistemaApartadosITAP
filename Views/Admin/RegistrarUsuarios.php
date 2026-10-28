@@ -104,6 +104,7 @@
                         <option value="administrador">Administrador</option>
                         <option value="invitado">Invitado</option>
                         <option value="maestro">Maestro</option>
+                        <option value="manager">Manager (encargado de departamento)</option>
                     </select>
                 </div>
 
@@ -143,7 +144,7 @@
                         }
                         ?>
                     </select>
-                    <small class="text-muted" id="deptoHelp">Obligatorio solo para usuarios con rol "Maestro"</small>
+                    <small class="text-muted" id="deptoHelp">Obligatorio para usuarios con rol "Maestro" o "Manager"</small>
                 </div>
 
             </div>
@@ -195,9 +196,9 @@
 
         if(rolSelect && deptoSelect && deptoHelp) {
             rolSelect.addEventListener("change", function() {
-                if(this.value === "maestro") {
+                if(this.value === "maestro" || this.value === "manager") {
                     deptoSelect.required = true;
-                    deptoHelp.textContent = '⚠️ Obligatorio para maestros';
+                    deptoHelp.textContent = '⚠️ Obligatorio para maestros y managers';
                     deptoHelp.style.color = '#dc3545';
                 } else {
                     deptoSelect.required = false;

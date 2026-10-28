@@ -104,6 +104,12 @@ function guardarReservacion() {
         return;
     }
 
+    // Regla general: de hoy a 2 días (min/max los define el servidor)
+    if((fecha.min && fecha.value < fecha.min) || (fecha.max && fecha.value > fecha.max)){
+        Swal.fire("Error", "Solo puedes reservar desde hoy hasta 2 días después", "error");
+        return;
+    }
+
     if(horasSeleccionadas.length === 0){
         Swal.fire("Error", "Selecciona horas", "error");
         return;

@@ -40,6 +40,8 @@ if ($result->num_rows > 0) {
         switch ($user['rol']) {
 
             case 'administrador':
+            case 'manager':
+                // El manager usa el mismo panel, limitado a su departamento
                 $ruta = "Views/Admin/admin.php";
                 break;
 

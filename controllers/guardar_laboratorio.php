@@ -7,7 +7,8 @@ header('Content-Type: application/json');
 // =========================
 // VERIFICAR SESIÓN Y ROL
 // =========================
-if(!isset($_SESSION['id']) || $_SESSION['rol'] != 'administrador') {
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if (!puedeGestionar()) {
     echo json_encode([
         "status" => "error",
         "message" => "No autorizado"
@@ -89,6 +90,17 @@ if($idDepartamento <= 0) {
     echo json_encode([
         "status" => "error",
         "message" => "Selecciona un departamento válido"
+    ]);
+    exit;
+}
+
+// =========================
+// MANAGER: SOLO SU DEPARTAMENTO
+// =========================
+if(!puedeGestionarDepto($conn, $idDepartamento)) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Solo puedes registrar laboratorios de tu departamento"
     ]);
     exit;
 }

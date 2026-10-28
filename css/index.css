@@ -191,6 +191,43 @@ body.dark .login-card-header h2 {
     margin-right: 6px;
 }
 
+/* ===== INPUTS / LABELS MODO OSCURO ===== */
+
+/* Label en reposo (dentro del input) */
+body.dark .form-floating > label {
+    color: #94a3b8;
+}
+
+/* Label flotante (input con foco o con texto) */
+body.dark .form-floating > .form-control:focus ~ label,
+body.dark .form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: #cbd5e1;
+}
+
+/*
+   Bootstrap pinta una franja con el fondo claro detrás
+   del label flotante; la igualamos al fondo del input.
+*/
+body.dark .form-floating > label::after,
+body.dark .form-floating > .form-control:focus ~ label::after,
+body.dark .form-floating > .form-control:not(:placeholder-shown) ~ label::after {
+    background-color: #0f172a !important;
+}
+
+body.dark .form-control:focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.25);
+}
+
+/* Autocompletado del navegador (evita el fondo claro) */
+body.dark .form-control:-webkit-autofill,
+body.dark .form-control:-webkit-autofill:hover,
+body.dark .form-control:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #0f172a inset;
+    -webkit-text-fill-color: #f8fafc;
+    caret-color: #f8fafc;
+}
+
 /* ===== ICONO PASSWORD ===== */
 .toggle-password {
     position: absolute;
@@ -241,6 +278,16 @@ body.dark .login-card-header h2 {
 
 .forgot-link:hover {
     text-decoration: underline;
+}
+
+body.dark .login-card-header p,
+body.dark .toggle-password {
+    color: #94a3b8;
+}
+
+body.dark .toggle-password:hover,
+body.dark .forgot-link {
+    color: #60a5fa;
 }
 
 /* ===== MENSAJES ===== */

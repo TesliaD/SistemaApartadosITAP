@@ -4,7 +4,8 @@ session_start();
 
 header('Content-Type: application/json');
 
-if(!isset($_SESSION['id']) || $_SESSION['rol'] != 'administrador'){
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if (!puedeGestionar()){
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
@@ -16,7 +17,10 @@ if(!$conn){
     exit;
 }
 
-$sql = "SELECT IDCarrera, Nombre FROM carreras ORDER BY Nombre";
+// Manager: solo carreras de su departamento
+$sql = "SELECT IDCarrera, Nombre FROM carreras
+        WHERE " . filtroDeptoSQL($conn, "IDDepartamento") . "
+        ORDER BY Nombre";
 $result = $conn->query($sql);
 
 $carreras = [];

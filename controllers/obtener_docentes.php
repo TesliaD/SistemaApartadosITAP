@@ -4,7 +4,8 @@ session_start();
 
 header('Content-Type: application/json');
 
-if(!isset($_SESSION['id']) || $_SESSION['rol'] != 'administrador'){
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if (!puedeGestionar()){
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
@@ -18,7 +19,8 @@ if(!$conn){
 
 $sql = "SELECT IDUsuarios, CONCAT(nombre, ' ', apellidos) AS Nombre 
         FROM usuarios 
-        WHERE rol = 'maestro' AND activo = 1 
+        WHERE rol = 'maestro' AND activo = 1
+          AND " . filtroDeptoSQL($conn, "IDDepartamento") . "
         ORDER BY nombre";
 $result = $conn->query($sql);
 

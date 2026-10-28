@@ -1,4 +1,7 @@
-<?php 
+<?php
+// Hora local de Agua Prieta, Sonora (sin horario de verano)
+date_default_timezone_set('America/Hermosillo');
+
 $host = "localhost";
 $user = "root";
 $pass = "";

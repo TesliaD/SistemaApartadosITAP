@@ -1,5 +1,5 @@
 <?php
-include("../../includes/auth.php");
+include("../../includes/auth_gestion.php");
 include("../../includes/header.php");
 include("../../includes/navbar.php");
 include("../../includes/conexion.php");

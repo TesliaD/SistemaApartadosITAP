@@ -1,6 +1,6 @@
 <?php 
 include("../../includes/conexion.php"); 
-include("../../includes/auth.php"); 
+include("../../includes/auth_gestion.php");
 include("../../includes/header.php");
 include("../../includes/navbar.php");
 ?>
@@ -24,6 +24,13 @@ include("../../includes/navbar.php");
                 Panel principal del sistema de apartados.
             </p>
 
+            <?php if (esManager()): ?>
+            <span class="badge bg-primary-subtle text-primary mt-2">
+                <i class="bi bi-building"></i>
+                Manager · <?= htmlspecialchars(nombreDeptoSesion($conn) ?? 'Sin departamento asignado') ?>
+            </span>
+            <?php endif; ?>
+
         </div>
 
     </div>
@@ -33,6 +40,7 @@ include("../../includes/navbar.php");
     <!-- ========================= -->
     <div class="row g-4">
 
+        <?php if (esAdmin()): ?>
         <!-- CARD 1 -->
         <div class="col-lg-4 col-md-6">
 
@@ -59,6 +67,8 @@ include("../../includes/navbar.php");
             </div>
 
         </div>
+
+        <?php endif; ?>
 
         <!-- CARD 2 -->
         <div class="col-lg-4 col-md-6">

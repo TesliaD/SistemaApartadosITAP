@@ -1,4 +1,4 @@
-<?php include("../../includes/auth.php"); ?>
+<?php include("../../includes/auth_gestion.php"); ?>
 <?php include("../../includes/header.php"); ?>
 <?php include("../../includes/navbar.php"); ?>
 <?php include("../../includes/conexion.php"); ?>
@@ -50,7 +50,7 @@
                     <select name="IDDepartamento" id="IDDepartamento" class="form-select" required>
                         <option value="">Seleccionar departamento</option>
                         <?php
-                        $deptos = $conn->query("SELECT IDDepartamentos, nombre FROM departamentos ORDER BY nombre");
+                        $deptos = $conn->query("SELECT IDDepartamentos, nombre FROM departamentos WHERE " . filtroDeptoSQL($conn, "IDDepartamentos") . " ORDER BY nombre");
                         while($depto = $deptos->fetch_assoc()):
                         ?>
                         <option value="<?= $depto['IDDepartamentos'] ?>"><?= htmlspecialchars($depto['nombre']) ?></option>

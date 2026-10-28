@@ -36,8 +36,8 @@ if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
 }
 
 // Si es maestro, debe tener departamento
-if($rol === 'maestro' && empty($IDDepartamento)){
-    echo json_encode(["status" => "error", "message" => "Los maestros deben tener un departamento asignado"]);
+if(in_array($rol, ["maestro", "manager"]) && empty($IDDepartamento)){
+    echo json_encode(["status" => "error", "message" => "Los maestros y managers deben tener un departamento asignado"]);
     exit;
 }
 

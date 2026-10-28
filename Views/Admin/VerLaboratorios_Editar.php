@@ -1,11 +1,12 @@
 <?php 
-include("../../includes/auth.php"); 
+include("../../includes/auth_gestion.php"); 
 include($_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php");
 
 $sql = "SELECT l.*, d.nombre AS nombre_departamento
         FROM laboratorios l
         LEFT JOIN departamentos d 
         ON l.IDDepartamento = d.IDDepartamentos
+        WHERE " . filtroDeptoSQL($conn, "l.IDDepartamento") . "
         ORDER BY l.IDLab DESC";
 $result = $conn->query($sql);
 ?>
@@ -49,7 +50,7 @@ $result = $conn->query($sql);
             <select id="filtroDepartamento" class="form-select">
                 <option value="">Todos los departamentos</option>
                 <?php
-                $deptos = $conn->query("SELECT IDDepartamentos, nombre FROM departamentos WHERE activo = 1 ORDER BY nombre");
+                $deptos = $conn->query("SELECT IDDepartamentos, nombre FROM departamentos WHERE activo = 1 AND " . filtroDeptoSQL($conn, "IDDepartamentos") . " ORDER BY nombre");
                 while($depto = $deptos->fetch_assoc()):
                 ?>
                 <option value="<?= $depto['IDDepartamentos'] ?>"><?= $depto['nombre'] ?></option>
@@ -165,7 +166,7 @@ $result = $conn->query($sql);
                             <select id="edit_departamento" name="id_departamento" class="form-select" required>
                                 <option value="">Seleccionar</option>
                                 <?php
-                                $deptos = $conn->query("SELECT IDDepartamentos, nombre FROM departamentos WHERE activo = 1 ORDER BY nombre");
+                                $deptos = $conn->query("SELECT IDDepartamentos, nombre FROM departamentos WHERE activo = 1 AND " . filtroDeptoSQL($conn, "IDDepartamentos") . " ORDER BY nombre");
                                 while($depto = $deptos->fetch_assoc()):
                                 ?>
                                 <option value="<?= $depto['IDDepartamentos'] ?>"><?= $depto['nombre'] ?></option>

@@ -105,11 +105,11 @@ form.addEventListener("submit", function(e) {
     // =========================
     // VALIDACIÓN DE DEPARTAMENTO PARA MAESTROS
     // =========================
-    if(rol === "maestro" && !IDDepartamento) {
+    if((rol === "maestro" || rol === "manager") && !IDDepartamento) {
         Swal.fire({
             icon: 'warning',
             title: 'Departamento requerido',
-            text: 'Los maestros deben tener un departamento asignado'
+            text: 'Los maestros y managers deben tener un departamento asignado'
         });
         return;
     }

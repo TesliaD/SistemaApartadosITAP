@@ -5,7 +5,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexio
 
 header('Content-Type: application/json');
 
-if(!isset($_SESSION['id']) || $_SESSION['rol'] != 'administrador'){
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if (!puedeGestionar()){
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
@@ -23,6 +24,12 @@ $horas = $data['horas'];
 
 if(empty($idLab) || empty($horas)){
     echo json_encode(["error" => "Faltan datos requeridos"]);
+    exit;
+}
+
+// Manager: solo laboratorios de su departamento
+if(!puedeGestionarLab($conn, $idLab)){
+    echo json_encode(["error" => "Solo puedes modificar horarios de laboratorios de tu departamento"]);
     exit;
 }
 

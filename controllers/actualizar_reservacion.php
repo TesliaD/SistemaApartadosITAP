@@ -1,6 +1,14 @@
 <?php
 include("../includes/conexion.php");
+require_once __DIR__ . "/../includes/permisos.php";
 header('Content-Type: application/json');
+
+// Solo administrador o manager (este último, en reservaciones de su departamento)
+$dataAuth = json_decode(file_get_contents("php://input"), true);
+if(!puedeGestionar() || !puedeGestionarReservacion($conn, $dataAuth['id'] ?? 0)){
+    echo json_encode(["status"=>"error","error"=>"No autorizado"]);
+    exit;
+}
 
 $data = json_decode(file_get_contents("php://input"), true);
 

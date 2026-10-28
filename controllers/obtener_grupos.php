@@ -4,7 +4,8 @@ session_start();
 
 header('Content-Type: application/json');
 
-if(!isset($_SESSION['id']) || $_SESSION['rol'] != 'administrador'){
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if (!puedeGestionar()){
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
@@ -23,6 +24,7 @@ $sql = "SELECT
             c.Nombre AS Carrera
         FROM grupos g
         LEFT JOIN carreras c ON g.IDCarrera = c.IDCarrera
+        WHERE " . filtroDeptoSQL($conn, "c.IDDepartamento") . "
         ORDER BY c.Nombre, g.Semestre";
 $result = $conn->query($sql);
 

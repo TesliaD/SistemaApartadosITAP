@@ -36,46 +36,59 @@ function limpiarJSON(texto) {
 // ==========================
 // VALIDACIONES DE FECHA
 // ==========================
+// "YYYY-MM-DD" en hora local (toISOString usa UTC y adelanta un día por la tarde)
+function fechaLocalStr(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Interpreta "YYYY-MM-DD" como fecha local (new Date("YYYY-MM-DD") la toma como UTC)
+function fechaDesdeStr(str) {
+    return new Date(str + 'T00:00:00');
+}
+
 function configurarFechas() {
     if(!fecha) return;
-    
-    const hoy = new Date();
-    const minFecha = new Date(hoy);
-    minFecha.setDate(hoy.getDate() + 1);
-    
-    const maxFecha = new Date(hoy);
-    maxFecha.setDate(hoy.getDate() + 3);
-    
-    const minFechaStr = minFecha.toISOString().split('T')[0];
-    const maxFechaStr = maxFecha.toISOString().split('T')[0];
-    
-    fecha.min = minFechaStr;
-    fecha.max = maxFechaStr;
-    
-    if(!fecha.value || fecha.value < minFechaStr) {
-        fecha.value = minFechaStr;
+
+    // El rango permitido (de hoy a 2 días) lo define el servidor
+    // en los atributos min/max del input. Respaldo por si faltan:
+    if(!fecha.min || !fecha.max) {
+        const hoy = new Date();
+        const minFecha = new Date(hoy);
+        // hoy
+        const maxFecha = new Date(hoy);
+        maxFecha.setDate(hoy.getDate() + 2);
+        fecha.min = fechaLocalStr(minFecha);
+        fecha.max = fechaLocalStr(maxFecha);
     }
-    
+
+    if(!fecha.value || fecha.value < fecha.min || fecha.value > fecha.max) {
+        fecha.value = fecha.min;
+    }
+
     fecha.addEventListener("change", validarFecha);
 }
 
 function validarFecha() {
     if(!fecha) return;
-    
-    const fechaSeleccionada = new Date(fecha.value);
+
+    if(fecha.value && (fecha.value < fecha.min || fecha.value > fecha.max)) {
+        Swal.fire("Error", "Solo puedes reservar desde hoy hasta 2 días después", "error");
+        fecha.value = fecha.min;
+    }
+
+    const fechaSeleccionada = fechaDesdeStr(fecha.value);
     const diaSemana = fechaSeleccionada.getDay();
-    
+
     if(diaSemana === 0) {
         Swal.fire("Error", "No se pueden hacer reservaciones en domingo", "error");
-        const hoy = new Date();
-        const minFecha = new Date(hoy);
-        minFecha.setDate(hoy.getDate() + 1);
-        while(minFecha.getDay() === 0) {
-            minFecha.setDate(minFecha.getDate() + 1);
+        // Primer día permitido que no sea domingo
+        const opcion = fechaDesdeStr(fecha.min);
+        while(opcion.getDay() === 0) {
+            opcion.setDate(opcion.getDate() + 1);
         }
-        fecha.value = minFecha.toISOString().split('T')[0];
+        fecha.value = fechaLocalStr(opcion);
     }
-    
+
     cargarHorasOcupadas();
 }
 
@@ -202,22 +215,18 @@ function guardarReservacion() {
         return;
     }
     
-    const fechaSeleccionada = new Date(fecha.value);
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    
-    if(fechaSeleccionada <= hoy) {
-        Swal.fire("Error", "No puedes reservar para el día actual. Solo con 1 día de anticipación", "error");
+    const fechaSeleccionada = fechaDesdeStr(fecha.value);
+
+    if(fecha.value < fecha.min) {
+        Swal.fire("Error", "No puedes reservar en una fecha que ya pasó", "error");
         return;
     }
-    
-    const diffTime = fechaSeleccionada - hoy;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    if(diffDays > 3) {
-        Swal.fire("Error", "Solo puedes reservar con máximo 3 días de anticipación", "error");
+
+    if(fecha.value > fecha.max) {
+        Swal.fire("Error", "Solo puedes reservar con máximo 2 días de anticipación", "error");
         return;
     }
-    
+
     if(fechaSeleccionada.getDay() === 0) {
         Swal.fire("Error", "No se pueden hacer reservaciones en domingo", "error");
         return;

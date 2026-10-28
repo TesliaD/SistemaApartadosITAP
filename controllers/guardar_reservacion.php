@@ -40,12 +40,27 @@ $horas = $data['horas'];
 $idLab = (int)$data['IDLab'];
 $idUsuario = (int)$data['IDUsuario'];
 $idGrupo = (int)$data['IDGrupo'];
+// Panel de gestión: el manager solo aparta laboratorios de su departamento
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if(!puedeGestionar() || !puedeGestionarLab($conn, $idLab)){
+    echo json_encode(["error" => "Solo puedes apartar laboratorios de tu departamento"]);
+    exit;
+}
+
 $software = $data['software'] ?? '';
 $practica = $data['Practica'] ?? '';
 
 sort($horas);
 $horaInicio = $horas[0];
 $horaFin = end($horas);
+
+// Regla general: de hoy a 2 días; hoy solo horas que no han comenzado
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/reglas_reservacion.php";
+$errorFecha = validarFechaReservacion($fecha, $horaInicio);
+if($errorFecha){
+    echo json_encode(["error" => $errorFecha]);
+    exit;
+}
 
 // Verificar disponibilidad
 $sqlCheck = "SELECT COUNT(*) as total FROM reservaciones 

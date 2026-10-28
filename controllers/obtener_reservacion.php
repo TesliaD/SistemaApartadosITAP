@@ -5,7 +5,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexio
 
 header('Content-Type: application/json');
 
-if(!isset($_SESSION['id'])){
+require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+if(!puedeGestionar()){
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
@@ -47,6 +48,9 @@ if(!empty($_GET['estado'])) {
     $params[] = $_GET['estado'];
     $types .= "s";
 }
+
+// Manager: solo reservaciones de laboratorios de su departamento
+$where[] = filtroDeptoSQL($conn, "l.IDDepartamento");
 
 $whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
 
@@ -90,7 +94,11 @@ while($row = $result->fetch_assoc()) {
 }
 
 // Contar total para paginación
-$sqlCount = "SELECT COUNT(*) as total FROM reservaciones r $whereClause";
+$sqlCount = "SELECT COUNT(*) as total
+             FROM reservaciones r
+             LEFT JOIN laboratorios l ON r.IDLab = l.IDLab
+             LEFT JOIN usuarios u ON r.IDUsuario = u.IDUsuarios
+             $whereClause";
 $stmtCount = $conn->prepare($sqlCount);
 if(!empty($params)) {
     // Quitar los parámetros de LIMIT para el COUNT
