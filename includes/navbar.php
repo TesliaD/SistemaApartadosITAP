@@ -99,5 +99,5 @@
         </a>
 </div>
 
-<script src="../../js/darkmode.js"></script>
-<script src="../../js/logout.js"></script>
+<script src="<?= BASE_URL ?>/js/darkmode.js"></script>
+<script src="<?= BASE_URL ?>/js/logout.js"></script>
