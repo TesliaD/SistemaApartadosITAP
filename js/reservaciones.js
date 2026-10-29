@@ -144,7 +144,7 @@ function guardarReservacion() {
 
     console.log("Enviando reservación:", datos);
 
-    fetch('/SistemaApartadosITAP/controllers/guardar_reservacion.php', {
+    fetch('../../controllers/guardar_reservacion.php', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos)
@@ -182,7 +182,7 @@ function guardarReservacion() {
 // ==========================
 function cargarTabla(page = 1){
     paginaActual = page;
-    let url = `/SistemaApartadosITAP/controllers/obtener_reservacion.php?page=${page}`;
+    let url = `../../controllers/obtener_reservacion.php?page=${page}`;
 
     if(fechaInicio && fechaFin && fechaInicio.value && fechaFin.value){
         url += `&inicio=${fechaInicio.value}&fin=${fechaFin.value}`;
@@ -273,7 +273,7 @@ function cargarGrupos(){
         return;
     }
 
-    fetch(`/SistemaApartadosITAP/controllers/obtener_grupos_docente.php?id=${idDocente}`)
+    fetch(`../../controllers/obtener_grupos_docente.php?id=${idDocente}`)
     .then(response => response.json())
     .then(data => {
         grupo.innerHTML = `<option value="">Seleccionar grupo</option>`;
@@ -324,7 +324,7 @@ function cargarAlumnos(){
 function cargarHorasOcupadas() {
     if (!fecha.value || !lab.value) return;
 
-    fetch(`/SistemaApartadosITAP/controllers/obtener_horas_ocupadas.php?fecha=${fecha.value}&lab=${lab.value}`)
+    fetch(`../../controllers/obtener_horas_ocupadas.php?fecha=${fecha.value}&lab=${lab.value}`)
         .then(response => response.json())
         .then(horas => {
             console.log("🟡 Horas recibidas del backend (PHP):", horas);
@@ -376,7 +376,7 @@ function cancelar(id){
     })
     .then(result => {
         if(result.isConfirmed){
-            fetch('/SistemaApartadosITAP/controllers/cancelar_reservacion.php', {
+            fetch('../../controllers/cancelar_reservacion.php', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: id })

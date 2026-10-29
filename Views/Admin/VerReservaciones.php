@@ -115,7 +115,7 @@ include("../../includes/navbar.php");
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- CSS -->
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/reservaciones.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/reservaciones.css">
 
 <!-- TU JS -->
 <script src="../../js/reservaciones.js"></script>

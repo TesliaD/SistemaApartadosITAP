@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
+require_once __DIR__ . "/../includes/conexion.php";
 
 header('Content-Type: application/json');
 

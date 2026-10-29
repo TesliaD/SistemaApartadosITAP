@@ -4,7 +4,7 @@ include("../../includes/header.php");
 include("../../includes/navbar.php");
 include("../../includes/conexion.php");
 ?>
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/noticias.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/noticias.css">
 <body>
 
 <div class="content p-4" id="content">

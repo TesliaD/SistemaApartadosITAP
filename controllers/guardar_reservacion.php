@@ -11,7 +11,7 @@ if(!isset($_SESSION['id'])){
     exit;
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
+require_once __DIR__ . "/../includes/conexion.php";
 
 if(!$conn){
     echo json_encode(["error" => "Error de conexión a BD"]);
@@ -41,7 +41,7 @@ $idLab = (int)$data['IDLab'];
 $idUsuario = (int)$data['IDUsuario'];
 $idGrupo = (int)$data['IDGrupo'];
 // Panel de gestión: el manager solo aparta laboratorios de su departamento
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+require_once __DIR__ . "/../includes/permisos.php";
 if(!puedeGestionar() || !puedeGestionarLab($conn, $idLab)){
     echo json_encode(["error" => "Solo puedes apartar laboratorios de tu departamento"]);
     exit;
@@ -55,7 +55,7 @@ $horaInicio = $horas[0];
 $horaFin = end($horas);
 
 // Regla general: de hoy a 2 días; hoy solo horas que no han comenzado
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/reglas_reservacion.php";
+require_once __DIR__ . "/../includes/reglas_reservacion.php";
 $errorFecha = validarFechaReservacion($fecha, $horaInicio);
 if($errorFecha){
     echo json_encode(["error" => $errorFecha]);

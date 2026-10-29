@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
             new FormData(form);
 
         fetch(
-            "/SistemaApartadosITAP/controllers/guardar_noticia.php",
+            "../../controllers/guardar_noticia.php",
             {
                 method: "POST",
                 body: formData

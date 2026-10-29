@@ -200,7 +200,7 @@ function cargarDatosSelects(tipo) {
     console.log("🔄 Cargando datos de selects...");
     
     // Cargar Departamentos
-    fetch('/SistemaApartadosITAP/controllers/obtener_departamentos.php')
+    fetch('../../controllers/obtener_departamentos.php')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('modalFiltroDepartamento');
@@ -218,7 +218,7 @@ function cargarDatosSelects(tipo) {
         .catch(err => console.error('Error cargando departamentos:', err));
 
     // Cargar Laboratorios
-    fetch('/SistemaApartadosITAP/controllers/obtener_laboratorios.php')
+    fetch('../../controllers/obtener_laboratorios.php')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('modalFiltroLab');
@@ -236,7 +236,7 @@ function cargarDatosSelects(tipo) {
         .catch(err => console.error('Error cargando laboratorios:', err));
 
     // Cargar Docentes
-    fetch('/SistemaApartadosITAP/controllers/obtener_docentes.php')
+    fetch('../../controllers/obtener_docentes.php')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('modalFiltroDocente');
@@ -254,7 +254,7 @@ function cargarDatosSelects(tipo) {
         .catch(err => console.error('Error cargando docentes:', err));
 
     // Cargar Grupos
-    fetch('/SistemaApartadosITAP/controllers/obtener_grupos.php')
+    fetch('../../controllers/obtener_grupos.php')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('modalFiltroGrupo');
@@ -273,7 +273,7 @@ function cargarDatosSelects(tipo) {
 
     // Cargar Carreras (solo para reporte_general)
     if(tipo === 'reporte_general') {
-        fetch('/SistemaApartadosITAP/controllers/obtener_carreras.php')
+        fetch('../../controllers/obtener_carreras.php')
             .then(response => response.json())
             .then(data => {
                 const select = document.getElementById('modalFiltroCarrera');
@@ -363,7 +363,7 @@ function generarReporteDesdeModal() {
     
     console.log("📊 Datos enviados:", datos);
     
-    fetch('/SistemaApartadosITAP/controllers/generar_reporte_fechas.php', {
+    fetch('../../controllers/generar_reporte_fechas.php', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos)

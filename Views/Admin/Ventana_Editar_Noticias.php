@@ -4,7 +4,7 @@ include("../../includes/header.php");
 include("../../includes/navbar.php");
 include("../../includes/conexion.php");
 ?>
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/noticias.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/noticias.css">
 <div class="content" id="content">
 
     <!-- HEADER -->
@@ -97,7 +97,7 @@ include("../../includes/conexion.php");
                                 <?php if(!empty($noticia['Imagen'])): ?>
 
                                     <img
-                                        src="/SistemaApartadosITAP/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
+                                        src="<?= BASE_URL ?>/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
                                         class="img-noticia">
 
                                 <?php else: ?>

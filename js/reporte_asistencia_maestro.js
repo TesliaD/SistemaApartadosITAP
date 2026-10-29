@@ -54,7 +54,7 @@ function verificarReservacion() {
     const horaInicio = hora.split(' - ')[0];
 
     // Consultar reservación
-    fetch(`/SistemaApartadosITAP/controllers/verificar_reservacion_maestro.php?grupo=${grupoId}&fecha=${fecha}&hora=${horaInicio}`)
+    fetch(`../../controllers/verificar_reservacion_maestro.php?grupo=${grupoId}&fecha=${fecha}&hora=${horaInicio}`)
         .then(response => response.json())
         .then(data => {
             if(data.error) {
@@ -128,7 +128,7 @@ function generarReporte() {
         reservacionId: datosReservacion.IDReservacion || null
     };
 
-    fetch('/SistemaApartadosITAP/controllers/generar_reporte_asistencia_maestro.php', {
+    fetch('../../controllers/generar_reporte_asistencia_maestro.php', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos)

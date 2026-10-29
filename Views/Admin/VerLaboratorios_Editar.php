@@ -1,6 +1,6 @@
 <?php 
 include("../../includes/auth_gestion.php"); 
-include($_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php");
+include(__DIR__ . "/../../includes/conexion.php");
 
 $sql = "SELECT l.*, d.nombre AS nombre_departamento
         FROM laboratorios l
@@ -36,7 +36,7 @@ $result = $conn->query($sql);
         <h3 class="mb-0">
             <i class="bi bi-pc-display"></i> Lista de Laboratorios
         </h3>
-        <a href="registro_laboratorio.php" class="btn btn-primary">
+        <a href="RegistrarLaboratorios.php" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Nuevo Laboratorio
         </a>
     </div>

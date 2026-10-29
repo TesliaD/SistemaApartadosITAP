@@ -1,16 +1,10 @@
 <?php 
-<<<<<<< HEAD
-include("../../includes/conexion.php"); 
-include("../../includes/auth_gestion.php");
-include("../../includes/header.php");
-include("../../includes/navbar.php");
-=======
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/conexion.php';
-require_once __DIR__ . '/../../includes/auth.php';
+// Administrador y manager (este último limitado a su departamento)
+require_once __DIR__ . '/../../includes/auth_gestion.php';
 require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/navbar.php';
->>>>>>> 4ac5f64288c895680aefcbe7404e718476b34518
 ?>
 
 <!-- ========================= -->

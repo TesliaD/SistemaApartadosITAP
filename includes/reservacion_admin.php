@@ -1,1 +1,2 @@
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/reservacion-admin.css">
+<?php require_once __DIR__ . "/config.php"; ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/reservacion-admin.css">

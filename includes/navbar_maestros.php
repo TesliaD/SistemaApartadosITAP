@@ -109,5 +109,5 @@ require_once __DIR__ . '/config.php';
     </a>
 </div>
 
-<script src="/SistemaApartadosITAP/js/darkmode.js"></script>
-<script src="/SistemaApartadosITAP/js/logout.js"></script>
+<script src="<?= BASE_URL ?>/js/darkmode.js"></script>
+<script src="<?= BASE_URL ?>/js/logout.js"></script>

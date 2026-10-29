@@ -24,8 +24,7 @@ if (!isset($_SESSION['id'])) {
 // CONEXIÓN
 // ============================================================
 
-require_once $_SERVER['DOCUMENT_ROOT'] .
-    "/SistemaApartadosITAP/includes/conexion.php";
+require_once __DIR__ . "/../includes/conexion.php";
 
 
 if (!$conn) {

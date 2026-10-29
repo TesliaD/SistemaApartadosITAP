@@ -1,13 +1,13 @@
 <?php
 session_start();
-include($_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php");
+include(__DIR__ . "/../includes/conexion.php");
 
 header('Content-Type: application/json');
 
 // =========================
 // VERIFICAR SESIÓN Y ROL
 // =========================
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+require_once __DIR__ . "/../includes/permisos.php";
 if (!puedeGestionar()) {
     echo json_encode([
         "status" => "error",

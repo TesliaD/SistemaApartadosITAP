@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // URL
         const url =
-            `/SistemaApartadosITAP/controllers/obtener_datos_reporte_maestro.php` +
+            `../../controllers/obtener_datos_reporte_maestro.php` +
             `?grupo=${encodeURIComponent(idGrupo)}` +
             `&fecha=${encodeURIComponent(fecha)}` +
             `&hora=${encodeURIComponent(horaInicio)}` +

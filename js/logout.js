@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "/SistemaApartadosITAP/logout.php"; 
+                    window.location.href = "../../logout.php"; 
                 }
             });
         });

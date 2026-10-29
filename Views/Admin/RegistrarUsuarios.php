@@ -39,7 +39,7 @@
 
     <div class="card p-4">
 
-        <form action="guardar_usuario.php" method="POST">
+        <form action="../../controllers/guardar_usuario.php" method="POST">
 
             <div class="row g-3">
 

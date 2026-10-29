@@ -1,5 +1,6 @@
 <?php
 // No requiere autenticación - es pública
+require_once __DIR__ . "/../../includes/config.php";
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- Paleta global del proyecto (--primary, --secondary, --accent, --bg, --text, --gray) -->
-    <link rel="stylesheet" href="/SistemaApartadosITAP/css/variablesglobales.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/variablesglobales.css">
 
     <style>
         /* =========================
@@ -957,7 +958,7 @@
     // CARGA DE DATOS
     // =========================
     function cargarReservacionesDia() {
-        fetch(`/SistemaApartadosITAP/controllers/obtener_reservaciones_dia.php?fecha=${fechaLocalISO()}`)
+        fetch(`../../controllers/obtener_reservaciones_dia.php?fecha=${fechaLocalISO()}`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {

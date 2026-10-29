@@ -192,7 +192,7 @@ include("../../includes/navbar_invitados.php");
                     <?php if(!empty($noticia['Imagen'])): ?>
 
                         <img 
-                            src="/SistemaApartadosITAP/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
+                            src="<?= BASE_URL ?>/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
                             class="noticia-img"
                             alt="Noticia">
 

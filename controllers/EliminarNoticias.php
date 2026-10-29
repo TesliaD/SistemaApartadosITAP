@@ -14,7 +14,8 @@ if(isset($_GET['id'])){
 
     if($stmt->execute()){
 
-        header("Location: /SistemaApartadosITAP/views/admin/Ventana_Editar_Noticias.php");
+        // Ruta relativa y con mayúsculas exactas (el hosting Linux distingue Views/Admin de views/admin)
+        header("Location: ../Views/Admin/Ventana_Editar_Noticias.php");
         exit;
 
     }

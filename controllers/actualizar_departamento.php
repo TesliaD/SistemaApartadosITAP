@@ -1,6 +1,6 @@
 <?php
 session_start();
-include($_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php");
+include(__DIR__ . "/../includes/conexion.php");
 
 header('Content-Type: application/json');
 

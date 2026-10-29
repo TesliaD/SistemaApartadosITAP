@@ -275,7 +275,7 @@ function guardarReservacion() {
         didOpen: () => Swal.showLoading()
     });
     
-    fetch('/SistemaApartadosITAP/controllers/guardar_reservacion_maestro.php', {
+    fetch('../../controllers/guardar_reservacion_maestro.php', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos)
@@ -314,7 +314,7 @@ function guardarReservacion() {
 // CARGAR GRUPOS DEL MAESTRO
 // ==========================
 function cargarDatosMaestro() {
-    fetch('/SistemaApartadosITAP/controllers/obtener_grupos_maestro_reservacion.php')
+    fetch('../../controllers/obtener_grupos_maestro_reservacion.php')
         .then(response => response.json())
         .then(data => {
             if(data.error){
@@ -351,7 +351,7 @@ function cargarDatosMaestro() {
 // ==========================
 function cargarTabla(page = 1){
     paginaActual = page;
-    let url = `/SistemaApartadosITAP/controllers/obtener_reservaciones_maestro.php?page=${page}`;
+    let url = `../../controllers/obtener_reservaciones_maestro.php?page=${page}`;
     
     if(fechaInicio && fechaInicio.value){
         url += `&inicio=${fechaInicio.value}`;
@@ -495,7 +495,7 @@ function cargarAlumnos(){
 function cargarHorasOcupadas(){
     if(!fecha.value || !lab.value) return;
     
-    fetch(`/SistemaApartadosITAP/controllers/obtener_horas_ocupadas.php?fecha=${fecha.value}&lab=${lab.value}`)
+    fetch(`../../controllers/obtener_horas_ocupadas.php?fecha=${fecha.value}&lab=${lab.value}`)
         .then(response => response.json())
         .then(horas => {
             console.log("🟡 Horas ocupadas recibidas del backend:", horas);
@@ -547,7 +547,7 @@ function cancelar(id){
         cancelButtonText: "No"
     }).then(result => {
         if(result.isConfirmed){
-            fetch('/SistemaApartadosITAP/controllers/cancelar_reservacion.php', {
+            fetch('../../controllers/cancelar_reservacion.php', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: id })

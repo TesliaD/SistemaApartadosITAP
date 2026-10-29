@@ -257,7 +257,7 @@ function cargarDepartamentos() {
 
 
     fetch(
-        "/SistemaApartadosITAP/controllers/obtener_departamentos_invitado.php"
+        "../../controllers/obtener_departamentos_invitado.php"
     )
 
     .then(response => {
@@ -387,7 +387,7 @@ function cargarLaboratorios(
 
 
     let url =
-        "/SistemaApartadosITAP/controllers/" +
+        "../../controllers/" +
         "obtener_laboratorios_invitado.php";
 
 
@@ -588,7 +588,7 @@ function cargarTabla(page = 1) {
     // ========================================================
 
     let url =
-        "/SistemaApartadosITAP/controllers/" +
+        "../../controllers/" +
         "obtener_reservaciones_invitado.php";
 
 

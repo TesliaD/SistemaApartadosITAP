@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 didOpen: () => Swal.showLoading()
             });
 
-            fetch('/SistemaApartadosITAP/controllers/guardar_horarios_laboratorio.php', {
+            fetch('../../controllers/guardar_horarios_laboratorio.php', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datos)
@@ -148,7 +148,7 @@ function cargarHorariosLaboratorio(idLab) {
     const tbody = document.querySelector("#tablaHorarios tbody");
     tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3">⏳ Cargando horarios...</td></tr>`;
 
-    fetch(`/SistemaApartadosITAP/controllers/obtener_horas_ocupadas.php?id=${idLab}`)
+    fetch(`../../controllers/obtener_horas_ocupadas.php?id=${idLab}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -301,7 +301,7 @@ function eliminarHorario(id) {
         cancelButtonText: "Cancelar"
     }).then(result => {
         if(result.isConfirmed) {
-            fetch('/SistemaApartadosITAP/controllers/eliminar_horario_laboratorio.php', {
+            fetch('../../controllers/eliminar_horario_laboratorio.php', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: id })

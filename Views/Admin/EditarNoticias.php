@@ -47,7 +47,7 @@ if($resultado->num_rows <= 0){
 $noticia = $resultado->fetch_assoc();
 
 ?>
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/noticias.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/noticias.css">
 <div class="content" id="content">
 
     <!-- TITULO -->
@@ -87,7 +87,7 @@ $noticia = $resultado->fetch_assoc();
             <form
 
                 id="formNoticias"
-                action="/SistemaApartadosITAP/controllers/ActualizarNoticias.php"
+                action="<?= BASE_URL ?>/controllers/ActualizarNoticias.php"
                 method="POST"
                 enctype="multipart/form-data">
 
@@ -213,7 +213,7 @@ $noticia = $resultado->fetch_assoc();
                         <?php if(!empty($noticia['Imagen'])): ?>
 
                             <img
-                                src="/SistemaApartadosITAP/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
+                                src="<?= BASE_URL ?>/uploads/noticias/<?= htmlspecialchars($noticia['Imagen']) ?>"
                                 id="preview"
                                 class="img-preview shadow rounded">
 
@@ -384,7 +384,7 @@ document.querySelector('input[name="Imagen"]')
         }).then(() => {
 
             window.location.href =
-            "/SistemaApartadosITAP/views/Admin/Ventana_Editar_Noticias.php";
+            "Ventana_Editar_Noticias.php";
 
         });
 

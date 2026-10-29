@@ -4,13 +4,13 @@ session_start();
 
 header('Content-Type: application/json');
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+require_once __DIR__ . "/../includes/permisos.php";
 if (!puedeGestionar()){
     echo json_encode(["error" => "No autorizado"]);
     exit;
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
+require_once __DIR__ . "/../includes/conexion.php";
 
 if(!$conn){
     echo json_encode(["error" => "Error de conexión a BD"]);

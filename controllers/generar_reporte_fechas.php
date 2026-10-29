@@ -3,7 +3,7 @@
 ob_clean();
 session_start();
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php";
+require_once __DIR__ . "/../includes/conexion.php";
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -12,7 +12,7 @@ header('Content-Type: application/json; charset=utf-8');
 // SEGURIDAD
 // ============================================================
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/permisos.php";
+require_once __DIR__ . "/../includes/permisos.php";
 if (!puedeGestionar()) {
 
     echo json_encode([

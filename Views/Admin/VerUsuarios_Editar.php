@@ -1,6 +1,6 @@
 <?php 
 include("../../includes/auth.php"); 
-include($_SERVER['DOCUMENT_ROOT'] . "/SistemaApartadosITAP/includes/conexion.php");
+include(__DIR__ . "/../../includes/conexion.php");
 
 // Consulta con JOIN para obtener el nombre del departamento
 $sql = "SELECT u.*, d.nombre AS departamento_nombre 
@@ -39,7 +39,7 @@ $result = $conn->query($sql);
         <h3 class="mb-0">
             <i class="bi bi-people"></i> Lista de Usuarios
         </h3>
-        <a href="registro_usuario.php" class="btn btn-primary">
+        <a href="RegistrarUsuarios.php" class="btn btn-primary">
             <i class="bi bi-person-plus"></i> Nuevo Usuario
         </a>
     </div>

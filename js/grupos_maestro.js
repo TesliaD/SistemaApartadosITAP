@@ -112,7 +112,7 @@ function cargarGrupos() {
     console.log("================================");
 
     fetch(
-        "/SistemaApartadosITAP/controllers/obtener_grupos_maestro.php",
+        "../../controllers/obtener_grupos_maestro.php",
         {
             method: "GET",
             headers: {
@@ -505,7 +505,7 @@ function guardarGrupo() {
     // --------------------------------------------------------
 
     fetch(
-        "/SistemaApartadosITAP/controllers/guardar_grupo_maestro.php",
+        "../../controllers/guardar_grupo_maestro.php",
         {
             method: "POST",
 
@@ -595,7 +595,7 @@ function editarGrupo(id) {
     );
 
     fetch(
-        `/SistemaApartadosITAP/controllers/obtener_grupo.php?id=${encodeURIComponent(id)}`,
+        `../../controllers/obtener_grupo.php?id=${encodeURIComponent(id)}`,
         {
             method: "GET",
             headers: {
@@ -951,7 +951,7 @@ function eliminarGrupo(id) {
         // ----------------------------------------------------
 
         fetch(
-            "/SistemaApartadosITAP/controllers/eliminar_grupo_maestro.php",
+            "../../controllers/eliminar_grupo_maestro.php",
             {
                 method: "POST",
 
@@ -1133,7 +1133,7 @@ function subirAlumnos(e) {
     `;
 
     fetch(
-        "/SistemaApartadosITAP/controllers/subir_alumnos_excel.php",
+        "../../controllers/subir_alumnos_excel.php",
         {
             method: "POST",
             body: formData
@@ -1448,7 +1448,7 @@ function verListaAlumnos(
     // --------------------------------------------------------
 
     fetch(
-        `/SistemaApartadosITAP/controllers/obtener_alumnos_por_grupo.php?id=${encodeURIComponent(grupoId)}`,
+        `../../controllers/obtener_alumnos_por_grupo.php?id=${encodeURIComponent(grupoId)}`,
         {
             method: "GET",
 

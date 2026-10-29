@@ -1,6 +1,9 @@
-<?php require_once __DIR__ . "/permisos.php"; ?>
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/navbar.css">
-<link rel="stylesheet" href="/SistemaApartadosITAP/css/dashcards.css">
+<?php
+require_once __DIR__ . "/config.php";
+require_once __DIR__ . "/permisos.php";
+?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/navbar.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/dashcards.css">
 <div class="overlay" id="overlay"></div>
 
 <!-- NAVBAR -->
