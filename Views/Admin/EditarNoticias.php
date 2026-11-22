@@ -47,7 +47,7 @@ if($resultado->num_rows <= 0){
 $noticia = $resultado->fetch_assoc();
 
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/noticias.css">
+<link rel="stylesheet" href="<?= recurso('/css/noticias.css') ?>">
 <div class="content" id="content">
 
     <!-- TITULO -->
@@ -400,7 +400,7 @@ document.querySelector('input[name="Imagen"]')
 });
 </script>
 
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
 
 </body>
 </html>

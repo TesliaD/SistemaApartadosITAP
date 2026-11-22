@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/config.php';
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/navbarmaestros.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/dashcards.css">
+<link rel="stylesheet" href="<?= recurso('/css/navbarmaestros.css') ?>">
+<link rel="stylesheet" href="<?= recurso('/css/dashcards.css') ?>">
 <script>
     document.body.classList.add('nav-maestro');
     try {
@@ -109,5 +109,5 @@ require_once __DIR__ . '/config.php';
     </a>
 </div>
 
-<script src="<?= BASE_URL ?>/js/darkmode.js"></script>
-<script src="<?= BASE_URL ?>/js/logout.js"></script>
+<script src="<?= recurso('/js/darkmode.js') ?>"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>

@@ -4,7 +4,7 @@ include("../../includes/header.php");
 include("../../includes/navbar.php");
 include("../../includes/conexion.php");
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/noticias.css">
+<link rel="stylesheet" href="<?= recurso('/css/noticias.css') ?>">
 <div class="content" id="content">
 
     <!-- HEADER -->
@@ -374,7 +374,7 @@ document.querySelectorAll(".btnEliminar")
 
 </script>
 
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
 
 </body>
 </html>

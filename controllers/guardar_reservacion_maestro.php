@@ -50,25 +50,11 @@ if($errorFecha) {
 }
 
 
-$sqlCheck = "SELECT COUNT(*) as total FROM reservaciones 
-             WHERE fecha = ? AND IDLab = ? AND Estado = 'activa'
-             AND (
-                (horaInicio <= ? AND horaFin > ?) OR
-                (horaInicio < ? AND horaFin >= ?) OR
-                (horaInicio >= ? AND horaFin <= ?)
-             )";
-
-$stmtCheck = $conn->prepare($sqlCheck);
-$stmtCheck->bind_param("sissssss", $fecha, $idLab, $horaInicio, $horaInicio, $horaFin, $horaFin, $horaInicio, $horaFin);
-$stmtCheck->execute();
-$resultCheck = $stmtCheck->get_result();
-$rowCheck = $resultCheck->fetch_assoc();
-
-if($rowCheck['total'] > 0) {
+// Cualquier reservación no cancelada ocupa el horario ('activa', 'Activo', etc.)
+if(hayEmpalme($conn, $fecha, $idLab, $horaInicio, $horaFin)) {
     echo json_encode(["error" => "Ya existe una reservación en este horario"]);
     exit;
 }
-$stmtCheck->close();
 
 
 $sql = "INSERT INTO reservaciones (fecha, horaInicio, horaFin, IDLab, IDUsuario, IDGrupo, Software, Practica, Estado) 

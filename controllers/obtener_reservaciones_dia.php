@@ -25,6 +25,7 @@ $sql = "SELECT
             r.horaInicio,
             r.horaFin,
             r.Practica,
+            r.Software,
             r.Estado,
             l.IDLab,
             l.Nombre AS laboratorio,

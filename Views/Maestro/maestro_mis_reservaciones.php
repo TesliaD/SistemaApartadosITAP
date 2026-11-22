@@ -98,5 +98,5 @@ $nombreCompleto = trim($usuario['nombre'] . " " . ($usuario['apellidos'] ?? ''))
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../../js/reservaciones_maestro.js"></script>
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/reservaciones_maestro.js') ?>"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>

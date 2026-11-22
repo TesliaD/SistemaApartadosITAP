@@ -30,7 +30,22 @@ if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
 
     // VALIDAR PASSWORD
-    if ($password == $user['password']) {
+    if ($password == $user['password'] && (int)$user['activo'] !== 1) {
+
+        // Usuario desactivado por el administrador: no se inicia sesión
+        echo "
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Cuenta inactiva',
+                text: 'Tu cuenta está desactivada. Contacta al administrador del Centro de Cómputo.'
+            }).then(() => {
+                window.location.href = 'index.html';
+            });
+        </script>
+        ";
+
+    } elseif ($password == $user['password']) {
 
         $_SESSION['usuario'] = $user['nombre'];
         $_SESSION['rol'] = $user['rol'];
@@ -40,9 +55,12 @@ if ($result->num_rows > 0) {
         switch ($user['rol']) {
 
             case 'administrador':
-            case 'manager':
-                // El manager usa el mismo panel, limitado a su departamento
                 $ruta = "Views/Admin/admin.php";
+                break;
+
+            case 'manager':
+                // Vistas del manager, limitadas a su departamento
+                $ruta = "Views/Manager/manager.php";
                 break;
 
             case 'maestro':

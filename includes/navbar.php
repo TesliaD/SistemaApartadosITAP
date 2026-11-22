@@ -2,8 +2,8 @@
 require_once __DIR__ . "/config.php";
 require_once __DIR__ . "/permisos.php";
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/navbar.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/dashcards.css">
+<link rel="stylesheet" href="<?= recurso('/css/navbar.css') ?>">
+<link rel="stylesheet" href="<?= recurso('/css/dashcards.css') ?>">
 <div class="overlay" id="overlay"></div>
 
 <!-- NAVBAR -->
@@ -38,7 +38,7 @@ require_once __DIR__ . "/permisos.php";
 
     <h5 class="mb-4">Menú</h5>
 
-    <a href="admin.php"><i class="bi bi-house"></i><span>Inicio</span></a>
+    <a href="<?= esManager() ? 'manager.php' : 'admin.php' ?>"><i class="bi bi-house"></i><span>Inicio</span></a>
 
     <!-- SUBMENU -->
      
@@ -102,5 +102,5 @@ require_once __DIR__ . "/permisos.php";
         </a>
 </div>
 
-<script src="<?= BASE_URL ?>/js/darkmode.js"></script>
-<script src="<?= BASE_URL ?>/js/logout.js"></script>
+<script src="<?= recurso('/js/darkmode.js') ?>"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>

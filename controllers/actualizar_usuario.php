@@ -18,6 +18,8 @@ $area = trim($_POST['area'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $rol = $_POST['rol'] ?? '';
 $IDDepartamento = isset($_POST['IDDepartamento']) && !empty($_POST['IDDepartamento']) ? (int)$_POST['IDDepartamento'] : null;
+// Estado: 1 = activo, 0 = inactivo (un usuario inactivo no puede iniciar sesión)
+$activo = (isset($_POST['activo']) && (string)$_POST['activo'] === '0') ? 0 : 1;
 
 // Validaciones
 if(!$id){
@@ -41,6 +43,12 @@ if(in_array($rol, ["maestro", "manager"]) && empty($IDDepartamento)){
     exit;
 }
 
+// El administrador no puede desactivarse a sí mismo (perdería el acceso)
+if($activo === 0 && $id === (int)$_SESSION['id']){
+    echo json_encode(["status" => "error", "message" => "No puedes desactivar tu propia cuenta"]);
+    exit;
+}
+
 // Verificar si el usuario existe
 $sqlCheck = "SELECT IDUsuarios FROM usuarios WHERE IDUsuarios = ?";
 $stmtCheck = $conn->prepare($sqlCheck);
@@ -60,11 +68,12 @@ $sql = "UPDATE usuarios SET
             area = ?, 
             email = ?, 
             rol = ?, 
-            IDDepartamento = ? 
+            IDDepartamento = ?,
+            activo = ?
         WHERE IDUsuarios = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sssssii", $nombre, $apellidos, $area, $email, $rol, $IDDepartamento, $id);
+$stmt->bind_param("sssssiii", $nombre, $apellidos, $area, $email, $rol, $IDDepartamento, $activo, $id);
 
 if($stmt->execute()){
     echo json_encode([

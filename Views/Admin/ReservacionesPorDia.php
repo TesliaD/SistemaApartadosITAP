@@ -15,7 +15,7 @@ require_once __DIR__ . "/../../includes/config.php";
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- Paleta global del proyecto (--primary, --secondary, --accent, --bg, --text, --gray) -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/css/variablesglobales.css">
+    <link rel="stylesheet" href="<?= recurso('/css/variablesglobales.css') ?>">
 
     <style>
         /* =========================
@@ -412,6 +412,20 @@ require_once __DIR__ . "/../../includes/config.php";
             white-space: nowrap;
         }
 
+        /* Software que se usará en la práctica */
+        .software {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .82rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: var(--accent-soft);
+            color: var(--accent-ui);
+        }
+
+
         .vacio {
             color: var(--text-3);
         }
@@ -701,7 +715,7 @@ require_once __DIR__ . "/../../includes/config.php";
 
         <div class="search">
             <i class="bi bi-search"></i>
-            <input type="search" id="buscar" placeholder="Buscar laboratorio, docente o grupo">
+            <input type="search" id="buscar" placeholder="Buscar laboratorio, docente, grupo o software">
         </div>
     </section>
 
@@ -718,12 +732,13 @@ require_once __DIR__ . "/../../includes/config.php";
                     <th>Docente</th>
                     <th>Grupo</th>
                     <th>Práctica</th>
+                    <th>Software</th>
                     <th>Estado</th>
                 </tr>
             </thead>
             <tbody id="cuerpoTabla">
                 <tr>
-                    <td colspan="7" class="mensaje">
+                    <td colspan="8" class="mensaje">
                         <i class="bi bi-arrow-repeat"></i>
                         <strong>Cargando reservaciones...</strong>
                     </td>
@@ -847,7 +862,7 @@ require_once __DIR__ . "/../../includes/config.php";
     // =========================
     function coincideBusqueda(res) {
         if (!estado.busqueda) return true;
-        const texto = [res.laboratorio, res.numLab, res.docente, res.grupo, res.Practica, res.departamento]
+        const texto = [res.laboratorio, res.numLab, res.docente, res.grupo, res.Practica, res.Software, res.departamento]
             .join(' ')
             .toLowerCase();
         return texto.includes(estado.busqueda);
@@ -903,7 +918,7 @@ require_once __DIR__ . "/../../includes/config.php";
             const hayFiltro = estado.depto || estado.busqueda;
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="mensaje">
+                    <td colspan="8" class="mensaje">
                         <i class="bi ${hayFiltro ? 'bi-funnel' : 'bi-calendar2-check'}"></i>
                         <strong>${hayFiltro ? 'Sin resultados' : 'No hay reservaciones para hoy'}</strong>
                         ${hayFiltro ? 'Prueba con otro departamento o búsqueda.' : 'Los laboratorios están disponibles todo el día.'}
@@ -936,6 +951,7 @@ require_once __DIR__ . "/../../includes/config.php";
                     <td data-label="Docente">${res.docente ? escaparHTML(res.docente) : vacio}</td>
                     <td data-label="Grupo">${res.grupo ? escaparHTML(res.grupo) : vacio}</td>
                     <td data-label="Práctica">${res.Practica ? escaparHTML(res.Practica) : vacio}</td>
+                    <td data-label="Software">${res.Software ? `<span class="software"><i class="bi bi-laptop"></i>${escaparHTML(res.Software)}</span>` : vacio}</td>
                     <td data-label="Estado">
                         <span class="estado ${est}">${ETIQUETAS[est]}</span>
                     </td>
@@ -946,7 +962,7 @@ require_once __DIR__ . "/../../includes/config.php";
     function mostrarError(mensaje) {
         document.getElementById('cuerpoTabla').innerHTML = `
             <tr>
-                <td colspan="7" class="mensaje">
+                <td colspan="8" class="mensaje">
                     <i class="bi bi-exclamation-triangle"></i>
                     <strong>${escaparHTML(mensaje)}</strong>
                     Se intentará de nuevo automáticamente.

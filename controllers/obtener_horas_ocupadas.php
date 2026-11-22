@@ -37,15 +37,23 @@ while ($row = $resultAdmin->fetch_assoc()) {
 }
 
 // 3. Obtener las horas ya RESERVADAS
+//    Se bloquea cada hora que cubre la reservación (desde el inicio hasta antes del fin),
+//    en formato "HH:MM" igual que los botones de la interfaz.
+require_once __DIR__ . "/../includes/reglas_reservacion.php";
 $horas_reservadas = [];
-$sqlRes = "SELECT horaInicio FROM reservaciones 
-           WHERE fecha = ? AND IDLab = ? AND Estado != 'cancelada'";
+$sqlRes = "SELECT r.horaInicio, " . SQL_FIN_RESERVACION . " AS horaFin
+           FROM reservaciones r
+           WHERE r.fecha = ? AND r.IDLab = ? AND " . SQL_RESERVACION_VIGENTE;
 $stmtRes = $conn->prepare($sqlRes);
 $stmtRes->bind_param("si", $fecha, $idLab);
 $stmtRes->execute();
 $resultRes = $stmtRes->get_result();
 while ($row = $resultRes->fetch_assoc()) {
-    $horas_reservadas[] = $row['horaInicio'];
+    $inicio = strtotime($row['horaInicio']);
+    $fin = strtotime($row['horaFin']);
+    for ($t = $inicio; $t < $fin; $t += 3600) {
+        $horas_reservadas[] = date('H:i', $t);
+    }
 }
 
 $stmtAdmin->close();
@@ -81,7 +89,8 @@ foreach ($horas_reservadas as $hora) {
 // 6. Si la fecha es hoy, bloqueamos también las horas que ya comenzaron
 require_once __DIR__ . "/../includes/reglas_reservacion.php";
 foreach ($todas_las_horas as $hora) {
-    if (horaYaPaso($fecha, $hora) && !in_array($hora, $horas_a_bloquear)) {
+    // (el administrador puede reservar horas que ya pasaron)
+    if (!reservaSinRestricciones() && horaYaPaso($fecha, $hora) && !in_array($hora, $horas_a_bloquear)) {
         $horas_a_bloquear[] = $hora;
     }
 }

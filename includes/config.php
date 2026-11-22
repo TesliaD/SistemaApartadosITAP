@@ -35,3 +35,17 @@ if (!defined('BASE_URL')) {
 
     define('BASE_URL', $baseUrl);
 }
+
+/*
+   recurso('/css/archivo.css') -> BASE_URL/css/archivo.css?v=<fecha de modificación>
+   El número cambia cada vez que se edita el archivo, así el navegador
+   descarga la versión nueva en lugar de usar la copia guardada en caché.
+*/
+if (!function_exists('recurso')) {
+    function recurso($ruta)
+    {
+        $archivo = realpath(__DIR__ . '/..') . $ruta;
+        $version = is_file($archivo) ? filemtime($archivo) : '';
+        return BASE_URL . $ruta . ($version ? '?v=' . $version : '');
+    }
+}

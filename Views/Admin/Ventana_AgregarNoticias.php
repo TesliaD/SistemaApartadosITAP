@@ -4,7 +4,7 @@ include("../../includes/header.php");
 include("../../includes/navbar.php");
 include("../../includes/conexion.php");
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/noticias.css">
+<link rel="stylesheet" href="<?= recurso('/css/noticias.css') ?>">
 <body>
 
 <div class="content p-4" id="content">
@@ -246,10 +246,10 @@ document.querySelector('input[name="Imagen"]')
 
 
 <!-- LOGOUT -->
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
 
 <!-- GUARDAR NOTICIAS -->
-<script src="../../js/form_guardar_noticias.js"></script>
+<script src="<?= recurso('/js/form_guardar_noticias.js') ?>"></script>
 
 </body>
 </html>

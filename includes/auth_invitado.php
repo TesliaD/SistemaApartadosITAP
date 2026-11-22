@@ -14,4 +14,7 @@ if ($_SESSION['rol'] !== 'invitado') {
 }
 
 
+
+// Cuenta desactivada mientras la sesión estaba abierta: se cierra la sesión
+require_once __DIR__ . "/verificar_activo.php";
 ?>

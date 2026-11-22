@@ -306,7 +306,7 @@ include("../../includes/navbar_maestros.php");
 <!-- ========================= -->
 <!-- JS -->
 <!-- ========================= -->
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
 
 </body>
 </html>

@@ -1,0 +1,306 @@
+/* =========================================================
+   DOCUMENTO DE REPORTE
+   Se usa en la vista previa, al imprimir y al exportar a Excel.
+   Siempre se ve como una hoja blanca (también en modo oscuro).
+   Nota: el contenido usa div/b/em/table (no h*, p, span, strong)
+   porque las reglas globales del modo oscuro fuerzan esas
+   etiquetas a texto blanco.
+========================================================= */
+
+.rpt-doc {
+    background: #ffffff;
+    color: #1d3557;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ---------- Encabezado ---------- */
+
+.rpt-encabezado {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+}
+
+.rpt-encabezado td {
+    border: none;
+    vertical-align: middle;
+    padding: 0;
+}
+
+.rpt-banda {
+    background: #1d3557;
+    color: #ffffff;
+    padding: 14px 18px !important;
+}
+
+.rpt-institucion {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    color: #ffffff;
+}
+
+.rpt-area {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a8dadc;
+    margin-top: 2px;
+}
+
+.rpt-titulo {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1d3557;
+    padding: 14px 0 4px !important;
+}
+
+.rpt-meta {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    background: #f1f4f8;
+}
+
+.rpt-meta td {
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #2a4a7a;
+}
+
+.rpt-meta b {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #757474;
+    font-weight: 600;
+}
+
+/* ---------- Tarjetas de resumen ---------- */
+
+.rpt-resumen {
+    width: 100%;
+    table-layout: fixed; /* tarjetas del mismo ancho */
+    border-collapse: separate;
+    border-spacing: 8px 0;
+    margin: 0 0 18px;
+}
+
+.rpt-kpi {
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #457b9d;
+    background: #ffffff;
+    padding: 10px 12px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.rpt-kpi-valor {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1d3557;
+}
+
+.rpt-kpi-etiqueta {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #757474;
+    margin-top: 2px;
+}
+
+.rpt-kpi-total   { border-top-color: #1d3557; }
+.rpt-kpi-ok      { border-top-color: #28a745; }
+.rpt-kpi-ok .rpt-kpi-valor { color: #155724; }
+.rpt-kpi-cancel  { border-top-color: #dc3545; }
+.rpt-kpi-cancel .rpt-kpi-valor { color: #842029; }
+.rpt-kpi-info    { border-top-color: #457b9d; }
+.rpt-kpi-neutral { border-top-color: #a8dadc; }
+
+/* ---------- Secciones ---------- */
+
+.rpt-seccion {
+    margin: 18px 0 8px;
+    padding: 6px 0 6px 10px;
+    border-left: 4px solid #457b9d;
+}
+
+.rpt-seccion-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1d3557;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.rpt-seccion-detalle {
+    font-size: 11px;
+    color: #757474;
+    margin-top: 2px;
+}
+
+.rpt-seccion-detalle b {
+    color: #1d3557;
+}
+
+.rpt-datos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+
+.rpt-datos td {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: #2a4a7a;
+    width: 50%;
+}
+
+/* ---------- Tablas ---------- */
+
+.rpt-doc .rpt-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 6px;
+    color: #1d3557;
+    font-size: 11px;
+}
+
+.rpt-tabla thead {
+    display: table-header-group; /* se repite en cada página impresa */
+}
+
+.rpt-tabla th {
+    background: #1d3557;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 7px 8px;
+    border: 1px solid #1d3557;
+    text-align: left;
+}
+
+.rpt-tabla td {
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+    color: #1d3557;
+}
+
+.rpt-tabla tr.rpt-par td {
+    background: #f8fafc;
+}
+
+.rpt-tabla tr {
+    page-break-inside: avoid;
+}
+
+.rpt-centro { text-align: center !important; }
+.rpt-num    { text-align: right !important; }
+.rpt-nowrap { white-space: nowrap; }
+
+.rpt-sub {
+    font-size: 10px;
+    color: #757474;
+    margin-top: 1px;
+}
+
+.rpt-vacio {
+    color: #9aa5b1;
+    font-style: italic;
+}
+
+/* ---------- Estados ---------- */
+
+.rpt-estado {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.rpt-estado-activa     { background: #d4edda; color: #155724; }
+.rpt-estado-cancelada  { background: #f8d7da; color: #842029; }
+.rpt-estado-finalizada { background: #e8f0f5; color: #1d3557; }
+.rpt-estado-pendiente  { background: #fff3cd; color: #856404; }
+
+/* ---------- Sin datos ---------- */
+
+.rpt-sin-datos {
+    padding: 28px;
+    text-align: center;
+    color: #757474;
+    border: 1px dashed #cbd5e1;
+    background: #f8fafc;
+    font-size: 13px;
+}
+
+/* ---------- Firma ---------- */
+
+.rpt-firmas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 40px;
+    page-break-inside: avoid;
+}
+
+.rpt-firmas td {
+    border: none;
+    text-align: center;
+    padding: 0 20px;
+    width: 50%;
+    color: #1d3557;
+}
+
+.rpt-linea-firma {
+    border-top: 1px solid #1d3557;
+    margin: 0 auto 4px;
+    width: 220px;
+    padding-top: 4px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.rpt-pie {
+    margin-top: 18px;
+    padding-top: 6px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 9px;
+    color: #9aa5b1;
+    text-align: center;
+}
+
+/* ---------- Impresión ---------- */
+
+@page {
+    size: landscape;
+    margin: 12mm;
+}
+
+@media print {
+    .rpt-doc {
+        font-size: 11px;
+    }
+
+    .rpt-banda,
+    .rpt-tabla th,
+    .rpt-kpi,
+    .rpt-estado,
+    .rpt-tabla tr.rpt-par td,
+    .rpt-meta {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

@@ -23,6 +23,27 @@ $result = $conn->query($sql);
     .badge-rol.maestro { background: #0d6efd; color: white; }
     .badge-rol.manager { background: #457b9d; color: white; }
     .badge-rol.invitado { background: #6c757d; color: white; }
+
+    .badge-estado {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+    .badge-estado.activo { background: #d4edda; color: #155724; }
+    .badge-estado.inactivo { background: #f8d7da; color: #842029; }
+
+    body.dark .badge-estado.activo { background: rgba(40, 167, 69, .15); color: #86efac !important; }
+    body.dark .badge-estado.inactivo { background: rgba(220, 53, 69, .15); color: #fca5a5 !important; }
+    body.dark .badge-estado.activo i,
+    body.dark .badge-estado.inactivo i { color: inherit; }
+
+    /* Fila de usuario inactivo: atenuada */
+    tr.usuario-inactivo > td:not(:last-child) { opacity: .6; }
     
     .badge-departamento {
         font-size: 0.7rem;
@@ -46,8 +67,15 @@ $result = $conn->query($sql);
 
     <!-- FILTROS Y BUSCADOR -->
     <div class="row g-2 mb-3">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <input type="text" id="buscador" class="form-control" placeholder="Buscar por nombre, correo o control...">
+        </div>
+        <div class="col-md-2">
+            <select id="filtroEstado" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="1">Activos</option>
+                <option value="0">Inactivos</option>
+            </select>
         </div>
         <div class="col-md-3">
             <select id="filtroRol" class="form-select">
@@ -84,12 +112,13 @@ $result = $conn->query($sql);
                         <th>Email</th>
                         <th>Rol</th>
                         <th>Departamento</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php while($row = $result->fetch_assoc()): ?>
-                    <tr>
+                    <tr class="<?= (int)$row['activo'] === 1 ? '' : 'usuario-inactivo' ?>">
                         <td><?= htmlspecialchars($row['IDUsuarios']); ?></td>
                         <td><?= htmlspecialchars($row['num_control']); ?></td>
                         <td><?= htmlspecialchars($row['nombre'] . ' ' . $row['apellidos']); ?></td>
@@ -109,8 +138,15 @@ $result = $conn->query($sql);
                                 <span class="text-muted">Sin asignar</span>
                             <?php endif; ?>
                         </td>
+                        <?php $activo = (int)$row['activo'] === 1; ?>
+                        <td data-activo="<?= $activo ? 1 : 0 ?>">
+                            <span class="badge-estado <?= $activo ? 'activo' : 'inactivo' ?>">
+                                <i class="bi <?= $activo ? 'bi-check-circle' : 'bi-slash-circle' ?>"></i>
+                                <?= $activo ? 'Activo' : 'Inactivo' ?>
+                            </span>
+                        </td>
                         <td>
-                            <button 
+                            <button
                                 class="btn btn-warning btn-sm btnEditar"
                                 data-id="<?= $row['IDUsuarios']; ?>"
                                 data-nombre="<?= $row['nombre']; ?>"
@@ -119,6 +155,7 @@ $result = $conn->query($sql);
                                 data-email="<?= $row['email']; ?>"
                                 data-rol="<?= $row['rol']; ?>"
                                 data-departamento="<?= $row['IDDepartamento']; ?>"
+                                data-activo="<?= $activo ? 1 : 0 ?>"
                             >
                                 <i class="bi bi-pencil"></i>
                             </button>
@@ -205,6 +242,16 @@ $result = $conn->query($sql);
                             </select>
                             <small class="text-muted">Obligatorio para maestros y managers</small>
                         </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-md-6">
+                            <label class="form-label">Estado</label>
+                            <select id="edit_activo" name="activo" class="form-select" required>
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                            <small class="text-muted">Un usuario inactivo no puede iniciar sesión</small>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -224,10 +271,10 @@ $result = $conn->query($sql);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!--TUS SCRIPTS -->
-<script src="../../js/logout.js"></script>
-<script src="../../js/buscadorUsuarios.js"></script>
-<script src="../../js/eliminarusuario_XYZ.js"></script>
-<script src="../../js/actualizarusuarios_XYZ.js"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
+<script src="<?= recurso('/js/buscadorUsuarios.js') ?>"></script>
+<script src="<?= recurso('/js/eliminarusuario_XYZ.js') ?>"></script>
+<script src="<?= recurso('/js/actualizarusuarios_XYZ.js') ?>"></script>
 
 <!-- ========================================== -->
 <!-- SCRIPT PARA FILTROS Y BUSCADOR -->
@@ -237,6 +284,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const buscador = document.getElementById("buscador");
     const filtroRol = document.getElementById("filtroRol");
     const filtroDepto = document.getElementById("filtroDepartamento");
+    const filtroEstado = document.getElementById("filtroEstado");
     const tabla = document.getElementById("usuarios");
     const filas = tabla.querySelectorAll("tbody tr");
 
@@ -268,6 +316,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
 
+            if(filtroEstado.value !== "") {
+                const estado = fila.querySelector("[data-activo]")?.dataset.activo || '';
+                if(estado !== filtroEstado.value) {
+                    coincide = false;
+                }
+            }
+
             fila.style.display = coincide ? '' : 'none';
         });
     }
@@ -275,5 +330,6 @@ document.addEventListener("DOMContentLoaded", function() {
     buscador.addEventListener("keyup", filtrarTabla);
     filtroRol.addEventListener("change", filtrarTabla);
     filtroDepto.addEventListener("change", filtrarTabla);
+    filtroEstado.addEventListener("change", filtrarTabla);
 });
 </script>

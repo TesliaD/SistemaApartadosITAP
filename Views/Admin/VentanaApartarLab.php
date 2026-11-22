@@ -35,10 +35,17 @@ include("../../includes/reservacion_admin.php")
                         type="date" 
                         id="fecha" 
                         class="form-control-modern form-control"
+                        <?php if (!reservaSinRestricciones()): ?>
                         min="<?= fechaMinReservacion() ?>"
-                        max="<?= fechaMaxReservacion() ?>">
+                        max="<?= fechaMaxReservacion() ?>"
+                        <?php endif; ?>>
                     <div class="info-label">
-                        <i class="bi bi-info-circle"></i> Desde hoy hasta 2 días después (hoy solo horarios que aún no inician)
+                        <i class="bi bi-info-circle"></i>
+                        <?php if (reservaSinRestricciones()): ?>
+                            Administrador: puedes reservar cualquier fecha y hora
+                        <?php else: ?>
+                            Desde hoy hasta 2 días después (hoy solo horarios que aún no inician)
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -213,8 +220,8 @@ include("../../includes/reservacion_admin.php")
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../../js/reservaciones.js"></script>
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/reservaciones.js') ?>"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
 
 <!-- ========================= -->
 <!-- SCRIPT PARA MOSTRAR DESCRIPCIÓN -->

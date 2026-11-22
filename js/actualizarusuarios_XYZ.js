@@ -34,6 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("edit_departamento").value =
                 this.dataset.departamento || '';
 
+            document.getElementById("edit_activo").value =
+                this.dataset.activo === "0" ? "0" : "1";
+
             modal.show();
 
         });

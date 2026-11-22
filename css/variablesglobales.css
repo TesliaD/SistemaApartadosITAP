@@ -157,6 +157,14 @@ body.dark .hora-btn-modern:hover:not(.activa):not(.ocupada) {
     border-color: #457b9d;
 }
 
+/* Hora seleccionada: debe ir después de la regla base para que se note en modo oscuro */
+body.dark .hora-btn-modern.activa {
+    background: #457b9d;
+    border-color: #a8dadc;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(168, 218, 220, .25), 0 4px 15px rgba(0, 0, 0, .45);
+}
+
 body.dark .hora-btn-modern.deshabilitada {
     background: #3f1d1d;
     border-color: #7f1d1d;
@@ -262,5 +270,64 @@ body.dark .reporte-card.seleccionado {
 }
 
 body.dark .reporte-card small {
+    color: #94a3b8;
+}
+
+/* =========================================================
+   ALERTAS (SweetAlert2) EN MODO OSCURO
+   La ventana era blanca y las reglas globales de modo oscuro
+   ponen h2/p/span/strong en blanco: el texto no se veía.
+========================================================= */
+
+body.dark .swal2-popup {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569;
+}
+
+body.dark .swal2-title {
+    color: #f8fafc !important;
+}
+
+body.dark .swal2-html-container,
+body.dark .swal2-html-container * {
+    color: #cbd5e1 !important;
+}
+
+body.dark .swal2-html-container strong,
+body.dark .swal2-html-container b {
+    color: #f8fafc !important;
+}
+
+/* Campos dentro de la alerta */
+body.dark .swal2-input,
+body.dark .swal2-textarea,
+body.dark .swal2-select {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+    border-color: #475569 !important;
+}
+
+body.dark .swal2-validation-message {
+    background: #0f172a !important;
+    color: #fca5a5 !important;
+}
+
+/* El ícono de éxito usa piezas del color del fondo de la ventana */
+body.dark .swal2-icon.swal2-success [class^="swal2-success-circular-line"],
+body.dark .swal2-icon.swal2-success .swal2-success-fix {
+    background-color: #1e293b !important;
+}
+
+body.dark .swal2-close {
+    color: #94a3b8;
+}
+
+body.dark .swal2-close:hover {
+    color: #f8fafc;
+}
+
+body.dark .swal2-footer {
+    border-top-color: #475569;
     color: #94a3b8;
 }

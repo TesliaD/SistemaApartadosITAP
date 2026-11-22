@@ -157,5 +157,5 @@ include("../../includes/horarios.php")
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../../js/horarios_laboratorios.js"></script>
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/horarios_laboratorios.js') ?>"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>

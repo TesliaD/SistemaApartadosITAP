@@ -87,7 +87,11 @@ $response = [
     "titulo" => "",
     "fechaInicio" => $fechaInicio,
     "fechaFin" => $fechaFin,
-    "html" => ""
+    "html" => "",
+    // Datos para el encabezado del documento
+    "generadoPor" => $_SESSION['usuario'] ?? '',
+    "generadoEl" => date('d/m/Y H:i'),
+    "departamento" => nombreDeptoSesion($conn) // solo para manager; null para admin
 ];
 
 
@@ -171,56 +175,210 @@ function escapar($texto)
 }
 
 
-function nombreEstado($estado)
+// ------------------------------------------------------------
+// ESTADOS
+// En la BD hay variantes ("activa", "Activo", "Cancelado"...):
+// se normalizan para contarlas y mostrarlas igual.
+// ------------------------------------------------------------
+
+function normalizarEstado($estado)
 {
-    $estado = strtolower(trim((string)$estado));
+    $e = strtolower(trim((string)$estado));
 
-    switch ($estado) {
+    if ($e === '') return 'sin-estado';
+    if (strpos($e, 'cancel') === 0) return 'cancelada';
+    if (strpos($e, 'activ') === 0) return 'activa';
+    if (strpos($e, 'finaliz') === 0 || strpos($e, 'complet') === 0) return 'finalizada';
+    if (strpos($e, 'pend') === 0) return 'pendiente';
 
-        case 'activa':
-            return 'Activa';
-
-        case 'cancelada':
-            return 'Cancelada';
-
-        case 'pendiente':
-            return 'Pendiente';
-
-        case 'completada':
-            return 'Completada';
-
-        default:
-
-            if ($estado === '') {
-                return 'Sin estado';
-            }
-
-            return ucfirst($estado);
-    }
+    return 'otro';
 }
 
 
-function claseEstado($estado)
+function nombreEstado($estado)
+{
+    $nombres = [
+        'activa'     => 'Activa',
+        'cancelada'  => 'Cancelada',
+        'finalizada' => 'Finalizada',
+        'pendiente'  => 'Pendiente',
+        'sin-estado' => 'Sin estado',
+    ];
+
+    $clave = normalizarEstado($estado);
+
+    return $nombres[$clave] ?? ucfirst(trim((string)$estado));
+}
+
+
+function badgeEstado($estado)
+{
+    return '<b class="rpt-estado rpt-estado-' . normalizarEstado($estado) . '">'
+        . escapar(nombreEstado($estado))
+        . '</b>';
+}
+
+
+// Condición SQL del filtro de estado (acepta las variantes de la BD)
+function sqlFiltroEstado($conn, $estado)
 {
     $estado = strtolower(trim((string)$estado));
 
-    switch ($estado) {
-
-        case 'activa':
-            return 'color:green; font-weight:bold;';
-
-        case 'cancelada':
-            return 'color:red; font-weight:bold;';
-
-        case 'pendiente':
-            return 'color:#b45309; font-weight:bold;';
-
-        case 'completada':
-            return 'color:#2563eb; font-weight:bold;';
-
-        default:
-            return 'font-weight:bold;';
+    if ($estado === 'activa') {
+        return "LOWER(r.Estado) IN ('activa', 'activo')";
     }
+
+    if ($estado === 'cancelada') {
+        return "LOWER(r.Estado) IN ('cancelada', 'cancelado')";
+    }
+
+    return "LOWER(r.Estado) = '" . $conn->real_escape_string($estado) . "'";
+}
+
+
+// ------------------------------------------------------------
+// HORAS
+// ------------------------------------------------------------
+
+// Duración en horas (registros antiguos con fin = inicio cuentan como 1 h)
+function horasReservacion($row)
+{
+    $inicio = strtotime($row['horaInicio'] ?? '');
+    $fin = strtotime($row['horaFin'] ?? '');
+
+    if (!$inicio) return 0;
+    if (!$fin || $fin <= $inicio) $fin = $inicio + 3600;
+
+    return ($fin - $inicio) / 3600;
+}
+
+
+function formatoHoras($horas)
+{
+    $texto = rtrim(rtrim(number_format($horas, 1, '.', ''), '0'), '.');
+    return $texto . ' h';
+}
+
+
+function horarioTexto($row)
+{
+    return horaBonita($row['horaInicio']) . ' – ' . horaBonita($row['horaFin']);
+}
+
+
+// Totales por estado y horas de uso (las canceladas no suman horas)
+function contarReservaciones($filas)
+{
+    $c = ['total' => 0, 'activa' => 0, 'cancelada' => 0, 'finalizada' => 0, 'pendiente' => 0, 'horas' => 0];
+
+    foreach ($filas as $row) {
+        $c['total']++;
+        $estado = normalizarEstado($row['Estado'] ?? '');
+
+        if (isset($c[$estado])) {
+            $c[$estado]++;
+        }
+
+        if ($estado !== 'cancelada') {
+            $c['horas'] += horasReservacion($row);
+        }
+    }
+
+    return $c;
+}
+
+
+// ------------------------------------------------------------
+// PIEZAS DEL DOCUMENTO
+// Se usan tablas y clases "rpt-*" (ver css/reporte_documento.css)
+// para que se vea igual en pantalla, impreso y exportado a Excel.
+// ------------------------------------------------------------
+
+function textoODefecto($valor, $defecto)
+{
+    $valor = trim((string)$valor);
+
+    return $valor !== ''
+        ? escapar($valor)
+        : '<em class="rpt-vacio">' . escapar($defecto) . '</em>';
+}
+
+
+function etiquetaLab($row)
+{
+    $nombre = trim((string)($row['laboratorio'] ?? ''));
+
+    if ($nombre === '') return 'Sin laboratorio';
+
+    return !empty($row['numLab']) ? $nombre . ' (Lab ' . $row['numLab'] . ')' : $nombre;
+}
+
+
+// $items: [[valor, etiqueta, variante], ...]  variante: total|ok|cancel|info|neutral
+function rptResumen($items)
+{
+    $html = '<table class="rpt-resumen"><tr>';
+
+    foreach ($items as [$valor, $etiqueta, $variante]) {
+        $html .= '<td class="rpt-kpi rpt-kpi-' . $variante . '">'
+            . '<div class="rpt-kpi-valor">' . escapar($valor) . '</div>'
+            . '<div class="rpt-kpi-etiqueta">' . escapar($etiqueta) . '</div>'
+            . '</td>';
+    }
+
+    return $html . '</tr></table>';
+}
+
+
+function rptSeccion($titulo, $detalle = '')
+{
+    return '<div class="rpt-seccion">'
+        . '<div class="rpt-seccion-titulo">' . escapar($titulo) . '</div>'
+        . ($detalle !== '' ? '<div class="rpt-seccion-detalle">' . $detalle . '</div>' : '')
+        . '</div>';
+}
+
+
+// $columnas: [[titulo, clase], ...]   $filas: [[celdaHtml, ...], ...] (ya escapadas)
+function rptTabla($columnas, $filas)
+{
+    $html = '<table class="rpt-tabla"><thead><tr>';
+
+    foreach ($columnas as [$titulo, $clase]) {
+        $html .= '<th class="' . $clase . '">' . escapar($titulo) . '</th>';
+    }
+
+    $html .= '</tr></thead><tbody>';
+
+    foreach ($filas as $i => $celdas) {
+        $html .= '<tr class="' . ($i % 2 ? 'rpt-par' : '') . '">';
+
+        foreach ($celdas as $j => $celda) {
+            $html .= '<td class="' . ($columnas[$j][1] ?? '') . '">' . $celda . '</td>';
+        }
+
+        $html .= '</tr>';
+    }
+
+    return $html . '</tbody></table>';
+}
+
+
+function rptVacio($mensaje)
+{
+    return '<div class="rpt-sin-datos">' . escapar($mensaje) . '</div>';
+}
+
+
+function rptFilas($result)
+{
+    $filas = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $filas[] = $row;
+    }
+
+    return $filas;
 }
 
 
@@ -372,265 +530,117 @@ function generarReporteDepartamento($conn, $inicio, $fin, $filtros)
     }
 
 
-    // ========================================================
-    // ENCABEZADO
-    // ========================================================
+    $filas = rptFilas($result);
 
-    $html = '
-
-    <div style="
-        margin-bottom:20px;
-        padding:12px;
-        background:#f8f9fa;
-        border:1px solid #ddd;
-        border-radius:6px;
-    ">
-
-        <strong>Período:</strong>
-        ' . escapar(fechaBonita($inicio)) . '
-        al
-        ' . escapar(fechaBonita($fin)) . '
-
-    </div>
-
-    ';
-
-
-    if ($result->num_rows === 0) {
-
-        return $html . '
-
-            <div style="
-                padding:20px;
-                text-align:center;
-                border:1px solid #ddd;
-            ">
-
-                No existen reservaciones para los filtros seleccionados.
-
-            </div>
-
-        ';
+    if (count($filas) === 0) {
+        return rptVacio('No existen reservaciones para los filtros seleccionados.');
     }
 
-
     // ========================================================
-    // CONTADORES
-    // ========================================================
-
-    $total = 0;
-    $activas = 0;
-    $canceladas = 0;
-    $pendientes = 0;
-
-
-    // Guardamos las filas para poder generar resumen
-    $filas = [];
-
-    while ($row = $result->fetch_assoc()) {
-
-        $filas[] = $row;
-
-        $total++;
-
-        $estado = strtolower(trim($row['Estado'] ?? ''));
-
-        if ($estado === 'activa') {
-            $activas++;
-        }
-
-        if ($estado === 'cancelada') {
-            $canceladas++;
-        }
-
-        if ($estado === 'pendiente') {
-            $pendientes++;
-        }
-    }
-
-
-    // ========================================================
-    // RESUMEN
+    // RESUMEN GENERAL
     // ========================================================
 
-    $html .= '
+    $c = contarReservaciones($filas);
 
-    <div style="
-        display:flex;
-        gap:12px;
-        flex-wrap:wrap;
-        margin-bottom:20px;
-    ">
-
-        <div style="
-            padding:12px 20px;
-            border:1px solid #ddd;
-            border-radius:6px;
-            background:#fff;
-        ">
-            <strong>Total:</strong><br>
-            ' . $total . ' reservaciones
-        </div>
-
-
-        <div style="
-            padding:12px 20px;
-            border:1px solid #ddd;
-            border-radius:6px;
-            background:#fff;
-        ">
-            <strong>Activas:</strong><br>
-            ' . $activas . '
-        </div>
-
-
-        <div style="
-            padding:12px 20px;
-            border:1px solid #ddd;
-            border-radius:6px;
-            background:#fff;
-        ">
-            <strong>Canceladas:</strong><br>
-            ' . $canceladas . '
-        </div>
-
-
-        <div style="
-            padding:12px 20px;
-            border:1px solid #ddd;
-            border-radius:6px;
-            background:#fff;
-        ">
-            <strong>Pendientes:</strong><br>
-            ' . $pendientes . '
-        </div>
-
-    </div>
-
-
-    <table style="
-        width:100%;
-        border-collapse:collapse;
-        font-size:12px;
-    ">
-
-        <thead>
-
-            <tr>
-
-                <th>Departamento</th>
-                <th>Laboratorio</th>
-                <th>Docente</th>
-                <th>Grupo</th>
-                <th>Carrera</th>
-                <th>Fecha</th>
-                <th>Horario</th>
-                <th>Práctica</th>
-                <th>Software</th>
-                <th>Estado</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-    ';
-
-
-    // ========================================================
-    // DETALLE
-    // ========================================================
+    // Uso por laboratorio (agrupado por departamento)
+    $usoLabs = [];
+    $porDepto = [];
 
     foreach ($filas as $row) {
+        $depto = $row['departamento'] ?: 'Sin departamento';
+        $lab = etiquetaLab($row);
+        $clave = $depto . '|' . $lab;
 
-        $estadoTexto = nombreEstado($row['Estado']);
-        $estadoCSS = claseEstado($row['Estado']);
-
-        $docente = trim($row['docente']);
-
-        if ($docente === '') {
-            $docente = 'Sin docente';
+        if (!isset($usoLabs[$clave])) {
+            $usoLabs[$clave] = ['depto' => $depto, 'lab' => $lab, 'total' => 0, 'canceladas' => 0, 'horas' => 0];
         }
 
-        $grupo = $row['grupo'] ?: 'Sin grupo';
-        $carrera = $row['carrera'] ?: 'Sin carrera';
+        $usoLabs[$clave]['total']++;
 
-        $laboratorio = $row['laboratorio'] ?: 'Sin laboratorio';
-
-        if (!empty($row['numLab'])) {
-            $laboratorio .= ' (' . $row['numLab'] . ')';
+        if (normalizarEstado($row['Estado']) === 'cancelada') {
+            $usoLabs[$clave]['canceladas']++;
+        } else {
+            $usoLabs[$clave]['horas'] += horasReservacion($row);
         }
 
-
-        $html .= '
-
-            <tr>
-
-                <td>' .
-                    escapar($row['departamento'] ?: 'Sin departamento') .
-                '</td>
-
-                <td>' .
-                    escapar($laboratorio) .
-                '</td>
-
-                <td>' .
-                    escapar($docente) .
-                '</td>
-
-                <td>' .
-                    escapar($grupo) .
-                '</td>
-
-                <td>' .
-                    escapar($carrera) .
-                '</td>
-
-                <td style="text-align:center;">
-                    ' .
-                    escapar(fechaBonita($row['fecha'])) .
-                '
-                </td>
-
-                <td style="text-align:center;">
-                    ' .
-                    escapar(horaBonita($row['horaInicio'])) .
-                    ' -
-                    ' .
-                    escapar(horaBonita($row['horaFin'])) .
-                '
-                </td>
-
-                <td>' .
-                    escapar($row['Practica'] ?: 'No especificada') .
-                '</td>
-
-                <td>' .
-                    escapar($row['Software'] ?: 'No especificado') .
-                '</td>
-
-                <td style="text-align:center; ' .
-                    $estadoCSS .
-                '">
-                    ' .
-                    escapar($estadoTexto) .
-                '
-                </td>
-
-            </tr>
-
-        ';
+        $porDepto[$depto][] = $row;
     }
 
+    ksort($usoLabs);
+    ksort($porDepto);
 
-    $html .= '
+    $html = rptResumen([
+        [$c['total'], 'Reservaciones', 'total'],
+        [$c['activa'], 'Activas', 'ok'],
+        [$c['cancelada'], 'Canceladas', 'cancel'],
+        [formatoHoras($c['horas']), 'Horas de uso', 'info'],
+        [count($usoLabs), 'Laboratorios utilizados', 'neutral'],
+    ]);
 
-        </tbody>
+    // ========================================================
+    // USO POR LABORATORIO
+    // ========================================================
 
-    </table>
+    $html .= rptSeccion('Uso por laboratorio');
 
-    ';
+    $filasUso = [];
+    foreach ($usoLabs as $uso) {
+        $filasUso[] = [
+            escapar($uso['depto']),
+            escapar($uso['lab']),
+            $uso['total'],
+            $uso['canceladas'],
+            formatoHoras($uso['horas']),
+        ];
+    }
 
+    $html .= rptTabla([
+        ['Departamento', ''],
+        ['Laboratorio', ''],
+        ['Reservaciones', 'rpt-num'],
+        ['Canceladas', 'rpt-num'],
+        ['Horas de uso', 'rpt-num'],
+    ], $filasUso);
+
+    // ========================================================
+    // DETALLE POR DEPARTAMENTO
+    // ========================================================
+
+    foreach ($porDepto as $depto => $reservas) {
+        $cd = contarReservaciones($reservas);
+
+        $html .= rptSeccion(
+            $depto,
+            $cd['total'] . ' reservaciones · ' . formatoHoras($cd['horas']) . ' de uso'
+        );
+
+        $detalle = [];
+        foreach ($reservas as $row) {
+            $detalle[] = [
+                escapar(fechaBonita($row['fecha'])),
+                escapar(horarioTexto($row)),
+                escapar(etiquetaLab($row)),
+                textoODefecto(trim($row['docente']), 'Sin docente'),
+                textoODefecto($row['grupo'], 'Sin grupo'),
+                textoODefecto($row['carrera'], 'Sin carrera'),
+                textoODefecto($row['Practica'], 'No especificada'),
+                textoODefecto($row['Software'], 'No especificado'),
+                badgeEstado($row['Estado']),
+            ];
+        }
+
+        $html .= rptTabla([
+            ['Fecha', 'rpt-centro rpt-nowrap'],
+            ['Horario', 'rpt-centro rpt-nowrap'],
+            ['Laboratorio', ''],
+            ['Docente', ''],
+            ['Grupo', ''],
+            ['Carrera', ''],
+            ['Práctica', ''],
+            ['Software', ''],
+            ['Estado', 'rpt-centro'],
+        ], $detalle);
+    }
 
     return $html;
 }
@@ -709,11 +719,7 @@ function generarReporteApartadosMaestro($conn, $inicio, $fin, $filtros)
 
     if (!empty($filtros['estado'])) {
 
-        $estado = $conn->real_escape_string(
-            $filtros['estado']
-        );
-
-        $where[] = "r.Estado = '$estado'";
+        $where[] = sqlFiltroEstado($conn, $filtros['estado']);
     }
 
 
@@ -795,379 +801,105 @@ function generarReporteApartadosMaestro($conn, $inicio, $fin, $filtros)
     }
 
 
-    $html = '
+    $filas = rptFilas($result);
 
-        <div style="
-            margin-bottom:20px;
-            padding:12px;
-            background:#f8f9fa;
-            border:1px solid #ddd;
-            border-radius:6px;
-        ">
-
-            <strong>Período:</strong>
-            ' . escapar(fechaBonita($inicio)) . '
-            al
-            ' . escapar(fechaBonita($fin)) . '
-
-        </div>
-
-    ';
-
-
-    if ($result->num_rows === 0) {
-
-        return $html . '
-
-            <div style="
-                padding:20px;
-                text-align:center;
-                border:1px solid #ddd;
-            ">
-
-                No existen apartados para el período y filtros seleccionados.
-
-            </div>
-
-        ';
+    if (count($filas) === 0) {
+        return rptVacio('No existen apartados para el período y filtros seleccionados.');
     }
 
-
     // ========================================================
-    // GUARDAR RESULTADOS
-    // ========================================================
-
-    $filas = [];
-
-    $total = 0;
-    $activas = 0;
-    $canceladas = 0;
-    $pendientes = 0;
-
-    $laboratorios = [];
-    $grupos = [];
-
-
-    while ($row = $result->fetch_assoc()) {
-
-        $filas[] = $row;
-
-        $total++;
-
-        $estado = strtolower(trim($row['Estado'] ?? ''));
-
-        if ($estado === 'activa') {
-            $activas++;
-        }
-
-        if ($estado === 'cancelada') {
-            $canceladas++;
-        }
-
-        if ($estado === 'pendiente') {
-            $pendientes++;
-        }
-
-
-        if (!empty($row['laboratorio'])) {
-
-            $nombreLab = $row['laboratorio'];
-
-            if (!empty($row['numLab'])) {
-                $nombreLab .= ' (' . $row['numLab'] . ')';
-            }
-
-            $laboratorios[$nombreLab] = true;
-        }
-
-
-        if (!empty($row['grupo'])) {
-
-            $grupos[$row['grupo']] = true;
-        }
-    }
-
-
-    // ========================================================
-    // DATOS DEL DOCENTE
+    // AGRUPAR POR DOCENTE
+    // (antes todo se mostraba bajo el nombre del primer docente)
     // ========================================================
 
-    $primerRegistro = $filas[0];
-
-    $docente = trim($primerRegistro['docente']);
-
-    if ($docente === '') {
-        $docente = 'Docente no identificado';
-    }
-
-    $numControl = $primerRegistro['num_control'] ?: 'No registrado';
-
-
-    // ========================================================
-    // ENCABEZADO DOCENTE
-    // ========================================================
-
-    $html .= '
-
-        <div style="
-            padding:15px;
-            margin-bottom:20px;
-            border:1px solid #d1d5db;
-            border-radius:8px;
-            background:#f8fafc;
-        ">
-
-            <h4 style="margin-bottom:8px;">
-                ' . escapar($docente) . '
-            </h4>
-
-            <div>
-                <strong>No. de control:</strong>
-                ' . escapar($numControl) . '
-            </div>
-
-        </div>
-
-    ';
-
-
-    // ========================================================
-    // RESUMEN
-    // ========================================================
-
-    $html .= '
-
-        <div style="
-            display:grid;
-            grid-template-columns:repeat(4, 1fr);
-            gap:10px;
-            margin-bottom:20px;
-        ">
-
-            <div style="
-                padding:12px;
-                border:1px solid #ddd;
-                border-radius:6px;
-                text-align:center;
-            ">
-                <strong>Total de apartados</strong>
-                <br>
-                ' . $total . '
-            </div>
-
-            <div style="
-                padding:12px;
-                border:1px solid #ddd;
-                border-radius:6px;
-                text-align:center;
-            ">
-                <strong>Activos</strong>
-                <br>
-                ' . $activas . '
-            </div>
-
-            <div style="
-                padding:12px;
-                border:1px solid #ddd;
-                border-radius:6px;
-                text-align:center;
-            ">
-                <strong>Cancelados</strong>
-                <br>
-                ' . $canceladas . '
-            </div>
-
-            <div style="
-                padding:12px;
-                border:1px solid #ddd;
-                border-radius:6px;
-                text-align:center;
-            ">
-                <strong>Pendientes</strong>
-                <br>
-                ' . $pendientes . '
-            </div>
-
-        </div>
-
-    ';
-
-
-    // ========================================================
-    // LABORATORIOS UTILIZADOS
-    // ========================================================
-
-    $html .= '
-
-        <div style="margin-bottom:10px;">
-
-            <strong>Laboratorios utilizados:</strong>
-
-            ' .
-            escapar(
-                !empty($laboratorios)
-                    ? implode(', ', array_keys($laboratorios))
-                    : 'Ninguno'
-            )
-            . '
-
-        </div>
-
-
-        <div style="margin-bottom:20px;">
-
-            <strong>Grupos atendidos:</strong>
-
-            ' .
-            escapar(
-                !empty($grupos)
-                    ? implode(', ', array_keys($grupos))
-                    : 'Ninguno'
-            )
-            . '
-
-        </div>
-
-    ';
-
-
-    // ========================================================
-    // DETALLE
-    // ========================================================
-
-    $html .= '
-
-        <h5 style="margin-bottom:10px;">
-            Detalle de apartados
-        </h5>
-
-        <table style="
-            width:100%;
-            border-collapse:collapse;
-            font-size:12px;
-        ">
-
-            <thead>
-
-                <tr>
-
-                    <th>Fecha</th>
-                    <th>Horario</th>
-                    <th>Departamento</th>
-                    <th>Laboratorio</th>
-                    <th>Grupo</th>
-                    <th>Carrera</th>
-                    <th>Práctica</th>
-                    <th>Software</th>
-                    <th>Estado</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-    ';
-
+    $porDocente = [];
 
     foreach ($filas as $row) {
+        $nombre = trim($row['docente']) ?: 'Docente no identificado';
+        $clave = $nombre . '|' . ($row['num_control'] ?? '');
 
-        $estadoTexto = nombreEstado($row['Estado']);
-        $estadoCSS = claseEstado($row['Estado']);
-
-
-        $laboratorio = $row['laboratorio'] ?: 'Sin laboratorio';
-
-        if (!empty($row['numLab'])) {
-
-            $laboratorio .=
-                ' (' .
-                $row['numLab'] .
-                ')';
+        if (!isset($porDocente[$clave])) {
+            $porDocente[$clave] = [
+                'nombre' => $nombre,
+                'control' => $row['num_control'] ?: 'No registrado',
+                'filas' => [],
+            ];
         }
 
-
-        $html .= '
-
-            <tr>
-
-                <td style="text-align:center;">
-                    ' .
-                    escapar(fechaBonita($row['fecha'])) .
-                '
-                </td>
-
-                <td style="text-align:center;">
-                    ' .
-                    escapar(horaBonita($row['horaInicio'])) .
-                    ' -
-                    ' .
-                    escapar(horaBonita($row['horaFin'])) .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['departamento'] ?: 'Sin departamento') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($laboratorio) .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['grupo'] ?: 'Sin grupo') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['carrera'] ?: 'Sin carrera') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['Practica'] ?: 'No especificada') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['Software'] ?: 'No especificado') .
-                '
-                </td>
-
-                <td style="
-                    text-align:center;
-                    ' .
-                    $estadoCSS .
-                '">
-
-                    ' .
-                    escapar($estadoTexto) .
-                '
-
-                </td>
-
-            </tr>
-
-        ';
+        $porDocente[$clave]['filas'][] = $row;
     }
 
+    // ========================================================
+    // RESUMEN GENERAL
+    // ========================================================
 
-    $html .= '
+    $c = contarReservaciones($filas);
 
-            </tbody>
+    $html = rptResumen([
+        [count($porDocente), count($porDocente) === 1 ? 'Docente' : 'Docentes', 'neutral'],
+        [$c['total'], 'Apartados', 'total'],
+        [$c['activa'], 'Activos', 'ok'],
+        [$c['cancelada'], 'Cancelados', 'cancel'],
+        [formatoHoras($c['horas']), 'Horas de uso', 'info'],
+    ]);
 
-        </table>
+    // ========================================================
+    // UNA SECCIÓN POR DOCENTE
+    // ========================================================
 
-    ';
+    foreach ($porDocente as $docente) {
+        $cd = contarReservaciones($docente['filas']);
 
+        $labs = [];
+        $grupos = [];
+        foreach ($docente['filas'] as $row) {
+            $labs[etiquetaLab($row)] = true;
+            if (!empty($row['grupo'])) {
+                $grupos[$row['grupo']] = true;
+            }
+        }
+
+        $html .= rptSeccion(
+            $docente['nombre'],
+            'No. de control: <b>' . escapar($docente['control']) . '</b>'
+            . ' · ' . $cd['total'] . ' apartados'
+            . ' · ' . $cd['activa'] . ' activos'
+            . ' · ' . $cd['cancelada'] . ' cancelados'
+            . ' · ' . formatoHoras($cd['horas']) . ' de uso'
+        );
+
+        $html .= '<table class="rpt-datos"><tr>'
+            . '<td><b>Laboratorios utilizados:</b> ' . escapar(implode(', ', array_keys($labs)) ?: 'Ninguno') . '</td>'
+            . '<td><b>Grupos atendidos:</b> ' . escapar(implode(', ', array_keys($grupos)) ?: 'Ninguno') . '</td>'
+            . '</tr></table>';
+
+        $detalle = [];
+        foreach ($docente['filas'] as $row) {
+            $detalle[] = [
+                escapar(fechaBonita($row['fecha'])),
+                escapar(horarioTexto($row)),
+                escapar(etiquetaLab($row)),
+                textoODefecto($row['departamento'], 'Sin departamento'),
+                textoODefecto($row['grupo'], 'Sin grupo'),
+                textoODefecto($row['carrera'], 'Sin carrera'),
+                textoODefecto($row['Practica'], 'No especificada'),
+                textoODefecto($row['Software'], 'No especificado'),
+                badgeEstado($row['Estado']),
+            ];
+        }
+
+        $html .= rptTabla([
+            ['Fecha', 'rpt-centro rpt-nowrap'],
+            ['Horario', 'rpt-centro rpt-nowrap'],
+            ['Laboratorio', ''],
+            ['Departamento', ''],
+            ['Grupo', ''],
+            ['Carrera', ''],
+            ['Práctica', ''],
+            ['Software', ''],
+            ['Estado', 'rpt-centro'],
+        ], $detalle);
+    }
 
     return $html;
 }
@@ -1259,11 +991,7 @@ function generarReporteGeneral($conn, $inicio, $fin, $filtros)
 
     if (!empty($filtros['estado'])) {
 
-        $estado = $conn->real_escape_string(
-            $filtros['estado']
-        );
-
-        $where[] = "r.Estado = '$estado'";
+        $where[] = sqlFiltroEstado($conn, $filtros['estado']);
     }
 
 
@@ -1353,241 +1081,76 @@ function generarReporteGeneral($conn, $inicio, $fin, $filtros)
     }
 
 
-    // ========================================================
-    // ENCABEZADO
-    // ========================================================
+    $filas = rptFilas($result);
 
-    $html = '
-
-        <div style="
-            margin-bottom:20px;
-            padding:12px;
-            background:#f8f9fa;
-            border:1px solid #ddd;
-            border-radius:6px;
-        ">
-
-            <strong>Período:</strong>
-
-            ' .
-            escapar(fechaBonita($inicio)) .
-            '
-
-            al
-
-            ' .
-            escapar(fechaBonita($fin)) .
-            '
-
-        </div>
-
-    ';
-
-
-    if ($result->num_rows === 0) {
-
-        return $html . '
-
-            <div style="
-                padding:20px;
-                text-align:center;
-                border:1px solid #ddd;
-            ">
-
-                No existen reservaciones para los filtros seleccionados.
-
-            </div>
-
-        ';
+    if (count($filas) === 0) {
+        return rptVacio('No existen reservaciones para los filtros seleccionados.');
     }
 
-
     // ========================================================
-    // CONTADOR
+    // RESUMEN
     // ========================================================
 
-    $total = $result->num_rows;
+    $c = contarReservaciones($filas);
 
+    $docentes = [];
+    $labs = [];
+    foreach ($filas as $row) {
+        if (trim($row['docente']) !== '') $docentes[trim($row['docente'])] = true;
+        $labs[etiquetaLab($row)] = true;
+    }
 
-    $html .= '
-
-        <div style="
-            margin-bottom:15px;
-            padding:12px;
-            border:1px solid #ddd;
-            border-radius:6px;
-        ">
-
-            <strong>
-                Total de reservaciones encontradas:
-            </strong>
-
-            ' .
-            $total .
-            '
-
-        </div>
-
-
-        <table style="
-            width:100%;
-            border-collapse:collapse;
-            font-size:11px;
-        ">
-
-            <thead>
-
-                <tr>
-
-                    <th>ID</th>
-                    <th>Fecha</th>
-                    <th>Horario</th>
-                    <th>Departamento</th>
-                    <th>Laboratorio</th>
-                    <th>Docente</th>
-                    <th>No. Control</th>
-                    <th>Grupo</th>
-                    <th>Carrera</th>
-                    <th>Práctica</th>
-                    <th>Software</th>
-                    <th>Estado</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-    ';
-
+    $html = rptResumen([
+        [$c['total'], 'Reservaciones', 'total'],
+        [$c['activa'], 'Activas', 'ok'],
+        [$c['cancelada'], 'Canceladas', 'cancel'],
+        [formatoHoras($c['horas']), 'Horas de uso', 'info'],
+        [count($labs), 'Laboratorios', 'neutral'],
+        [count($docentes), 'Docentes', 'neutral'],
+    ]);
 
     // ========================================================
     // DETALLE
     // ========================================================
 
-    while ($row = $result->fetch_assoc()) {
+    $html .= rptSeccion('Detalle de reservaciones', $c['total'] . ' registros ordenados por fecha y hora');
 
-        $estadoTexto = nombreEstado($row['Estado']);
-        $estadoCSS = claseEstado($row['Estado']);
+    $detalle = [];
+    foreach ($filas as $i => $row) {
+        $docente = textoODefecto(trim($row['docente']), 'Sin docente');
 
-
-        $docente = trim($row['docente']);
-
-        if ($docente === '') {
-            $docente = 'Sin docente';
+        if (!empty($row['num_control'])) {
+            $docente .= '<div class="rpt-sub">No. control ' . escapar($row['num_control']) . '</div>';
         }
 
-
-        $laboratorio = $row['laboratorio'] ?: 'Sin laboratorio';
-
-        if (!empty($row['numLab'])) {
-
-            $laboratorio .=
-                ' (' .
-                $row['numLab'] .
-                ')';
-        }
-
-
-        $html .= '
-
-            <tr>
-
-                <td style="text-align:center;">
-                    ' .
-                    escapar($row['IDReservacion']) .
-                '
-                </td>
-
-                <td style="text-align:center;">
-                    ' .
-                    escapar(fechaBonita($row['fecha'])) .
-                '
-                </td>
-
-                <td style="text-align:center;">
-                    ' .
-                    escapar(horaBonita($row['horaInicio'])) .
-                    ' -
-                    ' .
-                    escapar(horaBonita($row['horaFin'])) .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['departamento'] ?: 'Sin departamento') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($laboratorio) .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($docente) .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['num_control'] ?: 'No registrado') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['grupo'] ?: 'Sin grupo') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['carrera'] ?: 'Sin carrera') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['Practica'] ?: 'No especificada') .
-                '
-                </td>
-
-                <td>
-                    ' .
-                    escapar($row['Software'] ?: 'No especificado') .
-                '
-                </td>
-
-                <td style="
-                    text-align:center;
-                    ' .
-                    $estadoCSS .
-                '">
-
-                    ' .
-                    escapar($estadoTexto) .
-                '
-
-                </td>
-
-            </tr>
-
-        ';
+        $detalle[] = [
+            $i + 1,
+            escapar(fechaBonita($row['fecha'])),
+            escapar(horarioTexto($row)),
+            textoODefecto($row['departamento'], 'Sin departamento'),
+            escapar(etiquetaLab($row)),
+            $docente,
+            textoODefecto($row['grupo'], 'Sin grupo'),
+            textoODefecto($row['carrera'], 'Sin carrera'),
+            textoODefecto($row['Practica'], 'No especificada'),
+            textoODefecto($row['Software'], 'No especificado'),
+            badgeEstado($row['Estado']),
+        ];
     }
 
-
-    $html .= '
-
-            </tbody>
-
-        </table>
-
-    ';
-
+    $html .= rptTabla([
+        ['#', 'rpt-centro'],
+        ['Fecha', 'rpt-centro rpt-nowrap'],
+        ['Horario', 'rpt-centro rpt-nowrap'],
+        ['Departamento', ''],
+        ['Laboratorio', ''],
+        ['Docente', ''],
+        ['Grupo', ''],
+        ['Carrera', ''],
+        ['Práctica', ''],
+        ['Software', ''],
+        ['Estado', 'rpt-centro'],
+    ], $detalle);
 
     return $html;
 }

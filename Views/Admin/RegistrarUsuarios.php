@@ -211,10 +211,10 @@
 </script>
 
 <!--Logout-->
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
 
 <!--Formulario para Guardar Usuarios-->
-<script src="../../js/formguardarusuarios_XY.js"></script>
+<script src="<?= recurso('/js/formguardarusuarios_XY.js') ?>"></script>
 
 </body>
 </html>

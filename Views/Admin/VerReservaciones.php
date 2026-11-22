@@ -115,9 +115,9 @@ include("../../includes/navbar.php");
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- CSS -->
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/reservaciones.css">
+<link rel="stylesheet" href="<?= recurso('/css/reservaciones.css') ?>">
 
 <!-- TU JS -->
-<script src="../../js/reservaciones.js"></script>
-<script src="../../js/logout.js"></script>
-<script src="../../js/eliminarLab.js"></script>
+<script src="<?= recurso('/js/reservaciones.js') ?>"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
+<script src="<?= recurso('/js/eliminarLab.js') ?>"></script>

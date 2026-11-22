@@ -50,40 +50,29 @@ if(!puedeGestionar() || !puedeGestionarLab($conn, $idLab)){
 $software = $data['software'] ?? '';
 $practica = $data['Practica'] ?? '';
 
-sort($horas);
-$horaInicio = $horas[0];
-$horaFin = end($horas);
+require_once __DIR__ . "/../includes/reglas_reservacion.php";
+
+// Las horas llegan como bloques "19:00 - 20:00": se convierten en un rango inicio-fin
+$rango = rangoDesdeHoras($horas);
+if(isset($rango['error'])){
+    echo json_encode(["error" => $rango['error']]);
+    exit;
+}
+$horaInicio = $rango['inicio'];
+$horaFin = $rango['fin'];
 
 // Regla general: de hoy a 2 días; hoy solo horas que no han comenzado
-require_once __DIR__ . "/../includes/reglas_reservacion.php";
 $errorFecha = validarFechaReservacion($fecha, $horaInicio);
 if($errorFecha){
     echo json_encode(["error" => $errorFecha]);
     exit;
 }
 
-// Verificar disponibilidad
-$sqlCheck = "SELECT COUNT(*) as total FROM reservaciones 
-             WHERE fecha = ? AND IDLab = ? AND Estado != 'cancelada'
-             AND ((horaInicio <= ? AND horaFin > ?) OR (horaInicio < ? AND horaFin >= ?))";
-
-$stmtCheck = $conn->prepare($sqlCheck);
-if(!$stmtCheck){
-    echo json_encode(["error" => "Error prepare check: " . $conn->error]);
+// Verificar que el laboratorio no esté ocupado en ese horario
+if(hayEmpalme($conn, $fecha, $idLab, $horaInicio, $horaFin)){
+    echo json_encode(["error" => "El laboratorio ya está reservado en ese horario"]);
     exit;
 }
-
-$stmtCheck->bind_param("sissii", $fecha, $idLab, $horaInicio, $horaInicio, $horaFin, $horaFin);
-$stmtCheck->execute();
-$resultCheck = $stmtCheck->get_result();
-$rowCheck = $resultCheck->fetch_assoc();
-
-if($rowCheck['total'] > 0){
-    echo json_encode(["error" => "El laboratorio no está disponible en ese horario"]);
-    $stmtCheck->close();
-    exit;
-}
-$stmtCheck->close();
 
 // Guardar reservación - SIN la columna Alumnos
 $sql = "INSERT INTO reservaciones (fecha, horaInicio, horaFin, IDLab, IDUsuario, IDGrupo, Software, Practica, Estado) 

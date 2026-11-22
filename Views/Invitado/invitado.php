@@ -404,6 +404,6 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-<script src="../../js/reservaciones_invitados.js"></script>
+<script src="<?= recurso('/js/reservaciones_invitados.js') ?>"></script>
 
-<script src="../../js/logout.js"></script>
+<script src="<?= recurso('/js/logout.js') ?>"></script>
