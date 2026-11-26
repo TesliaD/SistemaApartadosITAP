@@ -42,16 +42,16 @@ include("../../includes/navbar_maestros.php");
 
                     <div class="icon-circle bg-primary-subtle mb-3">
 
-                        <i class="bi bi-people-fill text-primary"></i>
+                        <i class="bi bi-calendar2-date text-primary"></i>
 
                     </div>
 
                     <h5 class="fw-bold">
-                        Usuarios
+                        Reservaciones
                     </h5>
 
                     <p class="text-muted mb-0">
-                        Gestión de usuarios del sistema.
+                        Agenda tus clases
                     </p>
 
                 </div>
@@ -69,7 +69,7 @@ include("../../includes/navbar_maestros.php");
 
                     <div class="icon-circle bg-success-subtle mb-3">
 
-                        <i class="bi bi-laptop text-success"></i>
+                        <i class="bi bi-people-fill text-success"></i>
 
                     </div>
 
@@ -78,7 +78,7 @@ include("../../includes/navbar_maestros.php");
                     </h5>
 
                     <p class="text-muted mb-0">
-                        Administración de laboratorios.
+                        Administración de grupos
                     </p>
 
                 </div>
@@ -96,7 +96,7 @@ include("../../includes/navbar_maestros.php");
 
                     <div class="icon-circle bg-danger-subtle mb-3">
 
-                        <i class="bi bi-bar-chart-fill text-danger"></i>
+                        <i class="bi bi-person-check-fill text-danger"></i>
 
                     </div>
 
@@ -105,7 +105,7 @@ include("../../includes/navbar_maestros.php");
                     </h5>
 
                     <p class="text-muted mb-0">
-                        Estadísticas y reportes del sistema.
+                        Reportes de Asistencia
                     </p>
 
                 </div>

@@ -89,6 +89,10 @@ require_once __DIR__ . '/config.php';
             <i class="bi bi-building-fill-add"></i>
             Reporte de Asistencia
         </a>
+        <a href="control_asistencia.php">
+            <i class="bi bi-clipboard2-check"></i>
+            Registrar Asistencia
+        </a>
     </div>
 
 

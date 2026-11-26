@@ -65,7 +65,11 @@ require_once __DIR__ . "/permisos.php";
     </div>
     
     <!--Reportes-->
-    <a href="reportes_asistencia.php"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a> 
+    <a href="reportes_asistencia.php"><i class="bi bi-bar-chart"></i> <span>Reportes</span></a>
+
+    <?php if (esAdmin()): ?>
+    <a href="control_asistencia.php"><i class="bi bi-clipboard2-check"></i> <span>Control de asistencia</span></a>
+    <?php endif; ?>
     
     <?php if (esAdmin()): ?>
     <!--Noticias-->

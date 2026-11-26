@@ -1,0 +1,66 @@
+body { background: #f5f7fb; padding-top: 70px; }
+.asistencia-page { max-width: 1440px; margin: 0 auto; padding: 28px 24px 40px; }
+.asistencia-header { display:flex; align-items:center; gap:16px; margin-bottom:24px; color:#1d3557; }
+.asistencia-header h3 { margin:0; font-size:1.55rem; font-weight:700; }
+.asistencia-header p { margin:4px 0 0; color:#757474; }
+.asistencia-icon { width:52px; height:52px; display:grid; place-items:center; border-radius:14px; color:#fff; font-size:1.45rem; background:linear-gradient(135deg,#1d3557,#457b9d); box-shadow:0 8px 18px rgba(29,53,87,.2); }
+.asistencia-panel { background:#fff; border:1px solid #e2e8f0; border-radius:18px; padding:22px; box-shadow:0 8px 28px rgba(29,53,87,.07); }
+.filtros-panel { margin-bottom:18px; }
+.asistencia-panel-title { color:#1d3557; font-weight:700; font-size:1rem; margin-bottom:16px; }
+.asistencia-panel-title i { color:#457b9d; margin-right:7px; }
+.asistencia-panel .form-label { color:#1d3557; font-size:.82rem; font-weight:700; text-transform:uppercase; letter-spacing:.35px; }
+.asistencia-panel .form-select { min-height:46px; border:2px solid #e2e8f0; color:#1d3557; border-radius:10px; }
+.asistencia-panel .form-select:focus { border-color:#457b9d; box-shadow:0 0 0 4px rgba(69,123,157,.13); }
+.grupo-resumen { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+.resumen-item { background:#e8f0f5; border-left:4px solid #457b9d; padding:12px 14px; border-radius:10px; }
+.resumen-item small { display:block; color:#757474; text-transform:uppercase; font-size:.68rem; font-weight:700; letter-spacing:.4px; }
+.resumen-item strong { display:block; color:#1d3557; margin-top:3px; font-size:.9rem; }
+.asistencia-table-header { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:16px; }
+.asistencia-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.btn-asistencia-primary { border:0; color:#fff; background:linear-gradient(135deg,#1d3557,#2a4a7a); }
+.btn-asistencia-primary:hover { color:#fff; background:linear-gradient(135deg,#2a4a7a,#1d3557); }
+.btn-asistencia-secondary { color:#1d3557; background:#e8f0f5; border:1px solid #c9d9e6; }
+.btn-asistencia-secondary:hover { background:#d8e8f2; color:#1d3557; }
+.asistencia-table thead th { background:#1d3557; color:#fff; border:0; font-size:.77rem; text-transform:uppercase; letter-spacing:.25px; padding:12px 10px; white-space:nowrap; }
+.asistencia-table tbody td { border-color:#e2e8f0; color:#26384f; padding:11px 10px; }
+.asistencia-table tbody tr:hover td { background:#f4f8fb; }
+.asistencia-switch { min-width:100px; border-radius:999px; border:1px solid #cbd5e1; background:#f8fafc; color:#64748b; font-size:.78rem; font-weight:700; padding:6px 10px; }
+.asistencia-switch.presente { background:#d4edda; border-color:#9bd6aa; color:#155724; }
+.asistencia-switch.falta { background:#f8d7da; border-color:#eeb4ba; color:#842029; }
+.estado-vacio { text-align:center; color:#757474 !important; padding:34px !important; }
+.historial-asistencia { display:flex; flex-direction:column; gap:10px; }
+.historial-item { border:1px solid #e2e8f0; border-radius:12px; padding:13px; cursor:pointer; transition:.2s; }
+.historial-item:hover, .historial-item.activo { border-color:#457b9d; background:#f4f8fb; }
+.historial-item h6 { color:#1d3557; font-size:.88rem; margin:0 0 6px; font-weight:700; }
+.historial-item p { color:#757474; font-size:.78rem; margin:0 0 9px; }
+.historial-estadisticas { display:flex; gap:8px; font-size:.73rem; }
+.historial-estadisticas span { padding:3px 7px; border-radius:999px; font-weight:700; }
+.est-presente { background:#d4edda; color:#155724; }.est-falta { background:#f8d7da; color:#842029; }.est-pendiente { background:#e8f0f5; color:#1d3557; }
+body.dark .asistencia-header, body.dark .asistencia-header h3, body.dark .asistencia-panel-title, body.dark .asistencia-panel .form-label { color:#f8fafc !important; }
+body.dark .asistencia-header p, body.dark .text-muted { color:#cbd5e1 !important; }
+body.dark .asistencia-panel { background:#1e293b !important; border-color:#475569; box-shadow:0 8px 28px rgba(0,0,0,.3); }
+body.dark .resumen-item, body.dark .historial-item { background:#0f172a; border-color:#475569; }
+body.dark .resumen-item strong, body.dark .historial-item h6, body.dark .asistencia-table tbody td { color:#f8fafc; }
+body.dark .asistencia-table tbody tr:hover td, body.dark .historial-item:hover, body.dark .historial-item.activo { background:#26364b; }
+body.dark .asistencia-table thead th { background:#0f172a; }
+@media (max-width: 992px) { .grupo-resumen { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 576px) { .asistencia-page { padding:20px 12px; }.asistencia-header { align-items:flex-start; }.asistencia-header p { font-size:.85rem; }.asistencia-panel { padding:15px; }.grupo-resumen { grid-template-columns:1fr; }.asistencia-table-header { flex-direction:column; }.asistencia-actions { width:100%; }.asistencia-actions .btn { flex:1; } }
+@media print {
+    @page { size: letter; margin: 12mm; }
+    body, body.dark { background:#fff !important; color:#111 !important; padding:0 !important; }
+    body * { visibility:hidden !important; }
+    #areaReporteAsistencia, #areaReporteAsistencia * { visibility:visible !important; }
+    #areaReporteAsistencia { position:absolute; left:0; top:0; width:100%; }
+    .no-imprimir, .navbar, .sidebar, .overlay, #historialAsistencia { display:none !important; }
+    .asistencia-panel, .resumen-item { background:#fff !important; border-color:#1d3557 !important; box-shadow:none !important; color:#111 !important; }
+    .asistencia-table thead th { background:#e8f0f5 !important; color:#1d3557 !important; }
+    .asistencia-table tbody td, .resumen-item strong, .resumen-item small { color:#111 !important; border-color:#1d3557 !important; }
+    .asistencia-switch { border:0 !important; background:transparent !important; color:#111 !important; }
+    .asistencia-switch::before { content:'Estado: '; font-weight:400; }
+}
+.reporte-asistencia-encabezado { display:none; }
+@media print {
+    .reporte-asistencia-encabezado { display:block !important; text-align:center; margin:0 0 16px; color:#111 !important; }
+    .reporte-asistencia-encabezado h4 { margin:0 0 8px; font-weight:700; color:#1d3557 !important; }
+    .reporte-asistencia-encabezado p { margin:3px 0; font-size:12px; color:#111 !important; }
+}
