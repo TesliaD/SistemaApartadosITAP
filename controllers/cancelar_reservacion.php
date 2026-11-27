@@ -3,6 +3,11 @@ session_start();
 header('Content-Type: application/json');
 error_reporting(0);
 
+if (($_SESSION['rol'] ?? '') === 'invitado') {
+    http_response_code(403);
+    echo json_encode(["error" => "Los invitados no pueden cancelar reservaciones"]);
+    exit;
+}
 if(!isset($_SESSION['id'])){
     echo json_encode(["error" => "No autorizado"]);
     exit;

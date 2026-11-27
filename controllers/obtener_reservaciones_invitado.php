@@ -13,6 +13,11 @@ header('Content-Type: application/json');
 // VALIDAR SESIÓN
 // ============================================================
 
+if (($_SESSION['rol'] ?? '') === 'invitado') {
+    http_response_code(403);
+    echo json_encode(["error" => "No autorizado"]);
+    exit;
+}
 if (!isset($_SESSION['id'])) {
 
     echo json_encode([

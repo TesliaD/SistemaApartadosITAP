@@ -1,6 +1,8 @@
 <?php
 // No requiere autenticación - es pública
 require_once __DIR__ . "/../../includes/config.php";
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+$esInvitado = ($_SESSION['rol'] ?? '') === 'invitado';
 ?>
 
 <!DOCTYPE html>
@@ -662,10 +664,12 @@ require_once __DIR__ . "/../../includes/config.php";
         </div>
 
         <div class="topbar-actions">
+            <?php if ($esInvitado): ?>
+            <a class="icon-btn" href="../Invitado/apartar.php" title="Hacer reservación" aria-label="Hacer reservación"><i class="bi bi-calendar-plus"></i></a>
+            <a class="icon-btn" href="../../logout.php" title="Salir" aria-label="Salir"><i class="bi bi-box-arrow-right"></i></a>
+            <?php endif; ?>
             <div class="reloj" id="horaActual">--:--:--</div>
-            <button class="icon-btn" id="btnTema" type="button" aria-label="Cambiar tema">
-                <i class="bi bi-sun"></i>
-            </button>
+            <button class="icon-btn" id="btnTema" type="button" aria-label="Cambiar tema"><i class="bi bi-sun"></i></button>
         </div>
     </header>
 

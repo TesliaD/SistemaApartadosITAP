@@ -29,8 +29,11 @@ if ($result->num_rows > 0) {
 
     $user = $result->fetch_assoc();
 
+    // Aceptar hashes nuevos y contraseñas antiguas en texto plano.
+    $passwordValida = password_verify($password, (string)$user['password']) || hash_equals((string)$user['password'], $password);
+
     // VALIDAR PASSWORD
-    if ($password == $user['password'] && (int)$user['activo'] !== 1) {
+    if ($passwordValida && (int)$user['activo'] !== 1) {
 
         // Usuario desactivado por el administrador: no se inicia sesión
         echo "
@@ -45,7 +48,7 @@ if ($result->num_rows > 0) {
         </script>
         ";
 
-    } elseif ($password == $user['password']) {
+    } elseif ($passwordValida) {
 
         $_SESSION['usuario'] = $user['nombre'];
         $_SESSION['rol'] = $user['rol'];
