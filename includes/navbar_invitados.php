@@ -35,26 +35,18 @@
 
     <h5 class="mb-4">Menú</h5>
 
-    <a href="inicio_invitado.php"><i class="bi bi-house"></i><span>Inicio</span></a>
-
     <!-- SUBMENU -->
-    <!--Departamentos-->
+    <!--Reservaciones-->
     <a href="#" class="toggle-submenu">
-        <i class="bi bi-building-fill-check"></i> <span>Departamentos</span>
+        <i class="bi bi-building-fill-check"></i> <span>Reservaciones</span>
     </a>
     <div class="submenu">
         <a href="invitado.php"><i class="bi bi-building-fill-add"></i></i>Agregar Departamentos</a>
-    </div>
-
-    <!--Reservaciones-->
-    <a href="#" class="toggle-submenu">
-        <i class="bi bi-newspaper"></i> <span>Reservaciones</span>
-    </a>
-    <div class="submenu">
-        <a href="VentanaApartarLab.php"><i class="bi bi-calendar-check"></i><span>Apartados</span></a>
         <a href="VerReservaciones.php"><i class="bi bi-info-circle"></i>Ver Reservaciones</a>
         <a href="../Admin/ReservacionesPorDia.php"><i class="bi bi-info-circle"></i>Reservaciones Diarias</a>
     </div>
+
+   
     
     <hr>
         <a href="#" id="logoutBtn">
